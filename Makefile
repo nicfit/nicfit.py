@@ -37,7 +37,7 @@ clean: clean-local clean-build clean-pyc clean-test clean-patch
 	rm -rf tags
 
 clean-local:
-	# TODO: Add extra clean targets here
+	-rm *.log
 
 clean-build:
 	rm -fr build/
@@ -75,10 +75,9 @@ test:
 test-all:
 	tox
 
-_COVERAGE_BUILD_D=build/tests/coverage
 coverage:
-	# FIXME: write report to _COVERAGE_BUILD_D
-	pytest --cov --cov-report=html ./tests
+	pytest --cov=nicfit \
+		   --cov-report=html --cov-config=setup.cfg ./tests
 
 docs:
 	rm -f docs/nicfit.py.rst

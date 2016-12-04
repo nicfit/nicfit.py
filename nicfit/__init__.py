@@ -2,6 +2,7 @@
 from collections import namedtuple
 
 from ._argparse import ArgumentParser
+from ._config import Config, ConfigOptions
 from ._logging import rootLogger, getLogger, DEFAULT_LOGGING_CONFIG
 
 from .app import Application

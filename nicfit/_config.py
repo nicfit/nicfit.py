@@ -1,18 +1,37 @@
 # -*- coding: utf-8 -*-
+import os.path
 import argparse
 import configparser
 from io import StringIO
 from pathlib import Path
 from collections import namedtuple
 
-DEFAULT_CONFIG = None
-
 
 class Config(configparser.ConfigParser):
-    '''Class for storing, reading, and writing config.'''
+    """Class for storing, reading, and writing config."""
     def __init__(self, filename, **kwargs):
         super().__init__(**kwargs)
-        self.filename = Path(filename)
+        self.filename = Path(os.path.expandvars(filename)).expanduser()
+
+    def read(self, filenames=None, encoding=None, touch=False):
+        if not self.filename.exists() and touch:
+            self.filename.touch()
+        with open(str(self.filename), encoding=encoding) as fp:
+            self.read_file(fp, source=str(self.filename))
+        super().read(filenames or [], encoding=encoding)
+        return self
+
+    def write(self, fileobject=None, space_around_delimiters=True):
+        if fileobject is None:
+            fp = open(str(self.filename), 'w')
+        else:
+            fp = fileobject
+
+        try:
+            super().write(fp, space_around_delimiters=space_around_delimiters)
+        finally:
+            if fileobject is None:
+                fp.close()
 
 
 class ConfigFileType(argparse.FileType):
@@ -37,181 +56,44 @@ class ConfigFileType(argparse.FileType):
         return config
 
 
-def addCommandLineArgs(arg_parser, required=False, default_file=None,
-                       default_config=DEFAULT_CONFIG):
-    group = arg_parser.add_argument_group("Configuration options")
-    if required:
-        arg_parser.add_argument("config", default=default_file,
-                          help="Configuration file (ini file format).",
-                          type=ConfigFileType(default_config=DEFAULT_CONFIG),
-                          nargs="?" if default_file else None)
-    else:
-        group.add_argument("-c", "--config", dest="config",
-                           metavar="FILENAME",
-                           type=ConfigFileType(default_config=DEFAULT_CONFIG),
-                           default=default_file,
-                           help="Configuration file (ini file format).")
-
-    # FIXME: implement the subs
-    group.add_argument("-o", dest="config_overrides", action="append",
-                       default=[], metavar="SECTION:OPTION=VALUE",
-                       help="Overrides the values for configuration OPTION in "
-                            "[SECTION].")
-
-
-## THis is the old option class
-'''
-class Config(configparser.ConfigParser):
-    """Class for storing, reading, and writing config."""
-
-    def __init__(self, filename, **kwargs):
-        super().__init__(**kwargs)
-        self.filename = expandvars(expanduser(filename))
-
-    def read(self, filenames=None, encoding=None):
-        with open(self.filename, encoding=encoding) as fp:
-            self.read_file(fp, source=self.filename)
-        super().read(filenames or [], encoding=encoding)
-
-    def write(self, fileobject=None, space_around_delimiters=True):
-        if fileobject is None:
-            fp = open(self.filename, 'w')
-        else:
-            fp = fileobject
-
-        try:
-            super().write(fp, space_around_delimiters=space_around_delimiters)
-        finally:
-            if fileobject is None:
-                fp.close()
-
-
 class ConfigOptions(namedtuple("_ConfigOptions", ["required",
                                                   "default_file",
                                                   "default_config",
-                                                  "ConfigClass"])):
+                                                  "ConfigClass",
+                                                  "override_arg"])):
     def __new__(cls, required=False, default_file=None, default_config=None,
-                ConfigClass=Config):
+                override_arg=False, ConfigClass=Config):
         return super().__new__(cls, required, default_file, default_config,
-                               ConfigClass)
-
-'''
-## THis is the old arg parser with config built in
-'''
-class ArgumentParser(argparse.ArgumentParser):
-    """
-    A subclased of argparse.ArgumentParser with added support for logging and
-    config file arguments.
-
-    -l debug
-    -llogger:warn
-    --log-level log2:error
-
-    TODO
-    FIXME
-    """
-
-    def __init__(self, add_log_args=False, config_opts=None, **kwargs):
-        self._config_opts = config_opts
-
-        super().__init__(**kwargs)
-
-        if add_log_args:
-            self.register("action", "log_levels", LogLevelAction)
-            self.register("action", "log_files", LogFileAction)
-
-            group = self.add_argument_group("Logging options")
-            group.add_argument(
-                "-l", "--log-level", dest="log_levels",
-                action="log_levels", metavar="LOGGER:LEVEL", default=[],
-                help="Set logging levels (the option may be specified multiple "
-                     "times). The level of a specific logger may be set with "
-                     "the syntax LOGGER:LEVEL, but LOGGER is optional so "
-                     "if only LEVEL is given it applies to the root logger. "
-                     "Valid level names are: %s" % ", ".join(LEVEL_NAMES))
-
-            group.add_argument(
-                "-L", "--log-file", dest="log_files",
-                action="log_files", metavar="LOGGER:FILE", default=[],
-                help="Set log files (the option may be specified multiple "
-                     "times). The level of a specific logger may be set with "
-                     "the syntax LOGGER:FILE, but LOGGER is optional so "
-                     "if only FILE is given it applies to the root logger. "
-                     "The special FILE values 'stdout', 'stderr', and 'null' "
-                     "result on logging to the console, or /dev/null in the "
-                     "latter case.")
-
-        if config_opts:
-            group = self.add_argument_group("Configuration options")
-            file_arg_type = ConfigFileType(config_opts)
-
-            if config_opts.required:
-                self.add_argument("config", default=config_opts.default_file,
-                                  help="Configuration file (ini file format).",
-                                  type=file_arg_type,
-                                  nargs="?" if config_opts.default_file
-                                            else None)
-            else:
-                group.add_argument("-c", "--config", dest="config",
-                                   metavar="FILENAME",
-                                   type=file_arg_type,
-                                   default=config_opts.default_file,
-                                   help="Configuration file (ini file format).")
-
-            group.add_argument("--config-override", dest="config_overrides",
-                               action="append", default=[],
-                               metavar="SECTION:OPTION=VALUE",
-                               type=config_override,
-                               help="Overrides the values for configuration "
-                                    "OPTION in [SECTION].")
-
-    def parse_known_args(self, args=None, namespace=None):
-        parsed, remaining = super().parse_known_args(args=args,
-                                                     namespace=namespace)
-        if "config" in parsed and "config_overrides" in parsed:
-            config = parsed.config
-            for sect, subst in parsed.config_overrides:
-                key, val = subst
-                if not config.has_section(sect):
-                    config.add_section(sect)
-                parsed.config.set(sect, key, val)
-
-        if "config" in parsed:
-            logging.config.fileConfig(parsed.config)
-
-        return parsed, remaining
+                               ConfigClass, override_arg)
 
 
-class ConfigFileType(argparse.FileType):
-    def __init__(self, config_opts):
-        super().__init__(mode='r')
-        self._opts = config_opts
+def addCommandLineArgs(arg_parser, opts):
+    from ._argparse import ArgumentParser
 
-    def __call__(self, filename):
-        try:
-            fp = super().__call__(expandvars(expanduser(filename)))
-        except Exception as ex:
-            if self._opts.default_config:
-                fp = StringIO(self._opts.default_config)
-            else:
-                raise
-
-        config = self._opts.ConfigClass(filename)
-        config.readfp(fp)
-
-        return config
-
-
-def config_override(s):
-    """TODO"""
-    sect, rhs = s.split(':', 1)
-    key, val = rhs.split('=', 1)
-    return (sect, (key, val))
-
-
-    if ':' in opt:
-        first, second = opt.split(":")
+    g = arg_parser.add_argument_group("Configuration options")
+    if opts.required:
+        arg_parser.add_argument("config", default=opts.default_file,
+                          help="Configuration file (ini file format).",
+                          type=ConfigFileType(default_config=opts.default_config),
+                          nargs="?" if opts.default_file else None)
     else:
-        first, second = None, opt
-    return first, second
-'''
+        g.add_argument("-c", "--config", dest="config", metavar="FILENAME",
+                       type=ConfigFileType(default_config=opts.default_config),
+                       default=opts.default_file,
+                       help="Configuration file (ini file format).")
+
+    if opts.override_arg:
+        if not isinstance(arg_parser, ArgumentParser):
+            raise ValueError("nicfit.ArgumentParser type required for "
+                             "--config-override support.")
+
+        def config_override(s):
+            sect, rhs = s.split(':', 1)
+            key, val = rhs.split('=', 1)
+            return (sect, (key, val))
+
+        g.add_argument("--config-override", dest="config_overrides",
+                       action="append", metavar="SECTION:OPTION=VALUE",
+                       type=config_override,
+                       help="Overrides the value for configuration OPTION in "
+                            "[SECTION].")
