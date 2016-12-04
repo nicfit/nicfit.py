@@ -3,6 +3,7 @@ import argparse
 import configparser
 from io import StringIO
 from pathlib import Path
+from collections import namedtuple
 
 DEFAULT_CONFIG = None
 
@@ -58,6 +59,43 @@ def addCommandLineArgs(arg_parser, required=False, default_file=None,
                             "[SECTION].")
 
 
+## THis is the old option class
+'''
+class Config(configparser.ConfigParser):
+    """Class for storing, reading, and writing config."""
+
+    def __init__(self, filename, **kwargs):
+        super().__init__(**kwargs)
+        self.filename = expandvars(expanduser(filename))
+
+    def read(self, filenames=None, encoding=None):
+        with open(self.filename, encoding=encoding) as fp:
+            self.read_file(fp, source=self.filename)
+        super().read(filenames or [], encoding=encoding)
+
+    def write(self, fileobject=None, space_around_delimiters=True):
+        if fileobject is None:
+            fp = open(self.filename, 'w')
+        else:
+            fp = fileobject
+
+        try:
+            super().write(fp, space_around_delimiters=space_around_delimiters)
+        finally:
+            if fileobject is None:
+                fp.close()
+
+
+class ConfigOptions(namedtuple("_ConfigOptions", ["required",
+                                                  "default_file",
+                                                  "default_config",
+                                                  "ConfigClass"])):
+    def __new__(cls, required=False, default_file=None, default_config=None,
+                ConfigClass=Config):
+        return super().__new__(cls, required, default_file, default_config,
+                               ConfigClass)
+
+'''
 ## THis is the old arg parser with config built in
 '''
 class ArgumentParser(argparse.ArgumentParser):

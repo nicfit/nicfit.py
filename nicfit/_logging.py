@@ -3,7 +3,6 @@ import sys
 import logging
 import logging.config
 import argparse
-from pathlib import Path
 
 """
 - Adds log level VERBOSE, DEBUG < VERBOSE < INFO.

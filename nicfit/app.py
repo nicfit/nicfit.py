@@ -1,11 +1,8 @@
 import sys
 from ._argparse import ArgumentParser
+from ._logging import getLogger
 
-
-"""
-TODO:
-    - Exception handling at top-level
-"""
+log = getLogger(__name__)
 
 
 class Application:
@@ -39,13 +36,15 @@ class Application:
 
     def run(self, args_list=None):
         """Run Application.main and exits with the return value."""
+        log.debug("Application.run: {args_list}".format(**locals()))
         retval = None
         try:
             retval = self._run(args_list=args_list)
         except KeyboardInterrupt:
-            pass
+            log.info("Interrupted")
         except Exception as ex:
             retval = 126
+            log.exception("Uncaught exception")
             raise
         finally:
             try:
@@ -63,8 +62,8 @@ class AsyncApplication(Application):
             return await self._main_func(args)
         return 127
 
-    async def main(self):
-        self.args = self.arg_parser.parse_args()
+    async def main(self, args_list=None):
+        self.args = self.arg_parser.parse_args(args=args_list)
         retval = await self._main(self.args)
         return retval or 0
 
