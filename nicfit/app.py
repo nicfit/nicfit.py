@@ -37,6 +37,7 @@ class Application:
 
     def main(self, args_list=None):
         self.log.debug("Application.main: {args_list}".format(**locals()))
+
         self.args = self.arg_parser.parse_args(args=args_list)
         retval = self._main(self.args)
         return retval or 0
@@ -67,6 +68,7 @@ class Application:
 class AsyncApplication(Application):
     async def _main(self, args):
         self.log.debug("AsyncApplication._main: {args}".format(**locals()))
+        import ipdb; ipdb.set_trace()
         if self._main_func:
             return await self._main_func(args)
         return self.NO_MAIN_EXIT
@@ -77,5 +79,5 @@ class AsyncApplication(Application):
         retval = await self._main(self.args)
         return retval or 0
 
-    def _run(self):
+    def _run(self, args_list=None):
         raise NotImplementedError("Implemement for a specific async API")

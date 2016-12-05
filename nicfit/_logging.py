@@ -132,8 +132,8 @@ class LogFileAction(argparse._AppendAction):
 
 
 # FIXME: metrics does not really belong in generic version
-def DEFAULT_LOGGING_CONFIG(root_logger, log_format=LOG_FORMAT,
-                           metrics_format=METRICS_FORMAT):
+def LOGGING_CONFIG(pkg_logger, log_format=LOG_FORMAT, root_level="NOTSET",
+                   pkg_level="NOTSET", metrics_format=METRICS_FORMAT):
     return """
 ###
 #logging configuration
@@ -141,7 +141,7 @@ def DEFAULT_LOGGING_CONFIG(root_logger, log_format=LOG_FORMAT,
 ###
 
 [loggers]
-keys = root, {root_logger}, {root_logger}.metrics
+keys = root, {pkg_logger}, {pkg_logger}.metrics
 
 [handlers]
 keys = console, metrics
@@ -150,12 +150,12 @@ keys = console, metrics
 keys = generic, metrics
 
 [logger_root]
-level = WARN
+level = {root_level}
 handlers = console
 
-[logger_{root_logger}]
-level = NOTSET
-qualname = {root_logger}
+[logger_{pkg_logger}]
+level = {pkg_level}
+qualname = {pkg_logger}
 ; When adding more specific handlers than what exists on the root you'll
 ; likely want to set propagate to false.
 handlers =
@@ -170,15 +170,15 @@ formatter = generic
 [formatter_generic]
 format = {log_format}
 
-[logger_{root_logger}.metrics]
+[logger_{pkg_logger}.metrics]
 level = NOTSET
-qualname = {root_logger}.metrics
+qualname = {pkg_logger}.metrics
 handlers = metrics
 propagate = 0
 
 [handler_metrics]
 class = FileHandler
-args = ("{root_logger}-metrics.log", "w", None, True)
+args = ("{pkg_logger}-metrics.log", "w", None, True)
 level = NOTSET
 formatter = metrics
 
