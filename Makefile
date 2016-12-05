@@ -38,6 +38,7 @@ clean: clean-local clean-build clean-pyc clean-test clean-patch
 
 clean-local:
 	-rm *.log
+	@# XXX Add new clean targets here.
 
 clean-build:
 	rm -fr build/
