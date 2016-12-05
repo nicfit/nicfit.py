@@ -6,7 +6,6 @@ import argparse
 
 """
 - Adds log level VERBOSE, DEBUG < VERBOSE < INFO.
-- rootLogger TODO
 - getLogger TODO
 - simpleConfig TODO
 """
@@ -30,15 +29,6 @@ def getLogger(name):
         logging.setLoggerClass(OrigLoggerClass)
 
 
-
-_ROOT_LOGGER_NAME = None
-def rootLogger(name):
-    global _ROOT_LOGGER_NAME
-    if _ROOT_LOGGER_NAME is None:
-        _ROOT_LOGGER_NAME = name
-    return getLogger(name)
-
-
 class Logger(logging.getLoggerClass()):
     '''Base class for all package loggers'''
 
@@ -54,14 +44,12 @@ class Logger(logging.getLoggerClass()):
         self.log(logging.VERBOSE, msg, *args, **kwargs)
 
 
-
 def _optSplit(opt):
     if ':' in opt:
         first, second = opt.split(":")
     else:
         first, second = None, opt
     return first, second
-
 
 
 def addCommandLineArgs(arg_parser):
@@ -106,7 +94,6 @@ class LogLevelAction(argparse._AppendAction):
         super().__call__(parser, namespace, values, option_string=option_string)
 
 
-
 class LogFileAction(argparse._AppendAction):
     """An 'action' value for log file setting options."""
     def __call__(self, parser, namespace, values, option_string=None):
@@ -144,9 +131,9 @@ class LogFileAction(argparse._AppendAction):
         super().__call__(parser, namespace, values, option_string=option_string)
 
 
-
 # FIXME: metrics does not really belong in generic version
-def DEFAULT_LOGGING_CONFIG():
+def DEFAULT_LOGGING_CONFIG(root_logger, log_format=LOG_FORMAT,
+                           metrics_format=METRICS_FORMAT):
     return """
 ###
 #logging configuration
@@ -181,7 +168,7 @@ level = NOTSET
 formatter = generic
 
 [formatter_generic]
-format = {default_format}
+format = {log_format}
 
 [logger_{root_logger}.metrics]
 level = NOTSET
@@ -198,5 +185,4 @@ formatter = metrics
 [formatter_metrics]
 format = {metrics_format}
 
-""".format(default_format=LOG_FORMAT, metrics_format=METRICS_FORMAT,
-           root_logger=_ROOT_LOGGER_NAME)
+""".format(**locals())
