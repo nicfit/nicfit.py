@@ -3,7 +3,7 @@ import nicfit
 from nicfit import aio
 
 # XXX
-pytestmark = pytest.mark.skipif(True, reason="fuckfcae")
+pytestmark = pytest.mark.skipif(True, reason="FIXME")
 
 async def _main(args):
     args.app.retval = 2

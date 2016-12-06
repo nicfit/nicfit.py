@@ -1,14 +1,16 @@
 import os.path
+import tempfile
 import argparse
 import configparser
 from pathlib import Path
+from os.path import expandvars, expanduser, join, sep
 
 import pytest
 
 from nicfit import Config
 from nicfit import ConfigOptions
 from nicfit import ArgumentParser
-from nicfit._config import ConfigFileType
+from nicfit._config import ConfigFileType, _config_override
 
 
 def test_ConfigOptions():
@@ -27,6 +29,52 @@ def test_ConfigOptions():
     assert opts.default_file is "config.ini"
     assert opts.default_config is "foobar"
     assert opts.ConfigClass is MyConfig
+
+    config = Config("/tmp/config.ini")
+    assert(str(config.filename) == "/tmp/config.ini")
+    config = Config("$HOME/config.ini")
+    assert(str(config.filename) == join(expandvars("$HOME"), "config.ini"))
+    config = Config("~/config.ini")
+    assert(str(config.filename) == join(expanduser("~"), "config.ini"))
+    config = Config("~/${HOME}/config.ini")
+
+    filename = filename2 = None
+    fn, filename = tempfile.mkstemp()
+    os.close(fn)
+    try:
+        config = Config(filename)
+
+        config.add_section("1")
+        config.set("1", "one", "uno")
+        config.add_section("2")
+        config.set("2", "two", "dos")
+        config.add_section("3")
+        config.set("3", "three", "tres")
+
+        config.write()
+
+        config2 = Config(filename)
+        config2.read()
+        assert(config2.get("1", "one") == "uno")
+        assert(config2.get("2", "two") == "dos")
+        assert(config2.get("3", "three") == "tres")
+
+        fn, filename2 = tempfile.mkstemp()
+        os.close(fn)
+
+        with open(filename2, 'w') as fp:
+            config2.write(fileobject=fp)
+        config3 = Config(filename2)
+        config3.read()
+        assert(config3.get("1", "one") == "uno")
+        assert(config3.get("2", "two") == "dos")
+        assert(config3.get("3", "three") == "tres")
+
+    finally:
+        if filename is not None:
+            os.unlink(filename)
+        if filename2 is not None:
+            os.unlink(filename2)
 
 
 def test_ConfigConstructor():
@@ -231,3 +279,9 @@ mainkey = config3
 [CONFIG3]
 key = value
 """
+
+def test_configoverride_argtype():
+    assert _config_override("sect:key=val") == ("sect", ("key", "val"))
+    for val in ("sect", "sect:key", "sect:=val", ":key=", ":="):
+        with pytest.raises(ValueError):
+            _config_override(val)

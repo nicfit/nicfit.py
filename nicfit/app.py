@@ -25,13 +25,15 @@ class Application:
         if self._atexit_func:
              self._atexit_func(self)
 
-    def __init__(self, main_func=None, *, name=None,
-                 logging_args=True, config_opts=None, atexit=None):
+    def __init__(self, main_func=None, *, name=None, description=None,
+                 logging_args=True, config_opts=None,
+                 atexit=None):
         self.name = name
         self._main_func = main_func
         self._atexit_func = atexit
         self.arg_parser = ArgumentParser(prog=name, add_log_args=logging_args,
-                                         config_opts=config_opts)
+                                         config_opts=config_opts,
+                                         description=description)
         self.arg_parser.set_defaults(app=self)
         self.log = getLogger(name) if name else log
 
@@ -68,7 +70,6 @@ class Application:
 class AsyncApplication(Application):
     async def _main(self, args):
         self.log.debug("AsyncApplication._main: {args}".format(**locals()))
-        import ipdb; ipdb.set_trace()
         if self._main_func:
             return await self._main_func(args)
         return self.NO_MAIN_EXIT

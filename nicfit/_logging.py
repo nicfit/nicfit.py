@@ -46,10 +46,10 @@ class Logger(logging.getLoggerClass()):
 
 def _optSplit(opt):
     if ':' in opt:
-        first, second = opt.split(":")
+        first, second = opt.split(":", maxsplit=1)
     else:
         first, second = None, opt
-    return first, second
+    return first or None, second or None
 
 
 def addCommandLineArgs(arg_parser):

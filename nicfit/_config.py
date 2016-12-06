@@ -87,13 +87,15 @@ def addCommandLineArgs(arg_parser, opts):
             raise ValueError("nicfit.ArgumentParser type required for "
                              "--config-override support.")
 
-        def config_override(s):
-            sect, rhs = s.split(':', 1)
-            key, val = rhs.split('=', 1)
-            return (sect, (key, val))
-
         g.add_argument("--config-override", dest="config_overrides",
                        action="append", metavar="SECTION:OPTION=VALUE",
-                       type=config_override,
+                       type=_config_override,
                        help="Overrides the value for configuration OPTION in "
                             "[SECTION].")
+
+def _config_override(s):
+    sect, rhs = s.split(':', 1)
+    key, val = rhs.split('=', 1)
+    if not sect or not key:
+        raise ValueError("section and key required")
+    return (sect, (key, val))

@@ -6,17 +6,13 @@ from setuptools import setup, find_packages
 
 
 classifiers = [
-    'Development Status :: 2 - Pre-Alpha',
+    'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: GPL License',
+    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
     'Operating System :: POSIX',
     'Natural Language :: English',
     'Programming Language :: Python',
-    "Programming Language :: Python :: 2",
-    'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.3',
-    'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
 ]
 
@@ -67,7 +63,6 @@ src_dist_tgz = "{name}-{version}.tar.gz".format(**pkg_info)
 pkg_info["download_url"] = "{}/releases/{}".format(pkg_info["url"],
                                                    src_dist_tgz)
 
-# FIXME: anything special for pytest here?
 setup(classifiers=classifiers,
       package_dir={'nicfit.py': 'nicfit.py'},
       packages=find_packages('.','nicfit.py'),

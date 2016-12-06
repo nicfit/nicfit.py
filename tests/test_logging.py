@@ -101,3 +101,9 @@ def test_FileConfig():
     cfg = LOGGING_CONFIG("INl3agueWitS4t4n")
     cfg_file = StringIO(cfg)
     logging.config.fileConfig(cfg_file)
+
+def test_optSplit():
+    assert(_logging._optSplit("foo") == (None, "foo"))
+    assert(_logging._optSplit("foo:bazz") == ("foo", "bazz"))
+    assert(_logging._optSplit("foo:bar:bazz") == ("foo", "bar:bazz"))
+    assert(_logging._optSplit(":bazz") == (None, "bazz"))
