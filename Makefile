@@ -12,6 +12,7 @@ webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
 endef
 export BROWSER_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
+PYPI_REPO = pypitest
 
 help:
 	@echo "clean - remove all build, test, coverage and Python artifacts"
@@ -93,9 +94,9 @@ docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: clean
-	python setup.py sdist upload
-	python setup.py bdist_wheel upload
+release: dist
+	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
+	find dist -type f -exec twine upload -r ${PYPI_REPO} {} \;
 
 dist: clean
 	python setup.py sdist
