@@ -1,6 +1,5 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
 	    test test-all coverage docs release dist tags
-SRC_DIRS = nicfit.py tests bin
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
@@ -62,7 +61,7 @@ clean-patch:
 	find . -name '*.orig' -exec rm -f '{}' \;
 
 lint:
-	flake8 ${SRC_DIRS}
+	flake8 nicfit
 
 
 _PYTEST_OPTS=
@@ -83,7 +82,7 @@ coverage:
 docs:
 	rm -f docs/nicfit.py.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ nicfit.py
+	sphinx-apidoc -o docs/ nicfit
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	@if test -n '$(BROWSER)'; then \
@@ -106,4 +105,4 @@ install: clean
 	python setup.py install
 
 tags:
-	ctags -R ${SRC_DIRS}
+	ctags -R nicfit

@@ -72,10 +72,11 @@ def addCommandLineArgs(arg_parser, opts):
 
     g = arg_parser.add_argument_group("Configuration options")
     if opts.required:
-        arg_parser.add_argument("config", default=opts.default_file,
-                          help="Configuration file (ini file format).",
-                          type=ConfigFileType(default_config=opts.default_config),
-                          nargs="?" if opts.default_file else None)
+        arg_parser.add_argument(
+            "config", default=opts.default_file,
+            help="Configuration file (ini file format).",
+            type=ConfigFileType(default_config=opts.default_config),
+            nargs="?" if opts.default_file else None)
     else:
         g.add_argument("-c", "--config", dest="config", metavar="FILENAME",
                        type=ConfigFileType(default_config=opts.default_config),
@@ -92,6 +93,7 @@ def addCommandLineArgs(arg_parser, opts):
                        type=_config_override,
                        help="Overrides the value for configuration OPTION in "
                             "[SECTION].")
+
 
 def _config_override(s):
     sect, rhs = s.split(':', 1)

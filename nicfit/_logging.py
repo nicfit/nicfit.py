@@ -78,6 +78,7 @@ def addCommandLineArgs(arg_parser):
              "result on logging to the console, or /dev/null in the "
              "latter case.")
 
+
 class LogLevelAction(argparse._AppendAction):
     """An 'action' value for log level setting options."""
     def __call__(self, parser, namespace, values, option_string=None):
