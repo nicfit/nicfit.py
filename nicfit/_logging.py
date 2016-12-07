@@ -133,7 +133,7 @@ class LogFileAction(argparse._AppendAction):
 
 
 # FIXME: metrics does not really belong in generic version
-def LOGGING_CONFIG(pkg_logger, log_format=LOG_FORMAT, root_level="NOTSET",
+def LOGGING_CONFIG(pkg_logger, log_format=LOG_FORMAT, root_level="WARN",
                    pkg_level="NOTSET", metrics_format=METRICS_FORMAT):
     return """
 ###

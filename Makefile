@@ -11,7 +11,12 @@ webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
 endef
 export BROWSER_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
-PYPI_REPO = pypitest
+GIT := git -c user.name="$(NAME)" -c user.email="$(EMAIL)"
+ifeq ($(RELEASE), yes)
+	PYPI_REPO = pypi
+else
+	PYPI_REPO = pypitest
+endif
 
 help:
 	@echo "clean - remove all build, test, coverage and Python artifacts"
@@ -93,7 +98,22 @@ docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: dist
+pre-release:
+	$(eval VERSION = $(shell python setup.py --version 2> /dev/null))
+	@echo "VERSION: $(VERSION)"
+	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
+		printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
+		printf "\nCommit and try again.\n"
+
+build-release: test-all dist
+
+tag-release: pre-release
+	$(GIT) tag -a v$(VERSION) -m "Release $(VERSION)"
+	$(GIT) push --tags origin
+
+release: pre-release build-release tag-release upload-release
+
+upload-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} {} \;
 

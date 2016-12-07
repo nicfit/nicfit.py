@@ -1,4 +1,5 @@
-
+nicfit.Application
+-------------------
 .. code-block:: python
     from nicfit import Application
 
@@ -31,3 +32,8 @@ Invoke code right before ``sys.exit``.
 .. code-block:: python
     def f(): pass
     app = Application(main, atexit=f)
+
+Release procedure
+~~~~~~~~~~~~~~~~~~~
+::
+    PYPI_REPO=pypi make release
