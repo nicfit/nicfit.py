@@ -12,7 +12,8 @@ class Application(AsyncApplication):
 
     def _run(self, args_list=None):
         self.log.debug("aio.Application: {args_list}".format(**locals()))
-        self._main_task = self.event_loop.create_task(self.main(args_list=args_list))
+        self._main_task = \
+            self.event_loop.create_task(self.main(args_list=args_list))
         try:
             self._exit_status = \
                 self.event_loop.run_until_complete(self._main_task)
@@ -25,4 +26,3 @@ class Application(AsyncApplication):
         self.log.debug("Application::stop(exit_status=%d)" % exit_status)
         self._exit_status = exit_status
         self._main_task.cancel()
-

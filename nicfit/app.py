@@ -23,7 +23,7 @@ class Application:
         """Invoked in the 'finally' block of Application.run."""
         self.log.debug("Application._atexit")
         if self._atexit_func:
-             self._atexit_func(self)
+            self._atexit_func(self)
 
     def __init__(self, main_func=None, *, name=None, description=None,
                  logging_args=True, config_opts=None,

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 
-from ._argparse import ArgumentParser
-from ._config import Config, ConfigOptions
-from ._logging import getLogger, LOGGING_CONFIG
+from ._argparse import ArgumentParser                                     # noqa
+from ._config import Config, ConfigOptions                                # noqa
+from ._logging import getLogger, LOGGING_CONFIG                           # noqa
 
-from .app import Application
+from .app import Application                                              # noqa
 
 
 __project_name__ = 'nicfit.py'
@@ -17,7 +17,7 @@ __description__ = 'Common Python utils (App, logging, config, etc.)'
 
 __version__ = '0.2.0-alpha'
 __release__ = __version__.split('-')[1] if '-' in __version__ else "final"
-__version_info__   = \
+__version_info__ = \
     namedtuple("Version", "major, minor, maint, release")(
         *(tuple((int(v) for v in __version__.split('-')[0].split('.'))) +
           tuple((__release__,))))
@@ -31,4 +31,3 @@ This program comes with ABSOLUTELY NO WARRANTY! See LICENSE for details.
 Run with --help/-h for usage information or read the docs at
 %(__url__)s
 """ % (locals())
-
