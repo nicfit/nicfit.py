@@ -12,11 +12,7 @@ endef
 export BROWSER_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 GIT := git -c user.name="$(NAME)" -c user.email="$(EMAIL)"
-ifeq ($(RELEASE), yes)
-	PYPI_REPO = pypi
-else
-	PYPI_REPO = pypitest
-endif
+PYPI_REPO = pypitest
 
 help:
 	@echo "clean - remove all build, test, coverage and Python artifacts"

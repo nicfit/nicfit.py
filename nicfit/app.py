@@ -26,16 +26,21 @@ class Application:
             self._atexit_func(self)
 
     def __init__(self, main_func=None, *, name=None, description=None,
-                 logging_args=True, config_opts=None,
+                 logging_args=True, config_opts=None, version=None,
                  atexit=None):
-        self.name = name
         self._main_func = main_func
         self._atexit_func = atexit
-        self.arg_parser = ArgumentParser(prog=name, add_log_args=logging_args,
-                                         config_opts=config_opts,
-                                         description=description)
-        self.arg_parser.set_defaults(app=self)
+
+        self.name = name
         self.log = getLogger(name) if name else log
+
+        self.arg_parser = ArgumentParser(add_log_args=logging_args,
+                                         config_opts=config_opts,
+                                         prog=name, description=description)
+        if version:
+            self.add_argument("--version", action="version", version=version)
+        self.arg_parser.set_defaults(app=self)
+
 
     def main(self, args_list=None):
         self.log.debug("Application.main: {args_list}".format(**locals()))

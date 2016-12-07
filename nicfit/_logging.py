@@ -3,11 +3,10 @@ import sys
 import logging
 import logging.config
 import argparse
+from io import StringIO
 
 """
-- Adds log level VERBOSE, DEBUG < VERBOSE < INFO.
-- getLogger TODO
-- simpleConfig TODO
+TODO
 """
 
 LOG_FORMAT = "[%(asctime)s] %(name)-25s [%(levelname)-8s]: %(message)s"
@@ -133,9 +132,10 @@ class LogFileAction(argparse._AppendAction):
 
 
 # FIXME: metrics does not really belong in generic version
-def LOGGING_CONFIG(pkg_logger, log_format=LOG_FORMAT, root_level="WARN",
-                   pkg_level="NOTSET", metrics_format=METRICS_FORMAT):
-    return """
+def LOGGING_CONFIG(pkg_logger, root_level="WARN", log_format=LOG_FORMAT,
+                   pkg_level="NOTSET", metrics_format=METRICS_FORMAT,
+                   init_logging=False):
+    cfg = """
 ###
 #logging configuration
 #https://docs.python.org/3/library/logging.config.html#configuration-file-format
@@ -187,3 +187,6 @@ formatter = metrics
 format = {metrics_format}
 
 """.format(**locals())
+    if init_logging:
+        logging.config.fileConfig(StringIO(cfg))
+    return cfg
