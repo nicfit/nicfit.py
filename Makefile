@@ -102,8 +102,8 @@ pre-release:
 	$(eval VERSION = $(shell python setup.py --version 2> /dev/null))
 	@echo "VERSION: $(VERSION)"
 	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
-		printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
-		printf "\nCommit and try again.\n"
+		(printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
+		 printf "\nCommit and try again.\n")
 
 build-release: test-all dist
 
