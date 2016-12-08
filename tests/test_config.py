@@ -8,13 +8,13 @@ from os.path import expandvars, expanduser, join, sep
 import pytest
 
 from nicfit import Config
-from nicfit import ConfigOptions
+from nicfit import ConfigOpts
 from nicfit import ArgumentParser
 from nicfit._config import ConfigFileType, _config_override
 
 
-def test_ConfigOptions():
-    opts = ConfigOptions()
+def test_ConfigOpts():
+    opts = ConfigOpts()
     assert not opts.required
     assert opts.default_file is None
     assert opts.default_config is None
@@ -22,9 +22,8 @@ def test_ConfigOptions():
 
     class MyConfig(Config):
         pass
-    opts = ConfigOptions(required=True, ConfigClass=MyConfig,
-                         default_file="config.ini",
-                         default_config="foobar")
+    opts = ConfigOpts(required=True, ConfigClass=MyConfig,
+                      default_file="config.ini", default_config="foobar")
     assert opts.required
     assert opts.default_file is "config.ini"
     assert opts.default_config is "foobar"
@@ -155,7 +154,7 @@ def test_ConfigFileType(tmpdir):
     cfgtype = ConfigFileType()
     assert isinstance(cfgtype, argparse.FileType)
     assert cfgtype._encoding == "utf-8"
-    assert cfgtype._default_config == None
+    assert cfgtype._opts.default_config == None
 
     # File does not exist
     f = os.path.join(str(tmpdir), "dne")
@@ -164,8 +163,8 @@ def test_ConfigFileType(tmpdir):
 
     # File does not exist, but provide a default config
     f = os.path.join(str(tmpdir), "default")
-    cfgtype = ConfigFileType(default_config=SAMPLE_CONFIG3)
-    assert cfgtype._default_config == SAMPLE_CONFIG3
+    cfgtype = ConfigFileType(ConfigOpts(default_config=SAMPLE_CONFIG3))
+    assert cfgtype._opts.default_config == SAMPLE_CONFIG3
     config = cfgtype(f)
     assert isinstance(config, Config)
     assert str(config.filename) == f
@@ -186,7 +185,7 @@ def test_ConfigFileType(tmpdir):
 
 def test_ConfigArgumentParser(tmpdir):
     # A config is optional, so a -c/--config arg was added
-    p = ArgumentParser(config_opts=ConfigOptions())
+    p = ArgumentParser(config_opts=ConfigOpts())
     args = p.parse_args([])
 
     # No arg value
@@ -202,7 +201,7 @@ def test_ConfigArgumentParser(tmpdir):
         args = p.parse_args(["--config", "dne"])
 
     # Arg value, config does not exist, but a default was given.
-    p = ArgumentParser(config_opts=ConfigOptions(default_config=SAMPLE_CONFIG1))
+    p = ArgumentParser(config_opts=ConfigOpts(default_config=SAMPLE_CONFIG1))
     f = os.path.join(str(tmpdir), "default.ini")
     args = p.parse_args(["-c", f])
     assert args.config is not None
@@ -211,7 +210,7 @@ def test_ConfigArgumentParser(tmpdir):
     assert [i for i in args.config.items()] == [i for i in sample1.items()]
 
     # A config is required, so positional config argument is added
-    p = ArgumentParser(config_opts=ConfigOptions(required=True))
+    p = ArgumentParser(config_opts=ConfigOpts(required=True))
     with pytest.raises(SystemExit):
         args = p.parse_args([])
 
@@ -232,10 +231,10 @@ def test_ConfigOverrides(tmpdir):
     sample2.read_string(SAMPLE_CONFIG2)
 
     f = os.path.join(str(tmpdir), "default.ini")
-    p = ArgumentParser(config_opts=ConfigOptions(required=True,
-                                                 override_arg=True,
-                                                 default_file=f,
-                                                 default_config=SAMPLE_CONFIG2))
+    p = ArgumentParser(config_opts=ConfigOpts(required=True,
+                                              override_arg=True,
+                                              default_file=f,
+                                              default_config=SAMPLE_CONFIG2))
     args = p.parse_args([])
     assert args.config is not None
     assert [i for i in args.config.items()] == [i for i in sample2.items()]
@@ -254,7 +253,7 @@ def test_ConfigOverridesWrongParserType(tmpdir):
     from nicfit._config import addCommandLineArgs
     p = argparse.ArgumentParser()
     with pytest.raises(ValueError):
-        addCommandLineArgs(p, ConfigOptions(override_arg=True))
+        addCommandLineArgs(p, ConfigOpts(override_arg=True))
 
 
 SAMPLE_CONFIG1 = """

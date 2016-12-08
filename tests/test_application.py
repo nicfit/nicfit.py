@@ -46,9 +46,25 @@ def test_nomain():
     app = Application()
     assert app.main([]) == Application.NO_MAIN_EXIT
 
+##
+# AsyncApplication tests
+##
+
 def test_AsyncApp():
     app = AsyncApplication()
     with pytest.raises(NotImplementedError):
         app._run([])
 
-# FIXME: how to test await main
+async def _asyncMain(args):
+    args.app.reval = 10
+    return 10
+
+@pytest.mark.asyncio
+async def test_async_main():
+    app = AsyncApplication()
+    assert await app._main(None) == AsyncApplication.NO_MAIN_EXIT
+
+@pytest.mark.asyncio
+async def test_async_mainFunc():
+    app = AsyncApplication(_asyncMain)
+    assert await app.main([]) == 10

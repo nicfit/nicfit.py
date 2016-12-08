@@ -2,8 +2,6 @@ import pytest
 import nicfit
 from nicfit import aio
 
-# XXX
-pytestmark = pytest.mark.skipif(True, reason="FIXME")
 
 async def _main(args):
     args.app.retval = 2
@@ -42,4 +40,3 @@ def test_atexit():
     with pytest.raises(SystemExit):
         app.run()
     assert app.atexit == 3
-
