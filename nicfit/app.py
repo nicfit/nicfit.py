@@ -25,6 +25,9 @@ class Application:
         if self._atexit_func:
             self._atexit_func(self)
 
+    def _addArguments(self, parser):
+        return parser
+
     def __init__(self, main_func=None, *, name=None, description=None,
                  logging_args=True, config_opts=None, version=None,
                  atexit=None):
@@ -34,13 +37,13 @@ class Application:
         self.name = name
         self.log = getLogger(name) if name else log
 
-        self.arg_parser = ArgumentParser(add_log_args=logging_args,
-                                         config_opts=config_opts,
-                                         prog=name, description=description)
+        parser = ArgumentParser(add_log_args=logging_args,
+                                config_opts=config_opts,
+                                prog=name, description=description)
         if version:
-            self.add_argument("--version", action="version", version=version)
-        self.arg_parser.set_defaults(app=self)
-
+            parser.add_argument("--version", action="version", version=version)
+        parser.set_defaults(app=self)
+        self.arg_parser = self._addArguments(parser) or parser
 
     def main(self, args_list=None):
         self.log.debug("Application.main: {args_list}".format(**locals()))
