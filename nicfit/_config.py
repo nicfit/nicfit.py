@@ -11,14 +11,16 @@ class Config(configparser.ConfigParser):
     """Class for storing, reading, and writing config."""
     def __init__(self, filename, **kwargs):
         super().__init__(**kwargs)
-        self.filename = Path(os.path.expandvars(filename)).expanduser()
+        self.filename = Path(os.path.expandvars(filename)).expanduser() \
+                            if filename else None
 
     def read(self, filenames=None, encoding=None, touch=False):
+        super().read(filenames or [], encoding=encoding)
+
         if not self.filename.exists() and touch:
             self.filename.touch()
         with open(str(self.filename), encoding=encoding) as fp:
             self.read_file(fp, source=str(self.filename))
-        super().read(filenames or [], encoding=encoding)
         return self
 
     def write(self, fileobject=None, space_around_delimiters=True):
@@ -35,36 +37,43 @@ class Config(configparser.ConfigParser):
 
 
 class ConfigFileType(argparse.FileType):
-    '''ArgumentParser ``type`` for loading ``Config`` objects.'''
-    def __init__(self, default_config=None, encoding="utf-8"):
+    """ArgumentParser ``type`` for loading ``Config`` objects."""
+    def __init__(self, config_opts=None, encoding="utf-8"):
         super().__init__(mode='r')
         self._encoding = encoding
-        self._default_config = default_config
+        self._opts = config_opts or ConfigOpts()
 
     def __call__(self, filename):
-        try:
-            fp = super().__call__(filename)
-        except Exception as ex:
-            if self._default_config:
-                fp = StringIO(self._default_config)
-            else:
-                raise
+        if not filename and not self._opts.default_config:
+            return None
 
-        config = Config(filename)
-        config.readfp(fp)
+        assert(issubclass(self._opts.ConfigClass, Config))
+        config = self._opts.ConfigClass(filename)
+
+        if self._opts.default_config:
+            config.read_string(self._opts.default_config)
+
+        if filename:
+            try:
+                fp = super().__call__(filename)
+                config.readfp(fp)
+            except Exception as ex:
+                if not self._opts.default_config:
+                    raise
 
         return config
 
 
-class ConfigOptions(namedtuple("_ConfigOptions", ["required",
-                                                  "default_file",
-                                                  "default_config",
-                                                  "ConfigClass",
-                                                  "override_arg"])):
+class ConfigOpts(namedtuple("_ConfigOptions", ["required",
+                                               "default_file",
+                                               "default_config",
+                                               "override_arg",
+                                               "ConfigClass",
+                                              ])):
     def __new__(cls, required=False, default_file=None, default_config=None,
                 override_arg=False, ConfigClass=Config):
         return super().__new__(cls, required, default_file, default_config,
-                               ConfigClass, override_arg)
+                               override_arg, ConfigClass)
 
 
 def addCommandLineArgs(arg_parser, opts):
@@ -75,12 +84,12 @@ def addCommandLineArgs(arg_parser, opts):
         arg_parser.add_argument(
             "config", default=opts.default_file,
             help="Configuration file (ini file format).",
-            type=ConfigFileType(default_config=opts.default_config),
+            type=ConfigFileType(opts),
             nargs="?" if opts.default_file else None)
     else:
-        g.add_argument("-c", "--config", dest="config", metavar="FILENAME",
-                       type=ConfigFileType(default_config=opts.default_config),
-                       default=opts.default_file,
+        g.add_argument("-c", "--config", dest="config", metavar="file.ini",
+                       type=ConfigFileType(opts),
+                       default=ConfigFileType(opts)(opts.default_file),
                        help="Configuration file (ini file format).")
 
     if opts.override_arg:

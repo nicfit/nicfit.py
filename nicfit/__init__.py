@@ -2,7 +2,7 @@
 from collections import namedtuple
 
 from ._argparse import ArgumentParser                                     # noqa
-from ._config import Config, ConfigOptions                                # noqa
+from ._config import Config, ConfigOpts                                   # noqa
 from ._logging import getLogger, LOGGING_CONFIG                           # noqa
 
 from .app import Application                                              # noqa
