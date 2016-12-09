@@ -36,5 +36,6 @@ Invoke code right before ``sys.exit``.
 Release procedure
 ~~~~~~~~~~~~~~~~~~~
 ::
+    make pre-release
     make release
     make PYPI_REPO=pypi upload-release

@@ -96,7 +96,7 @@ docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release:
+pre-release: build-release
 	$(eval VERSION = $(shell python setup.py --version 2> /dev/null))
 	@echo "VERSION: $(VERSION)"
 	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
@@ -105,11 +105,11 @@ pre-release:
 
 build-release: test-all dist
 
-_tag-release: pre-release
+_tag-release:
 	$(GIT) tag -a v$(VERSION) -m "Release $(VERSION)"
 	$(GIT) push --tags origin
 
-release: pre-release build-release _tag-release upload-release
+release: pre-release _tag-release upload-release
 
 upload-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
