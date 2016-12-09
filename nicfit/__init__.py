@@ -15,7 +15,7 @@ __author_email__ = 'travis@pobox.com'
 __url__ = 'https://github.com/nicfit/nicfit.py'
 __description__ = 'Common Python utils (App, logging, config, etc.)'
 
-__version__ = '0.2.0-beta'
+__version__ = '0.2.0-beta2'
 __release__ = __version__.split('-')[1] if '-' in __version__ else "final"
 __version_info__ = \
     namedtuple("Version", "major, minor, maint, release")(

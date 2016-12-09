@@ -2,7 +2,6 @@
 import os.path
 import argparse
 import configparser
-from io import StringIO
 from pathlib import Path
 from collections import namedtuple
 

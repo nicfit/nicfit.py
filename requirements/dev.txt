@@ -4,3 +4,4 @@ tox
 flake8
 twine
 pytest-cov
+check-manifest

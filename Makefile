@@ -78,8 +78,8 @@ test-all:
 	tox
 
 coverage:
-	pytest --cov=nicfit \
-		   --cov-report=html --cov-config=setup.cfg ./tests
+	pytest --cov=nicfit --cov-report=html --cov-report term \
+		   --cov-config=setup.cfg ./tests
 
 docs:
 	rm -f docs/nicfit.py.rst
