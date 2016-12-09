@@ -4,6 +4,14 @@ from ._logging import getLogger
 
 log = getLogger(__name__)
 
+try:
+    import ipdb as _debugger
+except ImportError:
+    import pdb as _debugger
+def _pdb(): # noqa
+    e, m, tb = sys.exc_info()
+    _debugger.post_mortem(tb)
+
 
 class Application:
     UNCAUGHT_EXCEPTION_EXIT = 126
@@ -30,7 +38,7 @@ class Application:
 
     def __init__(self, main_func=None, *, name=None, description=None,
                  logging_args=True, config_opts=None, version=None,
-                 atexit=None):
+                 atexit=None, pdb_opt=False):
         self._main_func = main_func
         self._atexit_func = atexit
 
@@ -42,6 +50,10 @@ class Application:
                                 prog=name, description=description)
         if version:
             parser.add_argument("--version", action="version", version=version)
+        if pdb_opt:
+            parser.add_argument("--pdb", action="store_true", dest="debug_pdb",
+                                help="Drop into 'pdb' for unhandled exceptions")
+
         parser.set_defaults(app=self)
         self.arg_parser = self._addArguments(parser) or parser
 
@@ -61,6 +73,8 @@ class Application:
         except KeyboardInterrupt:
             self.log.verbose("Interrupted")
         except Exception as ex:
+            if "debug_pdb" in self.args and self.args.debug_pdb:
+                _pdb()
             retval = Application.UNCAUGHT_EXCEPTION_EXIT
             self.log.exception("Uncaught exception")
             raise

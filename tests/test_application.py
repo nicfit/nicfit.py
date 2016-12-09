@@ -46,6 +46,15 @@ def test_nomain():
     app = Application()
     assert app.main([]) == Application.NO_MAIN_EXIT
 
+def test_unhandled():
+    def m(args):
+        args.app.retval = Application.UNCAUGHT_EXCEPTION_EXIT
+        raise ValueError("1969")
+    app = Application(m)
+    with pytest.raises(SystemExit):
+        app.run([])
+    assert app.retval == Application.UNCAUGHT_EXCEPTION_EXIT
+
 ##
 # AsyncApplication tests
 ##
