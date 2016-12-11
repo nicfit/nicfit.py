@@ -96,9 +96,11 @@ docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: build-release
+pre-release: test
 	$(eval VERSION = $(shell python setup.py --version 2> /dev/null))
 	@echo "VERSION: $(VERSION)"
+	git authors --list >| AUTHORS
+	# FIXME: changelog update
 	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
 		(printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
 		 printf "\nCommit and try again.\n" && false)
@@ -109,7 +111,7 @@ _tag-release:
 	$(GIT) tag -a v$(VERSION) -m "Release $(VERSION)"
 	$(GIT) push --tags origin
 
-release: pre-release _tag-release upload-release
+release: pre-release build-release _tag-release upload-release
 
 upload-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
