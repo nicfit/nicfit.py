@@ -2,3 +2,4 @@ pytest
 pytest-runner
 pytest-asyncio
 curio
+pytest-curio

@@ -1,5 +1,5 @@
+import asyncio
 import pytest
-import nicfit
 from nicfit import aio
 
 
@@ -10,11 +10,13 @@ async def _main(args):
 def atexit(app):
     app.atexit = 2
 
+
 class Myapp(aio.Application):
     async def _main(self, args):
         assert args.app is self
         self.retval = 3
         return 3
+
     def _atexit(self):
         self.atexit = 3
 
@@ -30,13 +32,32 @@ def test_entryPoints():
         app.run([])
     assert app.retval == 3
 
-def test_atexit():
-    app = aio.Application(atexit=atexit)
+
+def test_atexit(event_loop):
+    app = aio.Application(atexit=atexit, event_loop=event_loop)
     with pytest.raises(SystemExit):
-        app.run()
+        app.run([])
     assert app.atexit == 2
 
-    app = Myapp()
+    app = Myapp(event_loop=event_loop)
     with pytest.raises(SystemExit):
-        app.run()
+        app.run([])
     assert app.atexit == 3
+
+
+def test_stop(event_loop):
+    async def main(args):
+        try:
+            await asyncio.sleep(5, loop=event_loop)
+        except asyncio.CancelledError:
+            args.app.retval = 14
+            raise
+    app = aio.Application(main, event_loop=event_loop)
+
+    def mgr():
+        print("MGT")
+        app.stop()
+    event_loop.call_later(2, mgr)
+    with pytest.raises(SystemExit):
+        app.run([])
+    assert app.retval == 14

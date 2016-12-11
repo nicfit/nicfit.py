@@ -1,5 +1,6 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
 	    test test-all coverage docs release dist tags
+SRC_DIRS = nicfit
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
@@ -65,7 +66,7 @@ clean-patch:
 	find . -name '*.orig' -exec rm -f '{}' \;
 
 lint:
-	flake8 nicfit
+	flake8 $(SRC_DIRS)
 
 
 _PYTEST_OPTS=
@@ -126,4 +127,4 @@ install: clean
 	python setup.py install
 
 tags:
-	ctags -R nicfit
+	ctags -R ${SRC_DIRS}
