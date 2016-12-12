@@ -107,7 +107,6 @@ pre-release: test
 	$(eval RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null))
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	git authors --list >| AUTHORS
-	# FIXME: changelog update
 
 build-release: test-all dist
 
@@ -135,13 +134,11 @@ github-release: pre-release
     echo "PRERELEASE: $$prerelease"; \
     github-release --verbose release --user "${GITHUB_USER}" --repo nicfit.py \
                    --tag ${RELEASE_TAG} --name "$${name}" $${prerelease}
-	# TODO               --description "$$(cat README.rst)" --draft
 	for file in $$(find dist -type f -exec basename {} \;) ; do \
         echo "FILE: $$file"; \
         github-release upload --user "${GITHUB_USER}" --repo nicfit.py \
                    --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
     done
-	# TODO: Upload md5sums
 
 upload-release: github-release pypi-release
 
