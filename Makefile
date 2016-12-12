@@ -1,5 +1,7 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
-	    test test-all coverage docs release dist tags
+	    test test-all coverage docs release dist tags install \
+		build-release pre-release freeze-release _tag-release upload-release \
+		pypi-release github-release
 SRC_DIRS = nicfit
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -100,21 +102,50 @@ servedocs: docs
 pre-release: test
 	$(eval VERSION = $(shell python setup.py --version 2> /dev/null))
 	@echo "VERSION: $(VERSION)"
+	$(eval RELEASE_TAG = v${VERSION})
+	@echo "RELEASE_TAG: $(RELEASE_TAG)"
+	$(eval RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null))
+	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	git authors --list >| AUTHORS
 	# FIXME: changelog update
+
+build-release: test-all dist
+
+freeze-release:
 	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
 		(printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
 		 printf "\nCommit and try again.\n" && false)
 
-build-release: test-all dist
-
 _tag-release:
-	$(GIT) tag -a v$(VERSION) -m "Release $(VERSION)"
+	$(GIT) tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	$(GIT) push --tags origin
 
-release: pre-release build-release _tag-release upload-release
+release: freeze-release pre-release build-release _tag-release upload-release
 
-upload-release:
+github-release: pre-release
+	name="${RELEASE_TAG}"; \
+    if test -n "${RELEASE_NAME}"; then \
+        name="${RELEASE_TAG} (${RELEASE_NAME})"; \
+    fi; \
+    prerelease=""; \
+    if echo "${RELEASE_TAG}" | grep '[^v0-9\.]'; then \
+        prerelease="--pre-release"; \
+    fi; \
+    echo "NAME: $$name"; \
+    echo "PRERELEASE: $$prerelease"; \
+    github-release --verbose release --user "${GITHUB_USER}" --repo nicfit.py \
+                   --tag ${RELEASE_TAG} --name "$${name}" $${prerelease}
+	# TODO               --description "$$(cat README.rst)" --draft
+	for file in $$(find dist -type f -exec basename {} \;) ; do \
+        echo "FILE: $$file"; \
+        github-release upload --user "${GITHUB_USER}" --repo nicfit.py \
+                   --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
+    done
+	# TODO: Upload md5sums
+
+upload-release: github-release pypi-release
+
+pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} {} \;
 

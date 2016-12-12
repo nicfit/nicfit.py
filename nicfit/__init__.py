@@ -7,6 +7,9 @@ from ._logging import getLogger, LOGGING_CONFIG                           # noqa
 
 from .app import Application                                              # noqa
 
+__version__ = '0.2.0-beta3'
+__release_name__ = "booyah"
+__release__ = __version__.split('-')[1] if '-' in __version__ else "final"
 
 __project_name__ = 'nicfit.py'
 __project_slug__ = 'nicfit.py'
@@ -15,8 +18,6 @@ __author_email__ = 'travis@pobox.com'
 __url__ = 'https://github.com/nicfit/nicfit.py'
 __description__ = 'Common Python utils (App, logging, config, etc.)'
 
-__version__ = '0.3.0'
-__release__ = __version__.split('-')[1] if '-' in __version__ else "final"
 __version_info__ = \
     namedtuple("Version", "major, minor, maint, release")(
         *(tuple((int(v) for v in __version__.split('-')[0].split('.'))) +

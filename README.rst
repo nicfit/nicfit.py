@@ -1,13 +1,14 @@
 nicfit.Application
 -------------------
-.. code-block:: python
-    from nicfit import Application
 
+.. code-block:: python
+
+    from nicfit import Application
     def main(args):
         return 0
-
      app = Application(main)
      app.run()
+
 
 What you get:
 
@@ -20,6 +21,7 @@ What you get:
 Maybe you don't what to ``sys.exit``.
 
 .. code-block:: python
+
     retval = app.main()
 
  What you lose:
@@ -30,12 +32,6 @@ Maybe you don't what to ``sys.exit``.
 Invoke code right before ``sys.exit``.
 
 .. code-block:: python
+
     def f(): pass
     app = Application(main, atexit=f)
-
-Release procedure
-~~~~~~~~~~~~~~~~~~~
-::
-    make pre-release
-    make release
-    make PYPI_REPO=pypi upload-release

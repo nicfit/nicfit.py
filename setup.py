@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import sys
 from setuptools import setup, find_packages
 
 
@@ -20,7 +21,7 @@ classifiers = [
 def getPackageInfo():
     info_dict = {}
     info_keys = ["version", "name", "author", "author_email", "url", "license",
-                 "description"]
+                 "description", "release_name"]
     key_remap = {"name": "project_name"}
 
     base = os.path.abspath(os.path.dirname(__file__))
@@ -49,6 +50,7 @@ if os.path.exists("HISTORY.rst"):
     with open("HISTORY.rst") as history_file:
         history = history_file.read().replace('.. :changelog:', '')
 
+
 def requirements(filename):
     reqfile = os.path.join("requirements", filename)
     if os.path.exists(reqfile):
@@ -63,17 +65,21 @@ src_dist_tgz = "{name}-{version}.tar.gz".format(**pkg_info)
 pkg_info["download_url"] = "{}/releases/{}".format(pkg_info["url"],
                                                    src_dist_tgz)
 
-setup(classifiers=classifiers,
-      package_dir={'nicfit.py': 'nicfit.py'},
-      packages=find_packages('.','nicfit.py'),
-      zip_safe=False,
-      platforms=["Any",],
-      keywords=['nicfit.py'],
-      include_package_data=True,
-      install_requires=requirements("default.txt"),
-      tests_require=requirements("test.txt"),
-      test_suite='tests',
-      long_description=readme + '\n\n' + history,
-      package_data={},
-      **pkg_info
-)
+if sys.argv[1] == "--release-name":
+    print(pkg_info["release_name"])
+    sys.exit(0)
+else:
+    setup(classifiers=classifiers,
+          package_dir={'nicfit.py': 'nicfit.py'},
+          packages=find_packages('.', 'nicfit.py'),
+          zip_safe=False,
+          platforms=["Any"],
+          keywords=['nicfit.py'],
+          include_package_data=True,
+          install_requires=requirements("default.txt"),
+          tests_require=requirements("test.txt"),
+          test_suite='tests',
+          long_description=readme + '\n\n' + history,
+          package_data={},
+          **pkg_info
+    )

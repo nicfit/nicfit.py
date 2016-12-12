@@ -55,7 +55,6 @@ def test_stop(event_loop):
     app = aio.Application(main, event_loop=event_loop)
 
     def mgr():
-        print("MGT")
         app.stop()
     event_loop.call_later(2, mgr)
     with pytest.raises(SystemExit):
