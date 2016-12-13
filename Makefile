@@ -14,7 +14,10 @@ webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
 endef
 export BROWSER_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
+NAME ?= Travis Shirk
+EMAIL ?= travis@pobox.com
 GIT := git -c user.name="$(NAME)" -c user.email="$(EMAIL)"
+GITHUB_USER ?= nicfit
 PYPI_REPO = pypitest
 
 help:
@@ -100,6 +103,10 @@ servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 pre-release: test
+	@test -n "${NAME}" || (echo "NAME not set, needed for git" && false)
+	@test -n "${EMAIL}" || (echo "EMAIL not set, needed for git" && false)
+	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
+	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	$(eval VERSION = $(shell python setup.py --version 2> /dev/null))
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
