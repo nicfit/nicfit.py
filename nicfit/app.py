@@ -72,6 +72,9 @@ class Application:
             retval = self._run(args_list=args_list)
         except KeyboardInterrupt:
             self.log.verbose("Interrupted")
+        except SystemExit as exit:
+            self.log.verbose("Exited")
+            retval = exit.code
         except Exception as ex:
             if "debug_pdb" in self.args and self.args.debug_pdb:
                 _pdb()

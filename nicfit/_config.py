@@ -8,8 +8,13 @@ from collections import namedtuple
 
 class Config(configparser.ConfigParser):
     """Class for storing, reading, and writing config."""
-    def __init__(self, filename, **kwargs):
+    def __init__(self, filename, *, config_env_var=None, **kwargs):
         super().__init__(**kwargs)
+
+        if config_env_var and config_env_var in os.environ:
+            with open(os.environ[config_env_var]) as confp:
+                self.read_file(confp)
+
         self.filename = Path(os.path.expandvars(filename)).expanduser() \
                             if filename else None
 
@@ -18,8 +23,10 @@ class Config(configparser.ConfigParser):
 
         if not self.filename.exists() and touch:
             self.filename.touch()
+
         with open(str(self.filename), encoding=encoding) as fp:
             self.read_file(fp, source=str(self.filename))
+
         return self
 
     def write(self, fileobject=None, space_around_delimiters=True):
@@ -47,7 +54,8 @@ class ConfigFileType(argparse.FileType):
             return None
 
         assert(issubclass(self._opts.ConfigClass, Config))
-        config = self._opts.ConfigClass(filename)
+        config = self._opts.ConfigClass(filename,
+                                        config_env_var=self._opts.env_var)
 
         if self._opts.default_config:
             config.read_string(self._opts.default_config)
@@ -68,11 +76,16 @@ class ConfigOpts(namedtuple("_ConfigOptions", ["required",
                                                "default_config",
                                                "override_arg",
                                                "ConfigClass",
+                                               "default_config_opt",
+                                               "env_var",
                                               ])):
+    # XXX: attrs lib could make this go away
     def __new__(cls, required=False, default_file=None, default_config=None,
-                override_arg=False, ConfigClass=Config):
+                override_arg=False, ConfigClass=Config,
+                default_config_opt=None, env_var=None):
         return super().__new__(cls, required, default_file, default_config,
-                               override_arg, ConfigClass)
+                               override_arg, ConfigClass, default_config_opt,
+                               env_var)
 
 
 def addCommandLineArgs(arg_parser, opts):
@@ -101,6 +114,14 @@ def addCommandLineArgs(arg_parser, opts):
                        type=_config_override,
                        help="Overrides the value for configuration OPTION in "
                             "[SECTION].")
+
+    if opts.default_config_opt:
+        if opts.default_config is None:
+            raise ValueError("ConfigOpts.default_config_opt requires a value "
+                             "in ConfigOpts.default_config")
+        g.add_argument(opts.default_config_opt, dest="config_show_default",
+                       action="store_true",
+                       help="Prints the default configuration.")
 
 
 def _config_override(s):
