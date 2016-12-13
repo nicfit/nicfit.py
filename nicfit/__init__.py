@@ -7,8 +7,8 @@ from ._logging import getLogger, LOGGING_CONFIG                           # noqa
 
 from .app import Application                                              # noqa
 
-__version__ = '0.2.0-beta3'
-__release_name__ = "Booyah"
+__version__ = "0.2.0-beta3"
+__release_name__ = ""
 __release__ = __version__.split('-')[1] if '-' in __version__ else "final"
 
 __project_name__ = 'nicfit.py'

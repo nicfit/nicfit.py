@@ -1,7 +1,7 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
 	    test test-all coverage docs release dist tags install \
-		build-release pre-release freeze-release _tag-release upload-release \
-		pypi-release github-release
+	    build-release pre-release freeze-release _tag-release upload-release \
+	    pypi-release github-release
 SRC_DIRS = nicfit
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -84,7 +84,7 @@ test-all:
 
 coverage:
 	pytest --cov=nicfit --cov-report=html --cov-report term \
-		   --cov-config=setup.cfg ./tests
+	       --cov-config=setup.cfg ./tests
 
 docs:
 	rm -f docs/nicfit.py.rst
@@ -107,13 +107,14 @@ pre-release: test
 	$(eval RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null))
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	git authors --list >| AUTHORS
+	check-manifest --ignore 'examples*'
 
 build-release: test-all dist
 
 freeze-release:
 	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
-		(printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
-		 printf "\nCommit and try again.\n" && false)
+	    (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
+	     printf "\nCommit and try again.\n" && false)
 
 _tag-release:
 	$(GIT) tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
@@ -149,6 +150,11 @@ pypi-release:
 dist: clean
 	python setup.py sdist
 	python setup.py bdist_wheel
+	@# The cd dist keeps the dist/ prefix out of the md5sum files
+	cd dist && \
+    for f in $$(ls); do \
+        md5sum $${f} > $${f}.md5; \
+    done
 	ls -l dist
 
 install: clean

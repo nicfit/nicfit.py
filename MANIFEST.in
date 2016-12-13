@@ -1,8 +1,10 @@
-include AUTHORS.rst
+include AUTHORS
 include CONTRIBUTING.rst
 include HISTORY.rst
 include LICENSE
 include README.rst
+include Makefile
+include tox.ini
 
 graft docs
 graft tests
