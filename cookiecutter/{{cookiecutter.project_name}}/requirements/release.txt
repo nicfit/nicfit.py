@@ -1,0 +1,13 @@
+cogapp
+Sphinx
+{% if cookiecutter.use_paver == "yes" -%}
+sphinxcontrib-paverutils
+{% endif %}
+{% if cookiecutter.use_pypi_deployment_with_travis == "yes" -%}
+cryptography==1.0.1
+PyYAML==3.11
+{% endif %}
+
+# Upstream PR: https://bitbucket.org/dhellmann/sphinxcontrib-bitbucket/pull-requests/1/use-setuptools-over-distribute-python3/diff
+#sphinxcontrib-bitbucket
+hg+https://nicfit@bitbucket.org/nicfit/sphinxcontrib-bitbucket

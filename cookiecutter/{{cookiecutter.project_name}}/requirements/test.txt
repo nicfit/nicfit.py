@@ -1,0 +1,6 @@
+{% if cookiecutter.use_pytest == "yes" -%}
+pytest
+pytest-runner
+{%- else -%}
+nose
+{% endif %}
