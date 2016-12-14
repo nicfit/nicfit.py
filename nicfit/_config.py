@@ -11,7 +11,8 @@ class Config(configparser.ConfigParser):
     def __init__(self, filename, *, config_env_var=None, **kwargs):
         super().__init__(**kwargs)
 
-        if config_env_var and config_env_var in os.environ:
+        if (config_env_var and config_env_var in os.environ and
+                Path(os.environ[config_env_var]).exists()):
             with open(os.environ[config_env_var]) as confp:
                 self.read_file(confp)
 
