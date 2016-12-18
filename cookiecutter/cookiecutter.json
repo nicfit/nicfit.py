@@ -16,7 +16,6 @@
         "Common Python utils (App, logging, config, etc.)",
     "version": ["0.2.0-beta4"],
     "web": "https://github.com/nicfit/nicfit.py",
-    "license": "GPL",
     "project_slug":
         "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
     "py_module": "nicfit",
