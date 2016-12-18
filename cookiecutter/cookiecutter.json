@@ -2,16 +2,15 @@
     "support_python2": ["yes", "yes"],
     "support_python3": ["yes", "no"],
 
-    "_comment": "FIXME: moving to nicfit.py project, remove templates",
-    "asyncio": ["no", "yes"],
-
     "_comment": "##### Project info #####",
     "project_name": "nicfit.py",
-    "project_short_description": "Common Python utils by Travis Shirk",
-    "version": ["0.1.0"],
+    "project_short_description":
+        "Common Python utils (App, logging, config, etc.)",
+    "version": ["0.2.0-beta4"],
     "web": "https://github.com/nicfit/nicfit.py",
     "license": "GPL",
-    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
+    "project_slug":
+        "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
     "py_module": "nicfit",
 
     "_comment": "##### Project author info #####",
@@ -36,16 +35,15 @@
 
     "use_github": ["yes", "no"],
     "github_username": "nicfit",
+    "github_repo": "nicfit.py",
 
     "use_pypi_deployment_with_travis": ["no", "yes"],
     "pypi_username": "{{ cookiecutter.github_username }}",
-            
+
     "_comment": "##### Build tools #####",
     "use_make": ["yes", "no"],
     "use_paver": ["yes", "no"],
-
     "use_pytest": ["yes", "no"],
 
     "_comment": "##### end #####"
 }
-

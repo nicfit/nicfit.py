@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
+from nicit import getLogger
 
+log = getLogger(__package__)
+__version__ = '{{ cookiecutter.version }}'
+__release_name__ = ""
+__release__ = __version__.split('-')[1] if '-' in __version__ else "final"
 
 __project_name__ = '{{ cookiecutter.project_name }}'
 __project_slug__ = '{{ cookiecutter.project_slug }}'
@@ -9,9 +14,7 @@ __author_email__ = '{{ cookiecutter.email }}'
 __url__ = '{{ cookiecutter.web }}'
 __description__ = '{{ cookiecutter.project_short_description }}'
 
-__version__ = '{{ cookiecutter.version }}'
-__release__ = __version__.split('-')[1] if '-' in __version__ else "final"
-__version_info__   = \
+__version_info__ = \
     namedtuple("Version", "major, minor, maint, release")(
         *(tuple((int(v) for v in __version__.split('-')[0].split('.'))) +
           tuple((__release__,))))
@@ -26,3 +29,5 @@ This program comes with ABSOLUTELY NO WARRANTY! See LICENSE for details.
 Run with --help/-h for usage information or read the docs at
 %(__url__)s
 """ % (locals())
+
+log = getLogger(__package__)

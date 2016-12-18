@@ -1,13 +1,25 @@
-cogapp
+wheel
+watchdog
+tox
+flake8
+twine
 Sphinx
+{% if cookiecutter.use_pytest == "yes" -%}
+pytest-cov
+{% else %}
+nose
+coverage
+{% endif %}
+check-manifest
 {% if cookiecutter.use_paver == "yes" -%}
+paver
+cogapp
 sphinxcontrib-paverutils
 {% endif %}
-{% if cookiecutter.use_pypi_deployment_with_travis == "yes" -%}
-cryptography==1.0.1
-PyYAML==3.11
-{% endif %}
 
+{% if cookiecutter.use_bitbucket == "yes" -%}
 # Upstream PR: https://bitbucket.org/dhellmann/sphinxcontrib-bitbucket/pull-requests/1/use-setuptools-over-distribute-python3/diff
 #sphinxcontrib-bitbucket
 hg+https://nicfit@bitbucket.org/nicfit/sphinxcontrib-bitbucket
+{% endif %}
+
