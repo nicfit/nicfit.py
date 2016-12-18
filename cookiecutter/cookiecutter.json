@@ -1,7 +1,7 @@
 {
     "support_python2": ["yes", "yes"],
     "support_python3": ["yes", "no"],
-
+    
     "_comment": "##### Project info #####",
     "project_name": "nicfit.py",
     "project_short_description":
@@ -19,7 +19,8 @@
 
     "year": [
         "now",
-        "2016",
+        "2017",
+        "2016-2017",
         "2015-2016",
         "2014-2016",
         "2013-2016",
