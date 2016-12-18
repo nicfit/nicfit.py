@@ -32,3 +32,5 @@ This program comes with ABSOLUTELY NO WARRANTY! See LICENSE for details.
 Run with --help/-h for usage information or read the docs at
 %(__url__)s
 """ % (locals())
+
+log = getLogger(__package__)

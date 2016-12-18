@@ -16,8 +16,9 @@ export BROWSER_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 NAME ?= Travis Shirk
 EMAIL ?= travis@pobox.com
-GIT := git -c user.name="$(NAME)" -c user.email="$(EMAIL)"
 GITHUB_USER ?= nicfit
+GITHUB_REPO ?= nicfit.py
+GIT := git -c user.name="$(NAME)" -c user.email="$(EMAIL)"
 PYPI_REPO = pypitest
 
 help:

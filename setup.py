@@ -81,5 +81,10 @@ else:
           test_suite='tests',
           long_description=readme + '\n\n' + history,
           package_data={},
+          entry_points={
+              "console_scripts": [
+                  "nicfit = nicfit.__main__:app.run",
+              ]
+          },
           **pkg_info
     )
