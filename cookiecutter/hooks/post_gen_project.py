@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import shutil
 import datetime
 from pathlib import Path
 
@@ -43,3 +44,7 @@ if __name__ == "__main__":
     if ('{{ cookiecutter.support_python2 }}',
         '{{ cookiecutter.support_python2 }}') != ("yes", "yes"):
         remove_file("{{ cookiecutter.py_module }}/_compat.py")
+
+    for f in Path("licenses").iterdir():
+        f.unlink()
+    Path("licenses").rmdir()

@@ -170,3 +170,6 @@ install: clean
 
 tags:
 	ctags -R ${SRC_DIRS}
+
+cookiecutter: freeze-release
+	cookiecutter -o .. -f ./cookiecutter
