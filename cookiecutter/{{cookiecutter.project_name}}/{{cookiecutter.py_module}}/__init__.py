@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from nicit import getLogger
+from nicfit import getLogger
 from .__about__ import __version__
 
 log = getLogger(__package__)

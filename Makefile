@@ -1,7 +1,7 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
 	    test test-all coverage docs release dist tags install \
 	    build-release pre-release freeze-release _tag-release upload-release \
-	    pypi-release github-release
+	    pypi-release github-release cookiecutter
 SRC_DIRS = nicfit
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
