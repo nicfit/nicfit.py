@@ -76,7 +76,7 @@ if sys.argv[1] == "--release-name":
 else:
     setup(classifiers=classifiers,
           package_dir={'{{ cookiecutter.project_slug }}': '{{ cookiecutter.project_slug }}'},
-          packages=find_packages('.','{{ cookiecutter.project_slug }}'),
+          packages=find_packages('.', '{{ cookiecutter.py_module }}'),
           zip_safe=False,
           platforms=["Any",],
           keywords=['{{ cookiecutter.project_slug }}'],

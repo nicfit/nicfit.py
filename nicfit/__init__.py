@@ -4,10 +4,10 @@ from collections import namedtuple
 from ._argparse import ArgumentParser                                     # noqa
 from ._config import Config, ConfigOpts                                   # noqa
 from ._logging import getLogger, LOGGING_CONFIG                           # noqa
-
 from .app import Application                                              # noqa
 
-__version__ = "0.2.0-beta3"
+log = getLogger(__package__)
+__version__ = '0.2.0-beta4'
 __release_name__ = ""
 __release__ = __version__.split('-')[1] if '-' in __version__ else "final"
 
@@ -24,7 +24,7 @@ __version_info__ = \
           tuple((__release__,))))
 
 __years__ = "2016"
-__license__ = 'GPL'
+__license__ = 'MIT'
 
 __version_txt__ = """
 %(__name__)s %(__version__)s (C) Copyright %(__years__)s %(__author__)s
