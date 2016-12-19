@@ -71,9 +71,9 @@ if sys.argv[1] == "--release-name":
 else:
     setup(classifiers=classifiers,
           package_dir={'nicfit.py': 'nicfit.py'},
-          packages=find_packages('.', 'nicfit.py'),
+          packages=find_packages('.', 'nicfit'),
           zip_safe=False,
-          platforms=["Any"],
+          platforms=["Any",],
           keywords=['nicfit.py'],
           include_package_data=True,
           install_requires=requirements("default.txt"),

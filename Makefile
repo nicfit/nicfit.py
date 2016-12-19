@@ -87,6 +87,7 @@ test-all:
 	tox
 
 coverage:
+	# FIXME: can these cover all SRC_DIRS?
 	pytest --cov=nicfit --cov-report=html --cov-report term \
 	       --cov-config=setup.cfg ./tests
 
@@ -141,11 +142,12 @@ github-release: pre-release
     fi; \
     echo "NAME: $$name"; \
     echo "PRERELEASE: $$prerelease"; \
-    github-release --verbose release --user "${GITHUB_USER}" --repo nicfit.py \
-                   --tag ${RELEASE_TAG} --name "$${name}" $${prerelease}
+    github-release --verbose release --user "${GITHUB_USER}" \
+                   --repo ${GITHUB_REPO} --tag ${RELEASE_TAG} \
+                   --name "$${name}" $${prerelease}
 	for file in $$(find dist -type f -exec basename {} \;) ; do \
         echo "FILE: $$file"; \
-        github-release upload --user "${GITHUB_USER}" --repo nicfit.py \
+        github-release upload --user "${GITHUB_USER}" --repo ${GITHUB_REPO} \
                    --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
     done
 

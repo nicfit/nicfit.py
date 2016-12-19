@@ -1,6 +1,27 @@
 nicfit.Application
 -------------------
 
+.. image:: https://badge.fury.io/py/nicfit.py.svg
+    :target: http://badge.fury.io/py/nicfit.py
+
+.. image:: https://travis-ci.org/nicfit/nicfit.py.png?branch=master
+        :target: https://travis-ci.org/nicfit/nicfit.py
+
+.. image:: https://img.shields.io/travis/nicfit/nicfit.py.svg
+        :target: https://travis-ci.org/nicfit/nicfit.py
+
+.. image:: https://img.shields.io/pypi/v/nicfit.py.svg
+        :target: https://pypi.python.org/pypi/nicfit.py
+
+
+Common Python utils (App, logging, config, etc.)
+
+* Free software: MIT license
+* Documentation: https://nicfit.py.readthedocs.org.
+
+Features
+--
+
 .. code-block:: python
 
     from nicfit import Application
@@ -35,3 +56,4 @@ Invoke code right before ``sys.exit``.
 
     def f(): pass
     app = Application(main, atexit=f)
+
