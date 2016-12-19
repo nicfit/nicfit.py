@@ -96,20 +96,20 @@ test:
 test-all:
 	tox
 
-{%- if cookiecutter.use_pytest != "yes" %}
+{% if cookiecutter.use_pytest != "yes" %}
 _COVERAGE_BUILD_D=build/tests/coverage
 {% endif %}
 coverage:
 	# FIXME: can these cover all SRC_DIRS?
 {%- if cookiecutter.use_pytest == "yes" %}
 	pytest --cov={{ cookiecutter.py_module }} --cov-report=html --cov-report term \
-		   --cov-config=setup.cfg ./tests
+	       --cov-config=setup.cfg ./tests
 {%- else %}
 	nosetests $(_NOSE_OPTS) $(_PDB_OPTS) --with-coverage \
 	      --cover-erase --cover-tests --cover-inclusive \
-		  --cover-package={{ cookiecutter.py_module }} \
-		  --cover-branches --cover-html \
-		  --cover-html-dir=$(_COVERAGE_BUILD_D) tests
+	      --cover-package={{ cookiecutter.py_module }} \
+	      --cover-branches --cover-html \
+	      --cover-html-dir=$(_COVERAGE_BUILD_D) tests
 	@if test -n '$(BROWSER)'; then \
 	    $(BROWSER) $(_COVERAGE_BUILD_D)/index.html;\
 	fi
