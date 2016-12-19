@@ -30,7 +30,7 @@ def getPackageInfo():
     key_remap = {"name": "project_name"}
 
     base = os.path.abspath(os.path.dirname(__file__))
-    with open(os.path.join(base, "{{ cookiecutter.py_module }}/__init__.py")) as infof:
+    with open(os.path.join(base, "{{ cookiecutter.py_module }}/__about__.py")) as infof:
         for line in infof:
             for what in info_keys:
                 rex = re.compile(r"__{what}__\s*=\s*['\"](.*?)['\"]"
