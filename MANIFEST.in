@@ -5,10 +5,13 @@ include LICENSE
 include README.rst
 include Makefile
 include tox.ini
-
+recursive-include requirements *.txt
 graft docs
 graft tests
+
+exclude .editorconfig
 global-exclude __pycache__
 global-exclude *.py[co]
-
-recursive-include requirements *.txt
+prune cookiecutter
+# FIXME: include at point
+prune examples
