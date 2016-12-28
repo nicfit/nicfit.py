@@ -30,6 +30,7 @@ if __name__ == "__main__":
 
     if '{{ cookiecutter.use_pypi_deployment_with_travis }}' == 'no':
         remove_file('travis_pypi_setup.py')
+        remove_file('.travis.yml')
 
     if '{{ cookiecutter.use_paver }}' == 'no':
         remove_file('pavement.py')
@@ -40,10 +41,6 @@ if __name__ == "__main__":
         remove_file('.hgignore')
     if '{{ cookiecutter.use_github }}' == 'no':
         remove_file('.gitignore')
-
-    if ('{{ cookiecutter.support_python2 }}',
-        '{{ cookiecutter.support_python2 }}') != ("yes", "yes"):
-        remove_file("{{ cookiecutter.py_module }}/_compat.py")
 
     for f in Path("licenses").iterdir():
         f.unlink()

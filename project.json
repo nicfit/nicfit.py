@@ -15,5 +15,5 @@ default_context:
     github_repo: "nicfit.py"
     use_pypi_deployment_with_travis: "no"
     use_make: "yes"
-    use_paver: "yes"
+    use_paver: "no"
     use_pytest: "yes"

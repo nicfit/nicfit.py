@@ -9,6 +9,7 @@ include tox.ini
 graft docs
 graft tests
 global-exclude __pycache__
+global-exclude .editorconfig
 global-exclude *.py[co]
 
 recursive-include requirements *.txt

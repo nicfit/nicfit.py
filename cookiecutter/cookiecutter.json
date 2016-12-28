@@ -1,49 +1,47 @@
 {
+    "full_name": "GG Allin",
+    "email": "gg@example.com",
+
     "license": [
         "GNU GPL v3.0",
+        "GNU GPL v2.0",
         "MIT",
         "BSD-3",
-        "GNU GPL v2.0",
         "Apache Software License 2.0",
         "Mozilla Public License 2.0"
     ],
-    "support_python2": ["yes", "yes"],
-    "support_python3": ["yes", "no"],
-    
+
     "_comment": "##### Project info #####",
-    "project_name": "nicfit.py",
-    "project_short_description":
-        "Common Python utils (App, logging, config, etc.)",
-    "version": ["0.2.0-beta4"],
-    "web": "https://github.com/nicfit/nicfit.py",
+    "project_name": "Project Name",
+    "project_short_description": "Project description",
+    "version": "0.1.0",
+    "web": "https://example.com",
     "project_slug":
         "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
-    "py_module": "nicfit",
+    "py_module": "{{ cookiecutter.project_slug }}",
 
     "_comment": "##### Project author info #####",
-    "full_name": "Travis Shirk",
-    "email": "travis@pobox.com",
 
     "year": [
         "now",
         "2017",
         "2016-2017",
-        "2015-2016",
-        "2014-2016",
-        "2013-2016",
-        "2012-2016",
-        "2011-2016",
-        "2010-2016"
+        "2015-2017",
+        "2014-2017",
+        "2013-2017",
+        "2012-2017",
+        "2011-2017",
+        "2010-2017"
     ],
     "release_date": "today",
 
     "_comment": "##### Remote repo options  #####",
-    "use_bitbucket": ["no", "no"],
-    "bitbucket_username": "nicfit",
+    "use_bitbucket": ["no", "yes"],
+    "bitbucket_username": "bbuser",
 
     "use_github": ["yes", "no"],
-    "github_username": "nicfit",
-    "github_repo": "nicfit.py",
+    "github_username": "ghuser",
+    "github_repo": "{{ cookiecutter.project_name }}",
 
     "use_pypi_deployment_with_travis": ["no", "yes"],
     "pypi_username": "{{ cookiecutter.github_username }}",

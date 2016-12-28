@@ -140,7 +140,8 @@ pre-release: test
 	$(eval RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null))
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	git authors --list >| AUTHORS
-	check-manifest
+	check-manifest --ignore 'examples*'
+	github-release --version
 
 build-release: test-all dist
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pytest
 import {{ cookiecutter.py_module }}
 """
 test_{{ cookiecutter.py_module }}
