@@ -19,6 +19,7 @@
     "project_slug":
         "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
     "py_module": "{{ cookiecutter.project_slug }}",
+    "src_dir": [".", "./src"],
 
     "_comment": "##### Project author info #####",
 

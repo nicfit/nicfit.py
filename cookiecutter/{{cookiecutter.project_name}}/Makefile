@@ -2,7 +2,8 @@
 	    test test-all coverage docs release dist tags install \
 	    build-release pre-release freeze-release _tag-release upload-release \
 	    pypi-release github-release
-SRC_DIRS = {{ cookiecutter.py_module }}
+SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
+TEST_DIR = {{ cookiecutter.src_dir }}/tests
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
@@ -88,7 +89,7 @@ endif
 
 test:
 {%- if cookiecutter.use_pytest == "yes" %}
-	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ./tests
+	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
 {%- else %}
 	nosetests $(_NOSE_OPTS) $(_PDB_OPTS)
 {% endif %}
@@ -102,23 +103,24 @@ _COVERAGE_BUILD_D=build/tests/coverage
 coverage:
 	# FIXME: can these cover all SRC_DIRS?
 {%- if cookiecutter.use_pytest == "yes" %}
-	pytest --cov={{ cookiecutter.py_module }} --cov-report=html --cov-report term \
-	       --cov-config=setup.cfg ./tests
+	pytest --cov={{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }} \
+           --cov-report=html --cov-report term \
+           --cov-config=setup.cfg ${TEST_DIR}
 {%- else %}
 	nosetests $(_NOSE_OPTS) $(_PDB_OPTS) --with-coverage \
-	      --cover-erase --cover-tests --cover-inclusive \
-	      --cover-package={{ cookiecutter.py_module }} \
-	      --cover-branches --cover-html \
-	      --cover-html-dir=$(_COVERAGE_BUILD_D) tests
+              --cover-erase --cover-tests --cover-inclusive \
+              --cover-package={{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }} \
+              --cover-branches --cover-html \
+              --cover-html-dir=$(_COVERAGE_BUILD_D) ${TEST_DIR}
 	@if test -n '$(BROWSER)'; then \
-	    $(BROWSER) $(_COVERAGE_BUILD_D)/index.html;\
-	fi
+        $(BROWSER) $(_COVERAGE_BUILD_D)/index.html;\
+    fi
 {% endif %}
 
 docs:
 	rm -f docs/{{ cookiecutter.project_slug }}.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ {{ cookiecutter.py_module }}
+	sphinx-apidoc -o docs/ ${SRC_DIRS}
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	@if test -n '$(BROWSER)'; then \

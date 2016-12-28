@@ -12,7 +12,9 @@ def _setup(args, capture=False):
 NAME, VERSION, AUTHOR, *_ = _setup("--name --version --author",
                                    capture=True).split('\n')
 FULL_NAME = '-'.join([NAME, VERSION])
-SRC_DIRS = ["{{ cookiecutter.project_slug }}", "tests", "bin"]
+TESTS_DIR = "{{ cookiecutter.src_dir }}/tests"
+SRC_DIRS = ["{{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}",
+            TESTS_DIR]
 
 options(
     test=Bunch(
@@ -51,7 +53,7 @@ def test(options):
         coverage_opts = (
             "--cover-erase --with-coverage --cover-tests --cover-inclusive "
             "--cover-package={{ cookiecutter.project_slug }} --cover-branches --cover-html "
-            "--cover-html-dir=%s tests" % coverage_build_d)
+            "--cover-html-dir=%s %s" % (coverage_build_d, TESTS_DIR))
     else:
         coverage_opts = ""
 

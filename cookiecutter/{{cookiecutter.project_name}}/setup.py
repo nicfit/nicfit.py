@@ -32,7 +32,9 @@ def getPackageInfo():
     key_remap = {"name": "project_name"}
 
     base = os.path.abspath(os.path.dirname(__file__))
-    with open(os.path.join(base, "{{ cookiecutter.py_module }}/__about__.py")) as infof:
+    with open(os.path.join(base, "{{ cookiecutter.src_dir }}",
+                           "{{ cookiecutter.py_module }}",
+                           "/__about__.py")) as infof:
         for line in infof:
             for what in info_keys:
                 rex = re.compile(r"__{what}__\s*=\s*['\"](.*?)['\"]"
@@ -69,6 +71,7 @@ def requirements(filename):
 pkg_info = getPackageInfo()
 
 src_dist_tgz = "{name}-{version}.tar.gz".format(**pkg_info)
+# FIXME: this needs to be prompted for, and could use a better default anyway
 pkg_info["download_url"] = "{}/releases/{}".format(pkg_info["url"],
                                                    src_dist_tgz)
 
@@ -78,14 +81,14 @@ if sys.argv[1] == "--release-name":
 else:
     setup(classifiers=classifiers,
           package_dir={'{{ cookiecutter.project_slug }}': '{{ cookiecutter.project_slug }}'},
-          packages=find_packages('.', '{{ cookiecutter.py_module }}'),
+          packages=find_packages('.', '{{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}'),
           zip_safe=False,
           platforms=["Any",],
           keywords=['{{ cookiecutter.project_slug }}'],
           include_package_data=True,
           install_requires=requirements("default.txt"),
           tests_require=requirements("test.txt"),
-          test_suite='tests',
+          test_suite="{{ cookiecutter.src_dir }}/tests",
           long_description=readme + '\n\n' + history,
           package_data={},
           entry_points={

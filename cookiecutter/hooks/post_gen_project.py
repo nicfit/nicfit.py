@@ -45,3 +45,10 @@ if __name__ == "__main__":
     for f in Path("licenses").iterdir():
         f.unlink()
     Path("licenses").rmdir()
+
+    if "{{ cookiecutter.src_dir }}" != ".":
+        src_d = Path("{{ cookiecutter.src_dir}}")
+        src_d.mkdir(parents=True)
+        shutil.move("{{ cookiecutter.py_module }}", str(src_d))
+        shutil.move("tests", str(src_d))
+
