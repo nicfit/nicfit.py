@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 
-__version__ = '0.5.0-beta'
+__version__ = '0.5.0'
 __release_name__ = ""
 __release__ = __version__.split('-')[1] if '-' in __version__ else "final"
 
@@ -17,7 +17,7 @@ __version_info__ = \
         *(tuple((int(v) for v in __version__.split('-')[0].split('.'))) +
           tuple((__release__,))))
 
-__years__ = "<YEAR>"
+__years__ = "2016-2017"
 __license__ = 'MIT'
 
 __version_txt__ = """
