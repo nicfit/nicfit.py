@@ -175,4 +175,4 @@ tags:
 	ctags -R ${SRC_DIRS}
 
 cookiecutter: freeze-release
-	cookiecutter -o .. -f ./cookiecutter
+	cookiecutter -o .. -f --config-file ./project.json ./cookiecutter
