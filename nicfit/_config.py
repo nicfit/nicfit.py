@@ -16,7 +16,7 @@ class Config(configparser.ConfigParser):
             with open(os.environ[config_env_var]) as confp:
                 self.read_file(confp)
 
-        self.filename = Path(os.path.expandvars(filename)).expanduser() \
+        self.filename = Path(os.path.expanduser(os.path.expandvars(filename))) \
                             if filename else None
 
     def read(self, filenames=None, encoding=None, touch=False):

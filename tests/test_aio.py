@@ -3,7 +3,8 @@ import pytest
 from nicfit import aio
 
 
-async def _main(args):
+@asyncio.coroutine
+def _main(args):
     args.app.retval = 2
     return 2
 
@@ -12,7 +13,8 @@ def atexit(app):
 
 
 class Myapp(aio.Application):
-    async def _main(self, args):
+    @asyncio.coroutine
+    def _main(self, args):
         assert args.app is self
         self.retval = 3
         return 3
@@ -46,9 +48,10 @@ def test_atexit(event_loop):
 
 
 def test_stop(event_loop):
-    async def main(args):
+    @asyncio.coroutine
+    def main(args):
         try:
-            await asyncio.sleep(5, loop=event_loop)
+            yield from asyncio.sleep(5, loop=event_loop)
         except asyncio.CancelledError:
             args.app.retval = 14
             raise

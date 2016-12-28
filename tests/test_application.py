@@ -1,4 +1,4 @@
-import nicfit
+import asyncio
 from nicfit.app import Application, AsyncApplication
 import pytest
 
@@ -64,16 +64,19 @@ def test_AsyncApp():
     with pytest.raises(NotImplementedError):
         app._run([])
 
-async def _asyncMain(args):
+@asyncio.coroutine
+def _asyncMain(args):
     args.app.reval = 10
     return 10
 
 @pytest.mark.asyncio
-async def test_async_main():
+@asyncio.coroutine
+def test_async_main():
     app = AsyncApplication()
-    assert await app._main(None) == AsyncApplication.NO_MAIN_EXIT
+    assert (yield from app._main(None)) == AsyncApplication.NO_MAIN_EXIT
 
 @pytest.mark.asyncio
-async def test_async_mainFunc():
+@asyncio.coroutine
+def test_async_mainFunc():
     app = AsyncApplication(_asyncMain)
-    assert await app.main([]) == 10
+    assert (yield from app.main([])) == 10

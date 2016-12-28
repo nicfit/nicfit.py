@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 
-__version__ = '0.5.0-beta'
+__version__ = '0.4.0-beta'
 __release_name__ = ""
 __release__ = __version__.split('-')[1] if '-' in __version__ else "final"
 

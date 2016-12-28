@@ -1,4 +1,5 @@
 import sys
+import asyncio
 from ._argparse import ArgumentParser
 from ._logging import getLogger
 
@@ -93,16 +94,19 @@ class Application:
 
 
 class AsyncApplication(Application):
-    async def _main(self, args):
+    @asyncio.coroutine
+    def _main(self, args):
         self.log.debug("AsyncApplication._main: {args}".format(**locals()))
         if self._main_func:
-            return await self._main_func(args)
+            retval = yield from self._main_func(args)
+            return retval
         return self.NO_MAIN_EXIT
 
-    async def main(self, args_list=None):
+    @asyncio.coroutine
+    def main(self, args_list=None):
         self.log.debug("AsyncApplication: {args_list}".format(**locals()))
         self.args = self.arg_parser.parse_args(args=args_list)
-        retval = await self._main(self.args)
+        retval = yield from self._main(self.args)
         return retval or 0
 
     def _run(self, args_list=None):
