@@ -117,6 +117,7 @@ pre-release: test
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	git authors --list >| AUTHORS
 	check-manifest --ignore 'examples*'
+	github-release --version
 
 build-release: test-all dist
 
