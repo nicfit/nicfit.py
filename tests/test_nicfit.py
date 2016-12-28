@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pytest
 import nicfit
 """
 test_nicfit
