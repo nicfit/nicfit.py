@@ -14,17 +14,17 @@
     "_comment": "##### Project info #####",
     "project_name": "Project Name",
     "project_short_description": "Project description",
+    "project_long_description": "",
     "version": "0.1.0",
     "web": "https://example.com",
     "project_slug":
         "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
-    "py_module": "{{ cookiecutter.project_slug }}",
+    "py_module": "{{ cookiecutter.project_slug.replace('.', '') }}",
     "src_dir": [".", "./src"],
 
     "_comment": "##### Project author info #####",
 
     "year": [
-        "now",
         "2017",
         "2016-2017",
         "2015-2017",
@@ -32,7 +32,8 @@
         "2013-2017",
         "2012-2017",
         "2011-2017",
-        "2010-2017"
+        "2010-2017",
+        "2002-2017"
     ],
     "release_date": "today",
 

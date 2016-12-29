@@ -7,21 +7,22 @@ from setuptools import setup, find_packages
 
 
 classifiers = [
-    'Development Status :: 3 - Alpha',
-    'Intended Audience :: Developers',
-    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-    'Operating System :: POSIX',
-    'Natural Language :: English',
-    'Programming Language :: Python',
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    # FIXME: make this conditional on License choice
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX",
+    "Natural Language :: English",
+    "Programming Language :: Python",
     "Programming Language :: Python :: 2",
-    'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.3',
-    'Programming Language :: Python :: 3.4',
-    'Programming Language :: Python :: 3.5',
-    'Programming Language :: Python :: 3.6',
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
     # XXX Remove to enable PyPi uploads
-    'Private :: Do Not Upload',
+    "Private :: Do Not Upload",
 ]
 
 
@@ -31,10 +32,10 @@ def getPackageInfo():
                  "description", "release_name"]
     key_remap = {"name": "project_name"}
 
-    base = os.path.abspath(os.path.dirname(__file__))
-    with open(os.path.join(base, "{{ cookiecutter.src_dir }}",
+    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                           "{{ cookiecutter.src_dir }}",
                            "{{ cookiecutter.py_module }}",
-                           "/__about__.py")) as infof:
+                           "__about__.py")) as infof:
         for line in infof:
             for what in info_keys:
                 rex = re.compile(r"__{what}__\s*=\s*['\"](.*?)['\"]"
@@ -57,7 +58,7 @@ if os.path.exists("README.rst"):
 history = ""
 if os.path.exists("HISTORY.rst"):
     with open("HISTORY.rst") as history_file:
-        history = history_file.read().replace('.. :changelog:', '')
+        history = history_file.read().replace(".. :changelog:", "")
 
 
 def requirements(filename):
@@ -80,16 +81,16 @@ if sys.argv[1] == "--release-name":
     sys.exit(0)
 else:
     setup(classifiers=classifiers,
-          package_dir={'{{ cookiecutter.project_slug }}': '{{ cookiecutter.project_slug }}'},
-          packages=find_packages('.', '{{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}'),
+          package_dir={"": "{{ cookiecutter.src_dir }}"},
+          packages=find_packages("{{ cookiecutter.src_dir }}"),
           zip_safe=False,
           platforms=["Any",],
-          keywords=['{{ cookiecutter.project_slug }}'],
+          keywords=["{{ cookiecutter.project_slug }}"],
           include_package_data=True,
           install_requires=requirements("default.txt"),
           tests_require=requirements("test.txt"),
           test_suite="{{ cookiecutter.src_dir }}/tests",
-          long_description=readme + '\n\n' + history,
+          long_description=readme + "\n\n" + history,
           package_data={},
           entry_points={
               "console_scripts": [
