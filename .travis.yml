@@ -1,8 +1,6 @@
 language: python
 
 python:
-  - "3.2"
-  - "3.3"
   - "3.4"
   - "3.5"
   - "3.6"
@@ -12,5 +10,4 @@ python:
 install: "pip install -r requirements/test.txt"
 
 # command to run tests
-script:
-    - if [[ $TRAVIS_PYTHON_VERSION == 3.4 || $TRAVIS_PYTHON_VERSION == 3.5 ]]; then py.test; else pytest; fi
+script: make test
