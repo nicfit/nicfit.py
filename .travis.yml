@@ -12,4 +12,5 @@ python:
 install: "pip install -r requirements/test.txt"
 
 # command to run tests
-script: pytest
+script:
+    - if [[ $TRAVIS_PYTHON_VERSION == 3.4 || $TRAVIS_PYTHON_VERSION == 3.5 ]]; then py.test; else pytest; fi
