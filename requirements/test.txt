@@ -1,3 +1,6 @@
 pytest
 pytest-cov
 pytest-runner
+pytest-asyncio
+curio
+pytest-curio
