@@ -4,9 +4,4 @@ tox
 flake8
 twine
 Sphinx
-
 check-manifest
-
-
-
-

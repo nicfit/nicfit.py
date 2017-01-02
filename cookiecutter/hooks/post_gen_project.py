@@ -42,9 +42,10 @@ if __name__ == "__main__":
         replace_contents(path, '<TODAY>', today.strftime("%Y-%m-%d"))
         replace_contents(path, '<YEAR>', today.strftime("%Y"))
 
+    if '{{ cookiecutter.use_travis_ci }}' == 'no':
+        remove_file('.travis.yml')
     if '{{ cookiecutter.use_pypi_deployment_with_travis }}' == 'no':
         remove_file('travis_pypi_setup.py')
-        remove_file('.travis.yml')
 
     if '{{ cookiecutter.use_paver }}' == 'no':
         remove_file('pavement.py')

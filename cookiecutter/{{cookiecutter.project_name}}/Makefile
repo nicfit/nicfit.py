@@ -1,16 +1,15 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
-	    test test-all coverage docs release dist tags install \
-	    build-release pre-release freeze-release _tag-release upload-release \
-	    pypi-release github-release
+        test test-all coverage docs release dist tags install \
+        build-release pre-release freeze-release _tag-release upload-release \
+        pypi-release github-release clean-docs
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
-	from urllib import pathname2url
+    from urllib import pathname2url
 except:
-	from urllib.request import pathname2url
-
+    from urllib.request import pathname2url
 webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
 endef
 export BROWSER_PYSCRIPT
@@ -29,6 +28,7 @@ help:
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
+	@echo "clean-docs - remove autogenerating doc artifacts"
 	@echo "clean-patch - remove patch artifacts (.rej, .orig)"
 	@echo "lint - check style with flake8"
 	@echo "coverage - check code coverage quickly with the default Python"
@@ -44,7 +44,7 @@ help:
 
 	@echo "BROWSER - Set to empty string to prevent opening docs/coverage results in a web browser"
 
-clean: clean-local clean-build clean-pyc clean-test clean-patch
+clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
 	rm -rf tags
 
 clean-local:
@@ -101,7 +101,6 @@ test-all:
 _COVERAGE_BUILD_D=build/tests/coverage
 {% endif %}
 coverage:
-	# FIXME: can these cover all SRC_DIRS?
 {%- if cookiecutter.use_pytest == "yes" %}
 	pytest --cov={{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }} \
            --cov-report=html --cov-report term \
@@ -127,10 +126,16 @@ docs:
 	    $(BROWSER) docs/_build/html/index.html;\
 	fi
 
+clean-docs:
+	# TODO
+	#$(MAKE) -C docs clean
+	-rm README.html
+
+# FIXME: never been tested
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: test
+pre-release: lint test
 	@test -n "${NAME}" || (echo "NAME not set, needed for git" && false)
 	@test -n "${EMAIL}" || (echo "EMAIL not set, needed for git" && false)
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
@@ -141,6 +146,10 @@ pre-release: test
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	$(eval RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null))
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
+	if git tag | grep ${VERSION} > /dev/null; then \
+        echo "Verison tag already exists!"; \
+        false; \
+    fi
 	git authors --list >| AUTHORS
 	check-manifest --ignore 'examples*'
 	github-release --version
@@ -199,3 +208,6 @@ install: clean
 
 tags:
 	ctags -R ${SRC_DIRS}
+
+README.html: README.rst
+	rst2html5.py README.rst >| README.html

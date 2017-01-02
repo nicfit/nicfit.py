@@ -4,22 +4,16 @@ tox
 flake8
 twine
 Sphinx
-{% if cookiecutter.use_pytest == "yes" -%}
-pytest-cov
-{% else %}
-nose
-coverage
-{% endif %}
 check-manifest
-{% if cookiecutter.use_paver == "yes" -%}
+{%- if cookiecutter.use_paver == "yes" %}
 paver
 cogapp
 sphinxcontrib-paverutils
-{% endif %}
+{%- endif %}
 
-{% if cookiecutter.use_bitbucket == "yes" -%}
+{%- if cookiecutter.use_bitbucket == "yes" %}
 # Upstream PR: https://bitbucket.org/dhellmann/sphinxcontrib-bitbucket/pull-requests/1/use-setuptools-over-distribute-python3/diff
 #sphinxcontrib-bitbucket
 hg+https://nicfit@bitbucket.org/nicfit/sphinxcontrib-bitbucket
-{% endif %}
+{%- endif %}
 

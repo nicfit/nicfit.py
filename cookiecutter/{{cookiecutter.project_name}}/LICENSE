@@ -6,6 +6,10 @@
 {%- include 'licenses/GPL-3' %}
 {%- elif cookiecutter.license == "GNU GPL v2.0" -%}
 {%- include 'licenses/GPL-2' %}
+{%- elif cookiecutter.license == "GNU LGPL v3.0" -%}
+{%- include 'licenses/LGPL-3' %}
+{%- elif cookiecutter.license == "GNU LGPL v2.0" -%}
+{%- include 'licenses/LGPL-2' %}
 {%- elif cookiecutter.license == "Apache Software License 2.0" -%}
 {%- include 'licenses/Apache-2' %}
 {%- elif cookiecutter.license == "Mozilla Public License 2.0" -%}

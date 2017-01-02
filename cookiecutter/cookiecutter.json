@@ -5,6 +5,8 @@
     "license": [
         "GNU GPL v3.0",
         "GNU GPL v2.0",
+        "GNU LGPL v3.0",
+        "GNU LGPL v2.0",
         "MIT",
         "BSD-3",
         "Apache Software License 2.0",
@@ -15,6 +17,7 @@
     "project_name": "Project Name",
     "project_short_description": "Project description",
     "project_long_description": "",
+    "intended_audience": ["End Users/Desktop", "Developers"],
     "version": "0.1.0",
     "web": "https://example.com",
     "project_slug":
@@ -45,8 +48,9 @@
     "github_username": "ghuser",
     "github_repo": "{{ cookiecutter.project_name }}",
 
-    "use_pypi_deployment_with_travis": ["no", "yes"],
+    "use_travis_ci": ["yes", "no"],
     "pypi_username": "{{ cookiecutter.github_username }}",
+    "use_pypi_deployment_with_travis": ["no", "yes"],
 
     "_comment": "##### Build tools #####",
     "use_make": ["yes", "no"],

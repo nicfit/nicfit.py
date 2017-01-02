@@ -17,3 +17,4 @@ default_context:
     use_make: "yes"
     use_paver: "no"
     use_pytest: "yes"
+    intended_audience: "Developers"

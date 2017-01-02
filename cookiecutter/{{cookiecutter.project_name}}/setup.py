@@ -7,12 +7,26 @@ from setuptools import setup, find_packages
 
 
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    # FIXME: make this conditional on License choice
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Intended Audience :: {{ cookiecutter.intended_audience }}",
     "Operating System :: POSIX",
     "Natural Language :: English",
+{%- if cookiecutter.license == "MIT" %}
+    "License :: OSI Approved :: MIT License",
+{%- elif cookiecutter.license == "BSD-3" %}
+    "License :: OSI Approved :: BSD License",
+{%- elif cookiecutter.license == "GNU GPL v3.0" %}
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+{%- elif cookiecutter.license == "GNU GPL v2.0" %}
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+{%- elif cookiecutter.license == "GNU LGPL v3.0" %}
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
+{%- elif cookiecutter.license == "GNU LGPL v2.0" %}
+    "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
+{%- elif cookiecutter.license == "Apache Software License 2.0" %}
+    "License :: OSI Approved :: Apache Software License",
+{%- elif cookiecutter.license == "Mozilla Public License 2.0" %}
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+{%- endif %}
     "Programming Language :: Python",
     "Programming Language :: Python :: 2",
     "Programming Language :: Python :: 2.7",
@@ -24,6 +38,17 @@ classifiers = [
     # XXX Remove to enable PyPi uploads
     "Private :: Do Not Upload",
 ]
+
+if pkg_info["release"].startswith("a"):
+    #classifiers.append("Development Status :: 1 - Planning")
+    #classifiers.append("Development Status :: 2 - Pre-Alpha")
+    classifiers.append("Development Status :: 3 - Alpha")
+elif pkg_info["release"].startswith("b"):
+    classifiers.append("Development Status :: 4 - Beta")
+else:
+    classifiers.append("Development Status :: 5 - Production/Stable")
+    #classifiers.append("Development Status :: 6 - Mature")
+    #classifiers.append("Development Status :: 7 - Inactive")
 
 
 def getPackageInfo():
@@ -47,6 +72,8 @@ def getPackageInfo():
                     continue
                 info_dict[what] = m.groups()[0]
 
+    vparts = info_dict["version"].split("-", maxsplits=1)
+    info_dict["release"] =  vparts[1] if len(vparts) > 1 else "final"
     return info_dict
 
 
