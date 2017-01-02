@@ -1,8 +1,3 @@
-{%- if cookiecutter.use_bitbucket == "yes" -%}
-{%- set repo_host = 'BitBucket' -%}
-{%- else -%}
-{%- set repo_host = 'GitHub' -%}
-{%- endif -%}
 ============
 Contributing
 ============
@@ -18,11 +13,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-{% if cookiecutter.use_bitbucket == "yes" -%}
-Report bugs at https://bitbucket.org/{{ cookiecutter.bitbucket_username }}/{{ cookiecutter.project_slug }}/issues.
-{%- else -%}
-Report bugs at https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/issues.
-{%- endif %}
+Report bugs at https://github.com/nicfit/nicfit.py/issues.
 
 If you are reporting a bug, please include:
 
@@ -33,31 +24,27 @@ If you are reporting a bug, please include:
 Fix Bugs
 ~~~~~~~~
 
-Look through the {{ repo_host }} issues for bugs. Anything tagged with "bug"
+Look through the GitHub issues for bugs. Anything tagged with "bug"
 is open to whoever wants to implement it.
 
 Implement Features
 ~~~~~~~~~~~~~~~~~~
 
-Look through the {{ repo_host }} issues for features. Anything tagged with
+Look through the GitHub issues for features. Anything tagged with
 "feature" is open to whoever wants to implement it.
 
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-{{ cookiecutter.project_name }} could always use more documentation, whether as
-part of the official {{ cookiecutter.project_name }} docs, in docstrings, or
+nicfit.py could always use more documentation, whether as
+part of the official nicfit.py docs, in docstrings, or
 even on the web in blog posts, articles, and such.
 
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
 The best way to send feedback is to file an issue at
-{%- if cookiecutter.use_bitbucket == "yes" %}
-https://bitbucket.org/{{ cookiecutter.bitbucket_username }}/{{ cookiecutter.project_slug }}/issues.
-{%- else %}
-https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/issues.
-{%- endif %}
+https://github.com/nicfit/nicfit.py/issues.
 
 If you are proposing a feature:
 
@@ -69,36 +56,24 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `{{ cookiecutter.project_slug }}` for local development.
+Ready to contribute? Here's how to set up `nicfit.py` for local development.
 
-1. Fork the `{{ cookiecutter.project_slug }}` repo on {{ repo_host }}.
+1. Fork the `nicfit.py` repo on GitHub.
 2. Clone your fork locally::
 
-{%- if cookiecutter.use_bitbucket == "yes" %}
-
-    $ hg clone https://your_name_here@bitbucket.org/your_name_here/{{ cookiecutter.project_slug }}
-{%- else %}
-
-    $ git clone git@github.com:your_name_here/{{ cookiecutter.project_slug }}.git
-{%- endif %}
+    $ git clone git@github.com:your_name_here/nicfit.py.git
 
 3. Install your local copy into a virtualenv. Assuming you have
    virtualenvwrapper installed, this is how you set up your fork for local
    development::
 
-    $ mkvirtualenv {{ cookiecutter.project_slug }}
-    $ cd {{ cookiecutter.project_slug }}/
+    $ mkvirtualenv nicfit.py
+    $ cd nicfit.py/
     $ python setup.py develop
 
 4. Create a branch for local development::
-{%- if cookiecutter.use_bitbucket == "yes" %}
-
-    $ hg branch name-of-your-bugfix-or-feature
-    $ hg up name-of-your-bugfix-or-feature
-{%- else %}
 
     $ git checkout -b name-of-your-bugfix-or-feature
-{%- endif %}
 
    Now you can make your changes locally.
 
@@ -111,19 +86,13 @@ Ready to contribute? Here's how to set up `{{ cookiecutter.project_slug }}` for 
 
    To get flake8 and tox, just pip install them into your virtualenv.
 
-6. Commit your changes and push your branch to {{ repo_host }}.::
-{%- if cookiecutter.use_bitbucket == "yes" %}
-
-    $ hg commit -m "Your detailed description of your changes."
-    $ hg push 
-{%- else %}
+6. Commit your changes and push your branch to GitHub.::
 
     $ git add .
     $ git commit -m "Your detailed description of your changes."
     $ git push origin name-of-your-bugfix-or-feature
-{%- endif %}
 
-7. Submit a pull request through the {{ repo_host }} website.
+7. Submit a pull request through the GitHub website.
 
 
 Pull Request Guidelines
@@ -136,5 +105,5 @@ Before you submit a pull request, check that it meets these guidelines:
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
 3. The pull request should work for Python 2.7, and 3.3, 3.4, 3.5, and for PyPy.  Check
-   https://travis-ci.org/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/pull_requests
+   https://travis-ci.org/nicfit/nicfit.py/pull_requests
    and make sure that the tests pass for all supported Python versions.
