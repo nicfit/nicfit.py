@@ -13,14 +13,13 @@ __url__ = "https://github.com/nicfit/nicfit.py"
 __description__ = "Common Python utils (App, logging, config, etc.)"
 __long_description__ = ""
 __license__ = "MIT"
+__github_url__ = "https://github.com/nicfit/nicfit.py",
 
 __release__ = __version__.split("-")[1] if "-" in __version__ else "final"
 __version_info__ = \
     namedtuple("Version", "major, minor, maint, release")(
         *(tuple((int(v) for v in __version__.split("-")[0].split("."))) +
           tuple((__release__,))))
-
-
 __version_txt__ = """
 %(__name__)s %(__version__)s (C) Copyright %(__years__)s %(__author__)s
 This program comes with ABSOLUTELY NO WARRANTY! See LICENSE for details.

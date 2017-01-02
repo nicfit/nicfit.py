@@ -39,22 +39,11 @@ classifiers = [
     "Private :: Do Not Upload",
 ]
 
-if pkg_info["release"].startswith("a"):
-    #classifiers.append("Development Status :: 1 - Planning")
-    #classifiers.append("Development Status :: 2 - Pre-Alpha")
-    classifiers.append("Development Status :: 3 - Alpha")
-elif pkg_info["release"].startswith("b"):
-    classifiers.append("Development Status :: 4 - Beta")
-else:
-    classifiers.append("Development Status :: 5 - Production/Stable")
-    #classifiers.append("Development Status :: 6 - Mature")
-    #classifiers.append("Development Status :: 7 - Inactive")
-
 
 def getPackageInfo():
     info_dict = {}
     info_keys = ["version", "name", "author", "author_email", "url", "license",
-                 "description", "release_name"]
+                 "description", "release_name", "github_url"]
     key_remap = {"name": "project_name"}
 
     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
@@ -72,7 +61,7 @@ def getPackageInfo():
                     continue
                 info_dict[what] = m.groups()[0]
 
-    vparts = info_dict["version"].split("-", maxsplits=1)
+    vparts = info_dict["version"].split("-", maxsplit=1)
     info_dict["release"] =  vparts[1] if len(vparts) > 1 else "final"
     return info_dict
 
@@ -97,13 +86,24 @@ def requirements(filename):
 
 
 pkg_info = getPackageInfo()
+if pkg_info["release"].startswith("a"):
+    #classifiers.append("Development Status :: 1 - Planning")
+    #classifiers.append("Development Status :: 2 - Pre-Alpha")
+    classifiers.append("Development Status :: 3 - Alpha")
+elif pkg_info["release"].startswith("b"):
+    classifiers.append("Development Status :: 4 - Beta")
+else:
+    classifiers.append("Development Status :: 5 - Production/Stable")
+    #classifiers.append("Development Status :: 6 - Mature")
+    #classifiers.append("Development Status :: 7 - Inactive")
 
-src_dist_tgz = "{name}-{version}.tar.gz".format(**pkg_info)
-# FIXME: this needs to be prompted for, and could use a better default anyway
-pkg_info["download_url"] = "{}/releases/{}".format(pkg_info["url"],
-                                                   src_dist_tgz)
+gz = "{name}-{version}.tar.gz".format(**pkg_info)
+pkg_info["download_url"] = (
+    "{github_url}/releases/downloads/v{version}/{gz}"
+    .format(gz=gz, **pkg_info)
+)
 
-if sys.argv[1] == "--release-name":
+if sys.argv[1:] and sys.argv[1] == "--release-name":
     print(pkg_info["release_name"])
     sys.exit(0)
 else:
