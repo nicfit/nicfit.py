@@ -1,9 +1,10 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
         test test-all coverage docs release dist tags install \
         build-release pre-release freeze-release _tag-release upload-release \
-        pypi-release github-release clean-docs
+        pypi-release github-release clean-docs cookiecutter
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
+TMPDIR=./tmp
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
@@ -211,3 +212,10 @@ tags:
 
 README.html: README.rst
 	rst2html5.py README.rst >| README.html
+
+cookiecutter:
+	rm -rf ${TMPDIR}
+	git clone . ${TMPDIR}/{{ cookiecutter.project_slug }}
+	cookiecutter -o ${TMPDIR} -f --config-file ./.cookiecutter.json \
+                 --no-input ./cookiecutter
+	git -C ${TMPDIR}/{{ cookiecutter.project_slug }} status -s -b

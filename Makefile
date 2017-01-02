@@ -4,6 +4,7 @@
         pypi-release github-release clean-docs cookiecutter
 SRC_DIRS = ./nicfit
 TEST_DIR = ./tests
+TMPDIR=./tmp
 
 NAME ?= Travis Shirk
 EMAIL ?= travis@pobox.com
@@ -179,8 +180,9 @@ README.html: README.rst
 	echo "python -m webbrowser -n README.html"
 
 cookiecutter:
-	rm -rf ./tmp
-	git clone . tmp/nicfit.py
-	cookiecutter -o ./tmp -f --config-file ./.cookiecutter.json --no-input \
-                 ./cookiecutter
-	git -C ./tmp/nicfit.py status -s -b
+	rm -rf ${TMPDIR}
+	git clone . ${TMPDIR}/nicfit.py
+	# FIXME: Pull from a non-local ./cookiecutter
+	cookiecutter -o ${TMPDIR} -f --config-file ./.cookiecutter.json \
+                 --no-input ./cookiecutter
+	git -C ${TMPDIR}/nicfit.py status -s -b
