@@ -22,7 +22,7 @@ Status
 |                                       |    :target: https://pypi.python.org/pypi/{{ cookiecutter.project_slug }}/                                                                                    |
 |                                       |    :alt: Supported Python implementations                                                                                                                    |
 +---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-{%- if cookiecutter.use_travis_ci == "yes" -%}
+{%- if cookiecutter.use_travis_ci == "yes" %}
 | *Builds and tests coverage*           | .. image:: https://travis-ci.org/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}.svg?branch=master                                        |
 |                                       |    :target: https://travis-ci.org/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}                                                         |
 |                                       |    :alt: Build Status                                                                                                                                        |
@@ -30,24 +30,25 @@ Status
 |                                       |    :target: https://coveralls.io/r/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}                                                        |
 |                                       |    :alt: Coverage Status                                                                                                                                     |
 +---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-{%- endif -%}
-{%- if cookiecutter.use_github == "yes" -%}
-| *Github*                              | .. image:: https://img.shields.io/github/downloads/atom/atom/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}.svg?style=social&label=Watch |
-|                                       |    :target: https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}                                                            |
-|                                       |    :alt: Github watchers                                                                                                                                     |
-|                                       | .. image:: https://img.shields.io/github/stars/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}.svg?style=social&label=Star                |
-|                                       |    :target: https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}                                                            |
-|                                       |    :alt: Github stargazers                                                                                                                                   |
-|                                       | .. image:: https://img.shields.io/github/forks/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}.svg?style=social&label=Fork                |
-|                                       |    :target: https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}                                                            |
-|                                       |    :alt: Github forks                                                                                                                                        |
-+---------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-{%- endif -%}
+{%- endif %}
+{%- if cookiecutter.use_github == "yes" %}
+| *Github* | .. image:: https://img.shields.io/github/watchers/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}.svg?style=social&label=Watch |
+|          |    :target: https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}                                                 |
+|          |    :alt: Github watchers                                                                                                                          |
+|          | .. image:: https://img.shields.io/github/stars/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}.svg?style=social&label=Star     |
+|          |    :target: https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}                                                 |
+|          |    :alt: Github stargazers                                                                                                                        |
+|          | .. image:: https://img.shields.io/github/forks/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}.svg?style=social&label=Fork     |
+|          |    :target: https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}                                                 |
+|          |    :alt: Github forks                                                                                                                             |
++----------+---------------------------------------------------------------------------------------------------------------------------------------------------+
+{%- endif %}
 
-* Free software: {{ cookiecutter.license }} license
+{%- if cookiecutter.use_rtd == "yes" %}
 * Documentation: https://{{ cookiecutter.project_slug }}.readthedocs.org.
+{%- endif %}
 
 Features
 --------
 
-* TODO
+* Free software: {{ cookiecutter.license }} license

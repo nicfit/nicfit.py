@@ -40,10 +40,7 @@ Status
 |                                       |    :alt: Github forks                                                                           |
 +---------------------------------------+-------------------------------------------------------------------------------------------------+
 
-* Free software: MIT license
-* Documentation: https://nicfit.py.readthedocs.org.
-
 Features
 --------
 
-* TODO
+* Free software: MIT license

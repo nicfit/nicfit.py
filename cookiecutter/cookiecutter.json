@@ -56,6 +56,7 @@
     "use_make": ["yes", "no"],
     "use_paver": ["yes", "no"],
     "use_pytest": ["yes", "no"],
+    "use_rtd": ["no", "yes"],
 
     "_comment": "##### end #####"
 }
