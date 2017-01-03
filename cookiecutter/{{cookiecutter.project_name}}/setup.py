@@ -109,7 +109,8 @@ if sys.argv[1:] and sys.argv[1] == "--release-name":
 else:
     setup(classifiers=classifiers,
           package_dir={"": "{{ cookiecutter.src_dir }}"},
-          packages=find_packages("{{ cookiecutter.src_dir }}"),
+          packages=find_packages("{{ cookiecutter.src_dir }}",
+                                 exclude=["tests", "tests.*"]),
           zip_safe=False,
           platforms=["Any"],
           keywords=["{{ cookiecutter.project_slug }}"],
