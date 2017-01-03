@@ -67,7 +67,6 @@ clean-patch:
 lint:
 	flake8 $(SRC_DIRS)
 
-
 _PYTEST_OPTS=
 ifdef TEST_PDB
     _PDB_OPTS=--pdb -s
@@ -121,6 +120,9 @@ pre-release: lint test
 	git authors --list >| AUTHORS
 	github-release --version
 
+changelog:
+	@# TODO
+
 build-release: test-all dist
 
 freeze-release:
@@ -133,7 +135,7 @@ _tag-release:
 	$(GIT) tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	$(GIT) push --tags origin
 
-release: freeze-release pre-release build-release _tag-release upload-release
+release: pre-release freeze-release build-release _tag-release upload-release
 
 github-release: pre-release
 	name="${RELEASE_TAG}"; \

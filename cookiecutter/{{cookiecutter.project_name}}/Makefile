@@ -1,7 +1,7 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
         test test-all coverage docs release dist tags install \
-        build-release pre-release freeze-release _tag-release upload-release \
-        pypi-release github-release clean-docs cookiecutter
+        build-release pre-release freeze-release _tag-release _upload-release \
+        _pypi-release _github-release clean-docs cookiecutter changelog
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
 TEMP_DIR ?= ./tmp
@@ -48,8 +48,7 @@ help:
 	@echo ""
 	@echo "Options:"
 	@echo "TEST_PDB - If defined PDB options are added when 'pytest' is invoked"
-
-	@echo "BROWSER - Set to empty string to prevent opening docs/coverage results in a web browser"
+	@echo "BROWSER - Set to "yes" to open docs/coverage results in a web browser"
 
 clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
 	rm -rf tags
@@ -142,7 +141,7 @@ clean-docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: lint test
+pre-release: lint test changelog
 	@test -n "${NAME}" || (echo "NAME not set, needed for git" && false)
 	@test -n "${EMAIL}" || (echo "EMAIL not set, needed for git" && false)
 {%- if cookiecutter.use_github == "yes" %}
@@ -168,10 +167,17 @@ pre-release: lint test
     fi
 {%- if cookiecutter.use_github == "yes" %}
 	git authors --list >| AUTHORS
-	@github-release --version    # Just a exe existance check
+	@github-release --version    # Just a exe existence check
 {%- else %}
 	@# TODO: Update AUTHORS file
 	@# TODO: Check for tool for making bitbucket releases
+{%- endif %}
+
+changelog:
+{%- if cookiecutter.use_github == "yes" %}
+	@# TODO
+{%- else %}
+	@# TODO
 {%- endif %}
 
 build-release: test-all dist
@@ -193,13 +199,14 @@ _tag-release:
 	$(GIT) push --tags origin
 {%- else %}
 	${HG} tag ${RELEASE_TAG}
-	${HG} commit -m "Release $(RELEASE_TAG)"
+	-${HG} commit -m "Release $(RELEASE_TAG)"
 	${HG} push --rev .
 {%- endif %}
 
-release: freeze-release pre-release build-release _tag-release upload-release
+release: pre-release freeze-release build-release _tag-release _upload-release
 
-github-release: pre-release
+{% if cookiecutter.use_github == "yes" %}
+_github-release:
 	name="${RELEASE_TAG}"; \
     if test -n "${RELEASE_NAME}"; then \
         name="${RELEASE_TAG} (${RELEASE_NAME})"; \
@@ -218,15 +225,25 @@ github-release: pre-release
         github-release upload --user "${GITHUB_USER}" --repo ${GITHUB_REPO} \
                    --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
     done
+{% else %}
+_bitbucket-release:
+	# Not implemented
+	false
+{%- endif %}
 
-upload-release: github-release pypi-release
+{% if cookiecutter.use_github == "yes" %}
+_upload-release: _github-release _pypi-release
+{% else %}
+_upload-release: _bitbucket-release _pypi-release
+{% endif %}
 
-pypi-release:
+_pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
-	find dist -type f -exec twine upload -r ${PYPI_REPO} {} \;
+	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
 
 dist: clean
 	python setup.py sdist
+	python setup.py bdist_egg
 	python setup.py bdist_wheel
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
 	cd dist && \
@@ -251,6 +268,7 @@ cookiecutter:
 {%- else %}
 	${HG} clone . ${TEMP_DIR}/{{ cookiecutter.project_name }}
 {%- endif %}
+	# FIXME: Pull from a non-local ./cookiecutter
 	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
                  --no-input ./cookiecutter
 {%- if cookiecutter.use_github == "yes" %}
