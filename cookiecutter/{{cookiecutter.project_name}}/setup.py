@@ -62,7 +62,7 @@ def getPackageInfo():
                 info_dict[what] = m.groups()[0]
 
     vparts = info_dict["version"].split("-", maxsplit=1)
-    info_dict["release"] =  vparts[1] if len(vparts) > 1 else "final"
+    info_dict["release"] = vparts[1] if len(vparts) > 1 else "final"
     return info_dict
 
 
@@ -111,7 +111,7 @@ else:
           package_dir={"": "{{ cookiecutter.src_dir }}"},
           packages=find_packages("{{ cookiecutter.src_dir }}"),
           zip_safe=False,
-          platforms=["Any",],
+          platforms=["Any"],
           keywords=["{{ cookiecutter.project_slug }}"],
           include_package_data=True,
           install_requires=requirements("default.txt"),

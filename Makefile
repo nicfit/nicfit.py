@@ -4,7 +4,7 @@
         pypi-release github-release clean-docs cookiecutter
 SRC_DIRS = ./nicfit
 TEST_DIR = ./tests
-TMPDIR=./tmp
+TEMP_DIR ?= ./tmp
 
 NAME ?= Travis Shirk
 EMAIL ?= travis@pobox.com
@@ -58,6 +58,7 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
+	rm -rf ${TEMP_DIR}
 
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
@@ -112,20 +113,21 @@ pre-release: lint test
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	$(eval RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null))
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
-	if git tag | grep ${VERSION} > /dev/null; then \
-        echo "Verison tag already exists!"; \
+	check-manifest --ignore 'examples*'
+	if git tag -l | grep ${RELEASE_TAG} > /dev/null; then \
+        echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
 	git authors --list >| AUTHORS
-	check-manifest --ignore 'examples*'
 	github-release --version
 
 build-release: test-all dist
 
 freeze-release:
+	@# TODO: check for incoming
 	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
-	    (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
-	     printf "\nCommit and try again.\n" && false)
+        (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
+         printf "\nCommit and try again.\n" && false)
 
 _tag-release:
 	$(GIT) tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
@@ -180,9 +182,9 @@ README.html: README.rst
 	echo "python -m webbrowser -n README.html"
 
 cookiecutter:
-	rm -rf ${TMPDIR}
-	git clone . ${TMPDIR}/nicfit.py
+	rm -rf ${TEMP_DIR}
+	git clone . ${TEMP_DIR}/nicfit.py
 	# FIXME: Pull from a non-local ./cookiecutter
-	cookiecutter -o ${TMPDIR} -f --config-file ./.cookiecutter.json \
+	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
                  --no-input ./cookiecutter
-	git -C ${TMPDIR}/nicfit.py status -s -b
+	git -C ${TEMP_DIR}/nicfit.py status -s -b

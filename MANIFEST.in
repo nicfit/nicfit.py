@@ -9,6 +9,8 @@ include tox.ini
 #graft docs
 graft cookiecutter
 graft tests
+
+exclude .cookiecutter.json
 global-exclude __pycache__
 global-exclude .editorconfig
 global-exclude *.py[co]

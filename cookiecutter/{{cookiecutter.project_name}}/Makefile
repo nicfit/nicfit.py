@@ -4,7 +4,7 @@
         pypi-release github-release clean-docs cookiecutter
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
-TMPDIR=./tmp
+TEMP_DIR ?= ./tmp
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
@@ -17,9 +17,15 @@ export BROWSER_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 NAME ?= {{ cookiecutter.full_name }}
 EMAIL ?= {{ cookiecutter.email }}
+{%- if cookiecutter.use_github == "yes" %}
 GITHUB_USER ?= {{ cookiecutter.github_username }}
 GITHUB_REPO ?= {{ cookiecutter.github_repo }}
 GIT := git -c user.name="$(NAME)" -c user.email="$(EMAIL)"
+{%- else %}
+BITBUCKET_USER ?= {{ cookiecutter.bitbucket_username }}
+BITBUCKET_REPO ?= {{ cookiecutter.bitbucket_repo }}
+HG=hg
+{%- endif %}
 PYPI_REPO = pypitest
 
 help:
@@ -67,6 +73,7 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
+	rm -rf ${TEMP_DIR}
 
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
@@ -75,12 +82,11 @@ clean-patch:
 lint:
 	flake8 $(SRC_DIRS)
 
-
 {% if cookiecutter.use_pytest == "yes" -%}
 _PYTEST_OPTS=
-{%- else -%}
+{% else %}
 _NOSE_OPTS=--verbosity=1 --detailed-errors
-{% endif %}
+{%- endif %}
 ifdef TEST_PDB
     _PDB_OPTS=--pdb -s
 {%- if cookiecutter.use_pytest == "no" %}
@@ -93,7 +99,7 @@ test:
 	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
 {%- else %}
 	nosetests $(_NOSE_OPTS) $(_PDB_OPTS)
-{% endif %}
+{%- endif %}
 
 test-all:
 	tox
@@ -115,7 +121,7 @@ coverage:
 	@if test -n '$(BROWSER)'; then \
         $(BROWSER) $(_COVERAGE_BUILD_D)/index.html;\
     fi
-{% endif %}
+{%- endif %}
 
 docs:
 	rm -f docs/{{ cookiecutter.project_slug }}.rst
@@ -139,32 +145,57 @@ servedocs: docs
 pre-release: lint test
 	@test -n "${NAME}" || (echo "NAME not set, needed for git" && false)
 	@test -n "${EMAIL}" || (echo "EMAIL not set, needed for git" && false)
+{%- if cookiecutter.use_github == "yes" %}
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
 	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
+{%- else %}
+	@# TODO: Check bitbucket settings
+{%- endif %}
 	$(eval VERSION = $(shell python setup.py --version 2> /dev/null))
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	$(eval RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null))
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
-	if git tag | grep ${VERSION} > /dev/null; then \
-        echo "Verison tag already exists!"; \
+	check-manifest
+{%- if cookiecutter.use_github == "yes" %}
+	@if git tag -l | grep ${RELEASE_TAG} > /dev/null; then \
+{%- else %}
+	@if ${HG} tags -q | grep ${RELEASE_TAG} > /dev/null; then \
+{%- endif %}
+        echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
+{%- if cookiecutter.use_github == "yes" %}
 	git authors --list >| AUTHORS
-	check-manifest --ignore 'examples*'
-	github-release --version
+	@github-release --version    # Just a exe existance check
+{%- else %}
+	@# TODO: Update AUTHORS file
+	@# TODO: Check for tool for making bitbucket releases
+{%- endif %}
 
 build-release: test-all dist
 
 freeze-release:
+{%- if cookiecutter.use_github == "yes" %}
+	@# TODO: check for incoming
 	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
-	    (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
-	     printf "\nCommit and try again.\n" && false)
+{%- else %}
+	@(test -z "`${HG} status --modified --added --deleted`" && \
+      ${HG} incoming | grep 'no changes found') || \
+{%- endif %}
+        (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
+         printf "\nCommit and try again.\n" && false)
 
 _tag-release:
+{%- if cookiecutter.use_github == "yes" %}
 	$(GIT) tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	$(GIT) push --tags origin
+{%- else %}
+	${HG} tag ${RELEASE_TAG}
+	${HG} commit -m "Release $(RELEASE_TAG)"
+	${HG} push --rev .
+{%- endif %}
 
 release: freeze-release pre-release build-release _tag-release upload-release
 
@@ -214,8 +245,16 @@ README.html: README.rst
 	rst2html5.py README.rst >| README.html
 
 cookiecutter:
-	rm -rf ${TMPDIR}
-	git clone . ${TMPDIR}/{{ cookiecutter.project_slug }}
-	cookiecutter -o ${TMPDIR} -f --config-file ./.cookiecutter.json \
+	rm -rf ${TEMP_DIR}
+{%- if cookiecutter.use_github == "yes" %}
+	git clone . ${TEMP_DIR}/{{ cookiecutter.project_name }}
+{%- else %}
+	${HG} clone . ${TEMP_DIR}/{{ cookiecutter.project_name }}
+{%- endif %}
+	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
                  --no-input ./cookiecutter
-	git -C ${TMPDIR}/{{ cookiecutter.project_slug }} status -s -b
+{%- if cookiecutter.use_github == "yes" %}
+	git -C ${TEMP_DIR}/{{ cookiecutter.project_name }} status -s -b
+{%- else %}
+	cd ${TEMP_DIR}/{{ cookiecutter.project_name }} && ${HG} status
+{%- endif %}

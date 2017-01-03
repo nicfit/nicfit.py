@@ -43,6 +43,7 @@
     "_comment": "##### Remote repo options  #####",
     "use_bitbucket": ["no", "yes"],
     "bitbucket_username": "bbuser",
+    "bitbucket_repo": "{{ cookiecutter.project_name }}",
 
     "use_github": ["yes", "no"],
     "github_username": "ghuser",
