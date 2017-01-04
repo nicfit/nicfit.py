@@ -29,7 +29,9 @@ class ArgumentParser(argparse.ArgumentParser):
                 config.set(sect, key, val)
 
         if "config_show_default" in parsed and parsed.config_show_default:
-            self.exit(0, self._config_opts.default_config)
+            # Not using the msg facility of self.exit because it goes to stderr
+            print(self._config_opts.default_config)
+            self.exit(0)
             # does not return
 
         return parsed, remaining
