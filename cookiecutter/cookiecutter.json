@@ -47,7 +47,8 @@
 
     "use_github": ["yes", "no"],
     "github_username": "ghuser",
-    "github_repo": "{{ cookiecutter.project_name }}",
+    "github_repo": "{{ cookiecutter.project_slug }}",
+    "github_url": "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}",
 
     "use_travis_ci": ["yes", "no"],
     "pypi_username": "{{ cookiecutter.github_username }}",
