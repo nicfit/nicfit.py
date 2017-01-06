@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 
-__version__ = "0.5.2-rc1"
+__version__ = "0.5.2"
 __release_name__ = ""
 __years__ = "2016-2017"
 
