@@ -44,6 +44,7 @@
     "use_bitbucket": ["no", "yes"],
     "bitbucket_username": "bbuser",
     "bitbucket_repo": "{{ cookiecutter.project_name }}",
+    "bitbucket_url": "https://bitbucket.org/{{ cookiecutter.bitbucket_username }}/{{ cookiecutter.project_slug }}",
 
     "use_github": ["yes", "no"],
     "github_username": "ghuser",

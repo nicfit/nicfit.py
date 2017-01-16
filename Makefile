@@ -192,7 +192,7 @@ README.html: README.rst
 
 cookiecutter:
 	rm -rf ${TEMP_DIR}
-	git clone . ${TEMP_DIR}/nicfit.py
+	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${TEMP_DIR}/nicfit.py
 	# FIXME: Pull from a non-local ./cookiecutter
 	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
                  --no-input ./cookiecutter

@@ -24,7 +24,6 @@ GIT := git -c user.name="$(NAME)" -c user.email="$(EMAIL)"
 {%- else %}
 BITBUCKET_USER ?= {{ cookiecutter.bitbucket_username }}
 BITBUCKET_REPO ?= {{ cookiecutter.bitbucket_repo }}
-HG=hg
 {%- endif %}
 PYPI_REPO = pypitest
 
@@ -160,7 +159,7 @@ pre-release: lint test changelog
 {%- if cookiecutter.use_github == "yes" %}
 	@if git tag -l | grep ${RELEASE_TAG} > /dev/null; then \
 {%- else %}
-	@if ${HG} tags -q | grep ${RELEASE_TAG} > /dev/null; then \
+	@if hg tags -q | grep ${RELEASE_TAG} > /dev/null; then \
 {%- endif %}
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
@@ -187,8 +186,8 @@ freeze-release:
 	@# TODO: check for incoming
 	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
 {%- else %}
-	@(test -z "`${HG} status --modified --added --deleted`" && \
-      ${HG} incoming | grep 'no changes found') || \
+	@(test -z "`hg status --modified --added --deleted`" && \
+      hg incoming | grep 'no changes found') || \
 {%- endif %}
         (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
          printf "\nCommit and try again.\n" && false)
@@ -198,9 +197,9 @@ _tag-release:
 	$(GIT) tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	$(GIT) push --tags origin
 {%- else %}
-	${HG} tag ${RELEASE_TAG}
-	-${HG} commit -m "Release $(RELEASE_TAG)"
-	${HG} push --rev .
+	hg tag ${RELEASE_TAG}
+	-hg commit -m "Release $(RELEASE_TAG)"
+	hg push --rev .
 {%- endif %}
 
 release: pre-release freeze-release build-release _tag-release _upload-release
@@ -264,15 +263,17 @@ README.html: README.rst
 cookiecutter:
 	rm -rf ${TEMP_DIR}
 {%- if cookiecutter.use_github == "yes" %}
-	git clone . ${TEMP_DIR}/{{ cookiecutter.project_name }}
+	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${TEMP_DIR}/{{ cookiecutter.project_name }}
 {%- else %}
-	${HG} clone . ${TEMP_DIR}/{{ cookiecutter.project_name }}
+	hg clone --updaterev `hg branch` . ${TEMP_DIR}/{{ cookiecutter.project_name }}
 {%- endif %}
 	# FIXME: Pull from a non-local ./cookiecutter
 	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
                  --no-input ./cookiecutter
 {%- if cookiecutter.use_github == "yes" %}
+	git -C ${TEMP_DIR}/{{ cookiecutter.project_name }} diff
 	git -C ${TEMP_DIR}/{{ cookiecutter.project_name }} status -s -b
 {%- else %}
-	cd ${TEMP_DIR}/{{ cookiecutter.project_name }} && ${HG} status
+	cd ${TEMP_DIR}/{{ cookiecutter.project_name }} && hg diff
+	cd ${TEMP_DIR}/{{ cookiecutter.project_name }} && hg status
 {%- endif %}
