@@ -36,7 +36,7 @@ if __name__ == "__main__":
     today = datetime.date.today()
 
     for path in [Path("HISTORY.rst"),
-                 Path('{{ cookiecutter.py_module }}') / "__init__.py",
+                 Path('{{ cookiecutter.py_module }}') / "__about__.py",
                  Path('docs') / 'conf.py']:
 
         replace_contents(path, '<TODAY>', today.strftime("%Y-%m-%d"))
@@ -56,6 +56,11 @@ if __name__ == "__main__":
         remove_file('.hgignore')
     if '{{ cookiecutter.use_github }}' == 'no':
         remove_file('.gitignore')
+
+    if '{{ cookiecutter.use_github }}' == 'yes':
+        shutil.move("git-commit-msg", ".git/hooks/commit-msg")
+    else:
+        remove_file('git-commit-msg')
 
     for f in Path("licenses").iterdir():
         f.unlink()
