@@ -26,6 +26,10 @@ BITBUCKET_USER ?= {{ cookiecutter.bitbucket_username }}
 BITBUCKET_REPO ?= {{ cookiecutter.bitbucket_repo }}
 {%- endif %}
 PYPI_REPO = pypitest
+VERSION = $(shell python setup.py --version 2> /dev/null)
+RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null)
+CHANGELOG = HISTORY.rst
+CHANGELOG_HEADER = v${VERSION} ($(shell date --iso-8601))$(if ${RELEASE_NAME}, : ${RELEASE_NAME},)
 
 help:
 	@echo "test - run tests quickly with the default Python"
@@ -149,11 +153,9 @@ pre-release: lint test changelog
 {%- else %}
 	@# TODO: Check bitbucket settings
 {%- endif %}
-	$(eval VERSION = $(shell python setup.py --version 2> /dev/null))
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
-	$(eval RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null))
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	check-manifest
 {%- if cookiecutter.use_github == "yes" %}
@@ -174,7 +176,21 @@ pre-release: lint test changelog
 
 changelog:
 {%- if cookiecutter.use_github == "yes" %}
-	@# TODO
+	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
+	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
+		rm -f ${CHANGELOG}.new; \
+		if test -n "$$last"; then \
+			gitchangelog show ^$${last} |\
+			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
+			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
+			 > ${CHANGELOG}.new; \
+		else \
+			cat ${CHANGELOG} |\
+			  sed "s/^%%version%% .*/${CHANGELOG_HEADER}/" \
+			> ${CHANGELOG}.new;\
+		fi; \
+		mv ${CHANGELOG}.new ${CHANGELOG}; \
+	fi
 {%- else %}
 	@# TODO
 {%- endif %}

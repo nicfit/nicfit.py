@@ -12,6 +12,10 @@ GITHUB_USER ?= nicfit
 GITHUB_REPO ?= nicfit.py
 GIT := git -c user.name="$(NAME)" -c user.email="$(EMAIL)"
 PYPI_REPO = pypitest
+VERSION = $(shell python setup.py --version 2> /dev/null)
+RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null)
+CHANGELOG = HISTORY.rst
+CHANGELOG_HEADER = v${VERSION} ($(shell date --iso-8601))$(if ${RELEASE_NAME}, : ${RELEASE_NAME},)
 
 help:
 	@echo "test - run tests quickly with the default Python"
@@ -108,13 +112,11 @@ pre-release: lint test changelog
 	@test -n "${EMAIL}" || (echo "EMAIL not set, needed for git" && false)
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
 	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
-	$(eval VERSION = $(shell python setup.py --version 2> /dev/null))
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
-	$(eval RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null))
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
-	check-manifest --ignore 'examples*'
+	check-manifest
 	@if git tag -l | grep ${RELEASE_TAG} > /dev/null; then \
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
@@ -123,7 +125,22 @@ pre-release: lint test changelog
 	@github-release --version    # Just a exe existence check
 
 changelog:
-	@# TODO
+	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
+	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
+		rm -f ${CHANGELOG}.new; \
+		if test -n "$$last"; then \
+			gitchangelog show ^$${last} |\
+			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
+			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
+			 > ${CHANGELOG}.new; \
+		else \
+			cat ${CHANGELOG} |\
+			  sed "s/^%%version%% .*/${CHANGELOG_HEADER}/" \
+			> ${CHANGELOG}.new;\
+		fi; \
+		mv ${CHANGELOG}.new ${CHANGELOG}; \
+	fi
+
 
 build-release: test-all dist
 

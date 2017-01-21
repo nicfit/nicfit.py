@@ -16,4 +16,4 @@ sphinxcontrib-paverutils
 #sphinxcontrib-bitbucket
 hg+https://nicfit@bitbucket.org/nicfit/sphinxcontrib-bitbucket
 {%- endif %}
-
+gitchangelog
