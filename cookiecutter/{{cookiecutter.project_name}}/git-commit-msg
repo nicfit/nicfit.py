@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+import re
+import sys
+from pathlib import Path
+
+msg_regex = re.compile(r"""
+        ^(?P<action>[Nn]ew|[Cc]hg|[Ff]ix):\s*
+         ((?P<audience>[Dd]ev|[Uu]sr|[Pp]kg|[Tt]est|[Dd]oc):\s*)?
+         (?P<msg>.*)""", re.DOTALL | re.VERBOSE)
+commit_msg = Path(sys.argv[1]).read_text()
+
+print("Checking commit msg for 'gitchangelog' formatting... ", end="")
+match = msg_regex.match(commit_msg)
+if not match:
+    print("FAIL")
+    print("\nCommit msg should match the pattern:\n{}\n"
+          "Or use 'git commit --no-verify'"
+          .format(msg_regex.pattern))
+    sys.exit(1)
+
+print("OK")
