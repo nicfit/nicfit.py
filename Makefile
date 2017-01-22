@@ -211,21 +211,19 @@ README.html: README.rst
 	rst2html5.py README.rst >| README.html
 	echo "python -m webbrowser -n README.html"
 
-CC_DIFF ?= no
-GVIMDIFF = gvimdiff -geometry 169x60 -f
-MELD = meld
+CC_DIFF ?= gvimdiff -geometry 169x60 -f
 cookiecutter:
 	rm -rf ${TEMP_DIR}
 	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${CC_DIR}
 	# FIXME: Pull from a non-local ./cookiecutter
 	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
                  --no-input ./cookiecutter
-	if test ${CC_DIFF} == "no"; then \
+	if test "${CC_DIFF}" == "no"; then \
 		git -C ${CC_DIR} diff; \
 		git -C ${CC_DIR} status -s -b; \
 	else \
 		for f in `git -C ${CC_DIR} status --porcelain | \
 		                 awk '{print $$2}'`; do \
-			${MELD} ${CC_DIR}/$$f ./$$f; \
+			${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
 		done \
 	fi

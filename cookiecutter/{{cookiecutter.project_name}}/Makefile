@@ -281,7 +281,7 @@ tags:
 README.html: README.rst
 	rst2html5.py README.rst >| README.html
 
-CC_DIFF ?= no
+CC_DIFF ?= gvimdiff -geometry 169x60 -f
 cookiecutter:
 	rm -rf ${TEMP_DIR}
 {%- if cookiecutter.use_github == "yes" %}
@@ -293,13 +293,13 @@ cookiecutter:
 	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
                  --no-input ./cookiecutter
 {%- if cookiecutter.use_github == "yes" %}
-	if test ${CC_DIFF} == "no"; then \
+	if test "${CC_DIFF}" == "no"; then \
 		git -C ${CC_DIR} diff; \
 		git -C ${CC_DIR} status -s -b; \
 	else \
 		for f in `git -C ${CC_DIR} status --porcelain | \
 		                 awk '{print $$2}'`; do \
-			gvimdiff -geometry 169x60 -f ${CC_DIR}/$$f ./$$f; \
+			${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
 		done \
 	fi
 {%- else %}
