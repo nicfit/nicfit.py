@@ -166,7 +166,11 @@ pre-release: lint test changelog
         false; \
     fi
 {%- if cookiecutter.use_github == "yes" %}
-	git authors --list >| AUTHORS
+	IFS=$$'\n';\
+	for auth in `git authors --list`; do \
+		echo "Checking $$auth...";\
+		grep "$$auth" AUTHORS || echo "$$auth" >> AUTHORS;\
+	done
 	@github-release --version    # Just a exe existence check
 {%- else %}
 	@# TODO: Update AUTHORS file
