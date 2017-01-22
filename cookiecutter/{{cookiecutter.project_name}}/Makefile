@@ -1,10 +1,12 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
         test test-all coverage docs release dist tags install \
         build-release pre-release freeze-release _tag-release _upload-release \
-        _pypi-release _github-release clean-docs cookiecutter changelog
+        _pypi-release _github-release clean-docs cookiecutter changelog \
+        _web-release
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
 TEMP_DIR ?= ./tmp
+CC_DIR = ${TEST_DIR}/{{ cookiecutter.project_name }}
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
@@ -243,10 +245,16 @@ _bitbucket-release:
 	false
 {%- endif %}
 
+_web-release:
+	# TODO
+	#find dist -type f -exec scp register -r ${PYPI_REPO} {} \;
+	# Not implemented
+	true
+
 {% if cookiecutter.use_github == "yes" %}
-_upload-release: _github-release _pypi-release
+_upload-release: _github-release _pypi-release _web-release
 {% else %}
-_upload-release: _bitbucket-release _pypi-release
+_upload-release: _bitbucket-release _pypi-release _web-release
 {% endif %}
 
 _pypi-release:
@@ -273,20 +281,28 @@ tags:
 README.html: README.rst
 	rst2html5.py README.rst >| README.html
 
+CC_DIFF ?= no
 cookiecutter:
 	rm -rf ${TEMP_DIR}
 {%- if cookiecutter.use_github == "yes" %}
-	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${TEMP_DIR}/{{ cookiecutter.project_name }}
+	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${CC_DIR}
 {%- else %}
-	hg clone --updaterev `hg branch` . ${TEMP_DIR}/{{ cookiecutter.project_name }}
+	hg clone --updaterev `hg branch` . ${CC_DIR}
 {%- endif %}
 	# FIXME: Pull from a non-local ./cookiecutter
 	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
                  --no-input ./cookiecutter
 {%- if cookiecutter.use_github == "yes" %}
-	git -C ${TEMP_DIR}/{{ cookiecutter.project_name }} diff
-	git -C ${TEMP_DIR}/{{ cookiecutter.project_name }} status -s -b
+	if test ${CC_DIFF} == "no"; then \
+		git -C ${CC_DIR} diff; \
+		git -C ${CC_DIR} -s -b; \
+	else \
+		for f in `git -C ${CC_DIR} status --porcelain | \
+		                 awk '{print $$2}'`; do \
+			gvimdiff -geometry 169x60 -f ./tmp/eyeD3/$$f ./$$f; \
+		done \
+	fi
 {%- else %}
-	cd ${TEMP_DIR}/{{ cookiecutter.project_name }} && hg diff
-	cd ${TEMP_DIR}/{{ cookiecutter.project_name }} && hg status
+	cd ${CC_DIR} && hg diff
+	cd ${CC_DIR} && hg status
 {%- endif %}
