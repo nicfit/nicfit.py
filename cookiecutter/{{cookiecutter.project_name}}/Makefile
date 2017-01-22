@@ -20,7 +20,6 @@ EMAIL ?= {{ cookiecutter.email }}
 {%- if cookiecutter.use_github == "yes" %}
 GITHUB_USER ?= {{ cookiecutter.github_username }}
 GITHUB_REPO ?= {{ cookiecutter.github_repo }}
-GIT := git -c user.name="$(NAME)" -c user.email="$(EMAIL)"
 {%- else %}
 BITBUCKET_USER ?= {{ cookiecutter.bitbucket_username }}
 BITBUCKET_REPO ?= {{ cookiecutter.bitbucket_repo }}
@@ -145,8 +144,6 @@ servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 pre-release: lint test changelog
-	@test -n "${NAME}" || (echo "NAME not set, needed for git" && false)
-	@test -n "${EMAIL}" || (echo "EMAIL not set, needed for git" && false)
 {%- if cookiecutter.use_github == "yes" %}
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
 	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
@@ -200,7 +197,7 @@ build-release: test-all dist
 freeze-release:
 {%- if cookiecutter.use_github == "yes" %}
 	@# TODO: check for incoming
-	@($(GIT) diff --quiet && $(GIT) diff --quiet --staged) || \
+	@(git diff --quiet && git diff --quiet --staged) || \
 {%- else %}
 	@(test -z "`hg status --modified --added --deleted`" && \
       hg incoming | grep 'no changes found') || \
@@ -210,8 +207,8 @@ freeze-release:
 
 _tag-release:
 {%- if cookiecutter.use_github == "yes" %}
-	$(GIT) tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
-	$(GIT) push --tags origin
+	git tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
+	git push --tags origin
 {%- else %}
 	hg tag ${RELEASE_TAG}
 	-hg commit -m "Release $(RELEASE_TAG)"
