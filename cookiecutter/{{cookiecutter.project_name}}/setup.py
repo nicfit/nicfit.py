@@ -114,11 +114,11 @@ else:
           zip_safe=False,
           platforms=["Any"],
           keywords=["{{ cookiecutter.project_slug }}"],
-          include_package_data=True,
           install_requires=requirements("default.txt"),
           tests_require=requirements("test.txt"),
           test_suite="{{ cookiecutter.src_dir }}/tests",
           long_description=readme + "\n\n" + history,
+          include_package_data=True,
           package_data={},
           entry_points={
               "console_scripts": [

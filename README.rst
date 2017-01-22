@@ -28,4 +28,4 @@ Status
 Features
 --------
 
-* 
+* Free software: MIT license

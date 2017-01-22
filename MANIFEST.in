@@ -7,6 +7,7 @@ include Makefile
 include tox.ini
 
 #graft docs
+#prune docs/_build
 graft cookiecutter
 
 recursive-include ./tests *.py

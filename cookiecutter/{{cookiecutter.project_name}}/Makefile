@@ -6,7 +6,7 @@
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
 TEMP_DIR ?= ./tmp
-CC_DIR = ${TEST_DIR}/{{ cookiecutter.project_name }}
+CC_DIR = ${TEMP_DIR}/{{ cookiecutter.project_name }}
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
@@ -295,11 +295,11 @@ cookiecutter:
 {%- if cookiecutter.use_github == "yes" %}
 	if test ${CC_DIFF} == "no"; then \
 		git -C ${CC_DIR} diff; \
-		git -C ${CC_DIR} -s -b; \
+		git -C ${CC_DIR} status -s -b; \
 	else \
 		for f in `git -C ${CC_DIR} status --porcelain | \
 		                 awk '{print $$2}'`; do \
-			gvimdiff -geometry 169x60 -f ./tmp/eyeD3/$$f ./$$f; \
+			gvimdiff -geometry 169x60 -f ${CC_DIR}/$$f ./$$f; \
 		done \
 	fi
 {%- else %}
