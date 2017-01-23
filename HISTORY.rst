@@ -3,6 +3,23 @@ Release History
 
 .. :changelog:
 
+v0.5.5 (2017-01-22)
+------------------------
+
+New
+~~~
+- Python version CC options.
+- Docs.
+
+Changes
+~~~~~~~
+- AUTHORS -> AUTHORS.rst.
+
+Fix
+~~~
+- BROWSER usage for docs/coverage view targets.
+
+
 v0.5.4 (2017-01-22)
 ------------------------
 
