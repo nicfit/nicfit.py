@@ -61,5 +61,13 @@
     "use_pytest": ["yes", "no"],
     "use_rtd": ["no", "yes"],
 
+    "py26": ["no", "yes"],
+    "py27": ["yes", "no"],
+    "py33": ["no", "yes"],
+    "py34": ["yes", "no"],
+    "py35": ["yes", "no"],
+    "py36": ["yes", "no"],
+    "py37": ["yes", "no"],
+
     "_comment": "##### end #####"
 }

@@ -1,13 +1,27 @@
 language: python
 
 python:
+{%- if cookiecutter.py26 == "yes" %}
+  - "2.6"
+{%- endif %}
+{%- if cookiecutter.py27 == "yes" %}
   - "2.7"
-  - "3.2"
+{%- endif %}
+{%- if cookiecutter.py33 == "yes" %}
   - "3.3"
+{%- endif %}
+{%- if cookiecutter.py34 == "yes" %}
   - "3.4"
+{%- endif %}
+{%- if cookiecutter.py35 == "yes" %}
   - "3.5"
+{%- endif %}
+{%- if cookiecutter.py36 == "yes" %}
   - "3.6"
+{%- endif %}
+{%- if cookiecutter.py37 == "yes" %}
   - "3.7-dev"
+{%- endif %}
 
 # command to install dependencies
 install:

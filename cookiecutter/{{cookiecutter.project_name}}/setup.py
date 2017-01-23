@@ -28,13 +28,24 @@ classifiers = [
     "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
 {%- endif %}
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2",
+{%- if cookiecutter.py26 == "yes" %}
+    "Programming Language :: Python :: 2.6",
+{%- endif %}
+{%- if cookiecutter.py27 == "yes" %}
     "Programming Language :: Python :: 2.7",
-    "Programming Language :: Python :: 3",
+{%- endif %}
+{%- if cookiecutter.py33 == "yes" %}
     "Programming Language :: Python :: 3.3",
+{%- endif %}
+{%- if cookiecutter.py34 == "yes" %}
     "Programming Language :: Python :: 3.4",
+{%- endif %}
+{%- if cookiecutter.py35 == "yes" %}
     "Programming Language :: Python :: 3.5",
+{%- endif %}
+{%- if cookiecutter.py36 == "yes" %}
     "Programming Language :: Python :: 3.6",
+{%- endif %}
     # XXX Remove to enable PyPi uploads
     "Private :: Do Not Upload",
 ]

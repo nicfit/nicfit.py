@@ -46,9 +46,23 @@ if __name__ == "__main__":
 
     for path in [Path("HISTORY.rst"),
                  Path('{{ cookiecutter.py_module }}') / "__about__.py",
-                 Path('docs') / 'conf.py']:
+                 Path('docs') / 'conf.py',
+                ]:
         replace_contents(path, '<TODAY>', today.strftime("%Y-%m-%d"))
         replace_contents(path, '<YEAR>', today.strftime("%Y"))
+
+    tox_envlist = []
+    for py, on in [("py26", "{{ cookiecutter.py26 }}"),
+                   ("py27", "{{ cookiecutter.py27 }}"),
+                   ("py33", "{{ cookiecutter.py33 }}"),
+                   ("py34", "{{ cookiecutter.py34 }}"),
+                   ("py35", "{{ cookiecutter.py35 }}"),
+                   ("py36", "{{ cookiecutter.py36 }}"),
+                  ]:
+        if on == "yes":
+            tox_envlist.append(py)
+    replace_contents(Path("tox.ini"), '@TOX_ENVLIST@',
+                     ", ".join(tox_envlist))
 
     if '{{ cookiecutter.use_travis_ci }}' == 'no':
         remove_file('.travis.yml')

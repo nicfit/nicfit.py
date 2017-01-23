@@ -8,8 +8,8 @@ include tox.ini
 
 graft cookiecutter
 
-#graft docs
-#prune docs/_build
+graft docs
+prune docs/_build
 
 recursive-include ./tests *.py
 
