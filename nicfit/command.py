@@ -44,5 +44,3 @@ class Command(object):
     def initAll(subparsers):
         for cmd in Command._all_commands.values():
             cmd(subparsers)
-
-

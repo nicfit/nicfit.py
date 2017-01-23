@@ -3,6 +3,17 @@ Release History
 
 .. :changelog:
 
+v0.5.4 (2017-01-22)
+------------------------
+
+New
+~~~
+
+- 'nicfit cookiecutter'
+- 'make build'
+- Commands API (nicfit.command)
+
+
 v0.5.3 (2017-01-21)
 -------------------
 

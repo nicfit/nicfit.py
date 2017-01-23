@@ -6,7 +6,7 @@ include README.rst
 include Makefile
 include tox.ini
 
-graft nicfit/cookiecutter
+graft cookiecutter
 
 #graft docs
 #prune docs/_build

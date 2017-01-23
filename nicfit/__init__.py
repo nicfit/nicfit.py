@@ -12,4 +12,4 @@ log = getLogger(__package__)
 
 __all__ = ["log", "getLogger", "version",
            "Application", "ArgumentParser", "Config", "ConfigOpts",
-           "Command", "CommandError"]
+           "command", "Command", "CommandError"]
