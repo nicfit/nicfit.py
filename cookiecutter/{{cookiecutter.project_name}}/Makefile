@@ -305,7 +305,9 @@ cookiecutter:
 	else \
 		for f in `git -C ${CC_DIR} status --porcelain | \
 		                 awk '{print $$2}'`; do \
-			${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
+			if test -f ${CC_DIR}/$$f; then \
+				${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
+			fi \
 		done; \
 		${CC_DIFF} ${CC_DIR}/.git/hooks/commit-msg ./.git/hooks/commit-msg; \
 	fi
