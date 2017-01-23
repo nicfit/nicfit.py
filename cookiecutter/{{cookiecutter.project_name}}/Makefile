@@ -293,9 +293,8 @@ cookiecutter:
 {%- else %}
 	hg clone --updaterev `hg branch` . ${CC_DIR}
 {%- endif %}
-	# FIXME: Pull from a non-local ./cookiecutter
-	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
-                 --no-input ./cookiecutter
+	nicfit cookiecutter --output-dir ${TEMP_DIR} \
+		                --config-file ./.cookiecutter.json --no-input
 {%- if cookiecutter.use_github == "yes" %}
 	if test "${CC_DIFF}" == "no"; then \
 		git -C ${CC_DIR} diff; \

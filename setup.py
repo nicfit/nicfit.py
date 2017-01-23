@@ -81,6 +81,14 @@ pkg_info["download_url"] = (
     .format(gz=gz, **pkg_info)
 )
 
+
+def package_files(directory):
+    paths = []
+    for (path, _, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join("..", path, filename))
+    return paths
+
 if sys.argv[1:] and sys.argv[1] == "--release-name":
     print(pkg_info["release_name"])
     sys.exit(0)
@@ -97,7 +105,9 @@ else:
           test_suite="./tests",
           long_description=readme + "\n\n" + history,
           include_package_data=True,
-          package_data={},
+          package_data = {
+              "nicfit": package_files("nicfit/cookiecutter/"),
+          },
           entry_points={
               "console_scripts": [
                   "nicfit = nicfit.__main__:app.run",

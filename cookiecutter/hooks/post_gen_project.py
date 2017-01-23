@@ -35,10 +35,18 @@ def copytree(src, dst, symlinks=False, ignore=None):
 if __name__ == "__main__":
     today = datetime.date.today()
 
+    if '{{ cookiecutter.use_github }}' == 'yes':
+        remove_file('.hgignore')
+        if not Path(".git").exists():
+            os.system("git init .")
+        shutil.move("git-commit-msg", ".git/hooks/commit-msg")
+    else:
+        remove_file('.gitignore')
+        remove_file('git-commit-msg')
+
     for path in [Path("HISTORY.rst"),
                  Path('{{ cookiecutter.py_module }}') / "__about__.py",
                  Path('docs') / 'conf.py']:
-
         replace_contents(path, '<TODAY>', today.strftime("%Y-%m-%d"))
         replace_contents(path, '<YEAR>', today.strftime("%Y"))
 
@@ -51,16 +59,6 @@ if __name__ == "__main__":
         remove_file('pavement.py')
     if '{{ cookiecutter.use_make }}' == 'no':
         remove_file('Makefile')
-
-    if '{{ cookiecutter.use_bitbucket }}' == 'no':
-        remove_file('.hgignore')
-    if '{{ cookiecutter.use_github }}' == 'no':
-        remove_file('.gitignore')
-
-    if '{{ cookiecutter.use_github }}' == 'yes':
-        shutil.move("git-commit-msg", ".git/hooks/commit-msg")
-    else:
-        remove_file('git-commit-msg')
 
     for f in Path("licenses").iterdir():
         f.unlink()

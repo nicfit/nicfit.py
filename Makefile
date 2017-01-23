@@ -215,9 +215,8 @@ CC_DIFF ?= gvimdiff -geometry 169x60 -f
 cookiecutter:
 	rm -rf ${TEMP_DIR}
 	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${CC_DIR}
-	# FIXME: Pull from a non-local ./cookiecutter
-	cookiecutter -o ${TEMP_DIR} -f --config-file ./.cookiecutter.json \
-                 --no-input ./cookiecutter
+	nicfit cookiecutter --output-dir ${TEMP_DIR} \
+		                --config-file ./.cookiecutter.json --no-input
 	if test "${CC_DIFF}" == "no"; then \
 		git -C ${CC_DIR} diff; \
 		git -C ${CC_DIR} status -s -b; \
