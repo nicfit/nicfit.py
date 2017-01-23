@@ -25,3 +25,4 @@ default_context:
     py34: "no"
     py35: "yes"
     py36: "yes"
+    py37: "yes"
