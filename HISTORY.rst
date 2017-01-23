@@ -36,7 +36,6 @@ Other
 - Cookiecut current branch, bitbucket and hg cleanup.
 
 
-
 v0.5.2 (2014-01-14)
 -------------------
 * Initial release
