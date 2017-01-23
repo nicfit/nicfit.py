@@ -123,7 +123,11 @@ pre-release: lint test changelog
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
-	git authors --list >| AUTHORS
+	IFS=$$'\n';\
+	for auth in `git authors --list`; do \
+		echo "Checking $$auth...";\
+		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
+	done
 	@github-release --version    # Just a exe existence check
 
 changelog:
@@ -226,8 +230,10 @@ cookiecutter:
 		for f in `git -C ${CC_DIR} status --porcelain | \
 		                 awk '{print $$2}'`; do \
 			if test -f ${CC_DIR}/$$f; then \
-				${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
+				diff ${CC_DIR}/$$f ./$$f > /dev/null || \
+				  ${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
 			fi \
 		done; \
-		${CC_DIFF} ${CC_DIR}/.git/hooks/commit-msg ./.git/hooks/commit-msg; \
+		diff ${CC_DIR}/$$f ./$$f > /dev/null || \
+		  ${CC_DIFF} ${CC_DIR}/.git/hooks/commit-msg ./.git/hooks/commit-msg; \
 	fi
