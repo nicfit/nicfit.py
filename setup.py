@@ -106,7 +106,7 @@ else:
           long_description=readme + "\n\n" + history,
           include_package_data=True,
           package_data = {
-              "nicfit": package_files("nicfit/cookiecutter/"),
+              "nicfit": package_files("cookiecutter/"),
           },
           entry_points={
               "console_scripts": [

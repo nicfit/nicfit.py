@@ -103,6 +103,14 @@ pkg_info["download_url"] = (
     .format(gz=gz, **pkg_info)
 )
 
+
+def package_files(directory):
+    paths = []
+    for (path, _, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join("..", path, filename))
+    return paths
+
 if sys.argv[1:] and sys.argv[1] == "--release-name":
     print(pkg_info["release_name"])
     sys.exit(0)

@@ -3,14 +3,16 @@ import re
 import sys
 from pathlib import Path
 
+commit_msg = Path(sys.argv[1]).read_text()
 msg_regex = re.compile(r"""
         ^(?P<action>[Nn]ew|[Cc]hg|[Ff]ix):\s*
          ((?P<audience>[Dd]ev|[Uu]sr|[Pp]kg|[Tt]est|[Dd]oc):\s*)?
          (?P<msg>.*)""", re.DOTALL | re.VERBOSE)
-commit_msg = Path(sys.argv[1]).read_text()
+tag_regex = re.compile(r".* !(?P<tag>refactor|minor|cosmetic|wip)\s*$")
 
 print("Checking commit msg for 'gitchangelog' formatting... ", end="")
-match = msg_regex.match(commit_msg)
+match = msg_regex.match(commit_msg) or \
+        tag_regex.search(commit_msg.split("\n")[0])
 if not match:
     print("FAIL")
     print("\nCommit msg should match the pattern:\n{}\n"

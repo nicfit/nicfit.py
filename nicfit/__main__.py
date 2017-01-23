@@ -27,11 +27,16 @@ class CookieCutter(nicfit.Command):
             print("CookieCutter not installed: pip install cookiecutter")
             return 1
 
-        template_d = Path(__file__).parent / "cookiecutter"
-        import ipdb; ipdb.set_trace()
+        template_d = None
+        for p in [Path(__file__).parent / "cookiecutter",
+                  Path(__file__).parent.parent / "cookiecutter",
+                 ]:
+            if p.exists():
+                template_d = p
+                break
+        assert template_d
         try:
-            cookiecutter(str(Path(__file__).parent / "cookiecutter"),
-                         config_file=self.args.config_file,
+            cookiecutter(str(template_d), config_file=self.args.config_file,
                          no_input=self.args.no_input, overwrite_if_exists=True,
                          output_dir=self.args.outdir)
         except click.exceptions.Abort as ex:

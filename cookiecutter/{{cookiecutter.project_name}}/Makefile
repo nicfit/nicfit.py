@@ -1,5 +1,5 @@
 .PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
-        test test-all coverage docs release dist tags install \
+        test test-all coverage docs release dist tags build install \
         build-release pre-release freeze-release _tag-release _upload-release \
         _pypi-release _github-release clean-docs cookiecutter changelog \
         _web-release
@@ -41,6 +41,7 @@ help:
 	@echo "clean-test - remove test and coverage artifacts"
 	@echo "clean-docs - remove autogenerating doc artifacts"
 	@echo "clean-patch - remove patch artifacts (.rej, .orig)"
+	@echo "build - byte-compile python files and generate other build objects"
 	@echo "lint - check style with flake8"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "test-all - run tests on various Python versions with tox"
@@ -53,6 +54,9 @@ help:
 	@echo "Options:"
 	@echo "TEST_PDB - If defined PDB options are added when 'pytest' is invoked"
 	@echo "BROWSER - Set to "yes" to open docs/coverage results in a web browser"
+
+build:
+	python setup.py build
 
 clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
 	rm -rf tags
@@ -293,8 +297,7 @@ cookiecutter:
 {%- else %}
 	hg clone --updaterev `hg branch` . ${CC_DIR}
 {%- endif %}
-	nicfit cookiecutter --output-dir ${TEMP_DIR} \
-		                --config-file ./.cookiecutter.json --no-input
+	nicfit cookiecutter --config-file ./.cookiecutter.json --no-input ${TEMP_DIR}
 {%- if cookiecutter.use_github == "yes" %}
 	if test "${CC_DIFF}" == "no"; then \
 		git -C ${CC_DIR} diff; \
@@ -303,7 +306,8 @@ cookiecutter:
 		for f in `git -C ${CC_DIR} status --porcelain | \
 		                 awk '{print $$2}'`; do \
 			${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
-		done \
+		done; \
+		${CC_DIFF} ${CC_DIR}/.git/hooks/commit-msg ./.git/hooks/commit-msg; \
 	fi
 {%- else %}
 	cd ${CC_DIR} && hg diff
