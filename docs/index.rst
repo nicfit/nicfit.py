@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to nicfit.py
-==========================================
+=====================
 
 Contents:
 

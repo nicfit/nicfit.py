@@ -7,16 +7,6 @@ SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
 TEMP_DIR ?= ./tmp
 CC_DIR = ${TEMP_DIR}/{{ cookiecutter.project_name }}
-define BROWSER_PYSCRIPT
-import os, webbrowser, sys
-try:
-    from urllib import pathname2url
-except:
-    from urllib.request import pathname2url
-webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
-endef
-export BROWSER_PYSCRIPT
-BROWSER := python -c "$$BROWSER_PYSCRIPT"
 NAME ?= {{ cookiecutter.full_name }}
 EMAIL ?= {{ cookiecutter.email }}
 {%- if cookiecutter.use_github == "yes" %}
@@ -53,7 +43,7 @@ help:
 	@echo ""
 	@echo "Options:"
 	@echo "TEST_PDB - If defined PDB options are added when 'pytest' is invoked"
-	@echo "BROWSER - Set to "yes" to open docs/coverage results in a web browser"
+	@echo "BROWSER - HTML viewer used by docs-view/coverage-view"
 
 build:
 	python setup.py build
@@ -125,10 +115,10 @@ coverage:
               --cover-package={{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }} \
               --cover-branches --cover-html \
               --cover-html-dir=$(_COVERAGE_BUILD_D) ${TEST_DIR}
-	@if test -n '$(BROWSER)'; then \
-        $(BROWSER) $(_COVERAGE_BUILD_D)/index.html;\
-    fi
 {%- endif %}
+
+coverage-view: coverage
+	${BROWSER} build/tests/coverage/index.html;\
 
 docs:
 	rm -f docs/{{ cookiecutter.project_slug }}.rst
@@ -136,9 +126,9 @@ docs:
 	sphinx-apidoc -o docs/ ${SRC_DIRS}
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	@if test -n '$(BROWSER)'; then \
-	    $(BROWSER) docs/_build/html/index.html;\
-	fi
+
+docs-view: docs
+	$(BROWSER) docs/_build/html/index.html;\
 
 clean-docs:
 	# TODO
@@ -288,6 +278,9 @@ tags:
 
 README.html: README.rst
 	rst2html5.py README.rst >| README.html
+	if test -n "${BROWSER}"; then \
+		${BROWSER} README.html;\
+	fi
 
 CC_DIFF ?= gvimdiff -geometry 169x60 -f
 cookiecutter:
@@ -310,7 +303,7 @@ cookiecutter:
 				  ${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
 			fi \
 		done; \
-		diff ${CC_DIR}/$$f ./$$f > /dev/null || \
+		diff ${CC_DIR}/.git/hooks/commit-msg .git/hooks/commit-msg >/dev/null || \
 		  ${CC_DIFF} ${CC_DIR}/.git/hooks/commit-msg ./.git/hooks/commit-msg; \
 	fi
 {%- else %}

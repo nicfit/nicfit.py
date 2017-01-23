@@ -7,7 +7,6 @@ SRC_DIRS = ./nicfit
 TEST_DIR = ./tests
 TEMP_DIR ?= ./tmp
 CC_DIR = ${TEMP_DIR}/nicfit.py
-
 NAME ?= Travis Shirk
 EMAIL ?= travis@pobox.com
 GITHUB_USER ?= nicfit
@@ -39,6 +38,7 @@ help:
 	@echo ""
 	@echo "Options:"
 	@echo "TEST_PDB - If defined PDB options are added when 'pytest' is invoked"
+	@echo "BROWSER - HTML viewer used by docs-view/coverage-view"
 
 build:
 	python setup.py build
@@ -47,8 +47,8 @@ clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
 	rm -rf tags
 
 clean-local:
-	-rm *.log
 	@# XXX Add new clean targets here.
+	-rm *.log
 
 clean-build:
 	rm -fr build/
@@ -92,7 +92,9 @@ coverage:
 	pytest --cov=./nicfit \
            --cov-report=html --cov-report term \
            --cov-config=setup.cfg ${TEST_DIR}
-	echo "python -m webbrowser build/tests/coverage/index.html"
+
+coverage-view: coverage
+	${BROWSER} build/tests/coverage/index.html;\
 
 docs:
 	rm -f docs/nicfit.py.rst
@@ -100,7 +102,9 @@ docs:
 	sphinx-apidoc -o docs/ ${SRC_DIRS}
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	echo "python -m webbrowser -n docs/_build/html/index.html"
+
+docs-view: docs
+	$(BROWSER) docs/_build/html/index.html;\
 
 clean-docs:
 	# TODO
@@ -216,7 +220,9 @@ tags:
 
 README.html: README.rst
 	rst2html5.py README.rst >| README.html
-	echo "python -m webbrowser -n README.html"
+	if test -n "${BROWSER}"; then \
+		${BROWSER} README.html;\
+	fi
 
 CC_DIFF ?= gvimdiff -geometry 169x60 -f
 cookiecutter:
@@ -234,6 +240,6 @@ cookiecutter:
 				  ${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
 			fi \
 		done; \
-		diff ${CC_DIR}/$$f ./$$f > /dev/null || \
+		diff ${CC_DIR}/.git/hooks/commit-msg .git/hooks/commit-msg >/dev/null || \
 		  ${CC_DIFF} ${CC_DIR}/.git/hooks/commit-msg ./.git/hooks/commit-msg; \
 	fi
