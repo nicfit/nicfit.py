@@ -44,3 +44,5 @@ class Command(object):
     def initAll(subparsers):
         for cmd in Command._all_commands.values():
             cmd(subparsers)
+        else:
+            raise ValueError("No commands have been registered")
