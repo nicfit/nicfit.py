@@ -42,14 +42,14 @@
 
     "_comment": "##### Remote repo options  #####",
     "use_bitbucket": ["no", "yes"],
-    "bitbucket_username": "bbuser",
-    "bitbucket_repo": "{{ cookiecutter.project_name }}",
-    "bitbucket_url": "https://bitbucket.org/{{ cookiecutter.bitbucket_username }}/{{ cookiecutter.project_slug }}",
+    "bitbucket_username": "bitbucket-user",
+    "bitbucket_repo": "{{ cookiecutter.project_slug }}",
+    "bitbucket_url": "https://bitbucket.org/{{ cookiecutter.bitbucket_username }}/{{ cookiecutter.bitbucket_repo }}",
 
     "use_github": ["yes", "no"],
-    "github_username": "ghuser",
+    "github_username": "github-user",
     "github_repo": "{{ cookiecutter.project_slug }}",
-    "github_url": "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}",
+    "github_url": "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.github_repo }}",
 
     "use_travis_ci": ["yes", "no"],
     "pypi_username": "{{ cookiecutter.github_username }}",

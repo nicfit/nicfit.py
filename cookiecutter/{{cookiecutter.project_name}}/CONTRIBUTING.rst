@@ -1,7 +1,9 @@
 {%- if cookiecutter.use_bitbucket == "yes" -%}
 {%- set repo_host = 'BitBucket' -%}
+{%- set repo = '{{ cookiecutter.bitbucket_repo }}' -%}
 {%- else -%}
 {%- set repo_host = 'GitHub' -%}
+{%- set repo = '{{ cookiecutter.github_repo }}' -%}
 {%- endif -%}
 ============
 Contributing
@@ -19,9 +21,9 @@ Report Bugs
 ~~~~~~~~~~~
 
 {% if cookiecutter.use_bitbucket == "yes" -%}
-Report bugs at https://bitbucket.org/{{ cookiecutter.bitbucket_username }}/{{ cookiecutter.project_slug }}/issues.
+Report bugs at {{ cookiecutter.bitbucket_url }}/issues.
 {%- else -%}
-Report bugs at https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/issues.
+Report bugs at {{ cookiecutter.github_url }}/issues.
 {%- endif %}
 
 If you are reporting a bug, please include:
@@ -54,9 +56,9 @@ Submit Feedback
 
 The best way to send feedback is to file an issue at
 {%- if cookiecutter.use_bitbucket == "yes" %}
-https://bitbucket.org/{{ cookiecutter.bitbucket_username }}/{{ cookiecutter.project_slug }}/issues.
+{{ cookiecutter.bitbucket_url }}/issues.
 {%- else %}
-https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/issues.
+{{ cookiecutter.github_url }}/issues.
 {%- endif %}
 
 If you are proposing a feature:
@@ -69,17 +71,18 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `{{ cookiecutter.project_slug }}` for local development.
+Ready to contribute? Here's how to set up `{{ repo }}` for
+local development.
 
-1. Fork the `{{ cookiecutter.project_slug }}` repo on {{ repo_host }}.
+1. Fork the `{{ repo }}` repo on {{ repo_host }}.
 2. Clone your fork locally::
 
 {%- if cookiecutter.use_bitbucket == "yes" %}
 
-    $ hg clone https://your_name_here@bitbucket.org/your_name_here/{{ cookiecutter.project_slug }}
+    $ hg clone https://your_name_here@bitbucket.org/your_name_here/{{ cookiecutter.bitbucket_repo }}
 {%- else %}
 
-    $ git clone git@github.com:your_name_here/{{ cookiecutter.project_slug }}.git
+    $ git clone git@github.com:your_name_here/{{ cookiecutter.github_repo }}.git
 {%- endif %}
 
 3. Install your local copy into a virtualenv. Assuming you have
@@ -103,13 +106,15 @@ Ready to contribute? Here's how to set up `{{ cookiecutter.project_slug }}` for 
    Now you can make your changes locally.
 
 5. When you're done making changes, check that your changes pass flake8 and the
-   tests, including testing other Python versions with tox::
+   tests, including testing other Python versions with tox:
+
+.. code-block:: bash
 
     $ make lint
     $ make test
-    $ make test-all
+    $ make test-all    # Optional, requires multiple versions of Python
 
-   To get flake8 and tox, just pip install them into your virtualenv.
+To get flake8 and tox, just pip install them into your virtualenv.
 
 6. Commit your changes and push your branch to {{ repo_host }}.::
 {%- if cookiecutter.use_bitbucket == "yes" %}
@@ -136,5 +141,5 @@ Before you submit a pull request, check that it meets these guidelines:
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
 3. The pull request should work for Python 2.7, and 3.3, 3.4, 3.5, and for PyPy.  Check
-   https://travis-ci.org/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}/pull_requests
+   https://travis-ci.org/{{ cookiecutter.github_username }}/{{ cookiecutter.github_repo }}/pull_requests
    and make sure that the tests pass for all supported Python versions.
