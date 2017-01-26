@@ -139,7 +139,7 @@ changelog:
 	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
 		rm -f ${CHANGELOG}.new; \
 		if test -n "$$last"; then \
-			gitchangelog show ^$${last} |\
+			gitchangelog show --author-format=email ^$${last} |\
 			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
 			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
 			 > ${CHANGELOG}.new; \

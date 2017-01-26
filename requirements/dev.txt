@@ -5,4 +5,5 @@ flake8
 twine
 Sphinx
 check-manifest
-gitchangelog
+#gitchangelog
+git+https://github.com/nicfit/gitchangelog.git
