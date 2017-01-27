@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 def register(CommandSubClass):
     """A class decorator for Command classes to register in the default set."""
-    Command._all_commands[CommandSubClass.name] = CommandSubClass
+    Command._all_commands[CommandSubClass.name()] = CommandSubClass
     return CommandSubClass
 
 
@@ -46,3 +46,6 @@ class Command(object):
             cmd(subparsers)
         else:
             raise ValueError("No commands have been registered")
+
+
+__all__ = ["register", "CommandError", "Command"]
