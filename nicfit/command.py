@@ -10,6 +10,9 @@ def register(CommandSubClass):
 
 class CommandError(Exception):
     """Base error type for nicfit.command.Command errors."""
+    def __init__(self, msg, exit_status=1):
+        super().__init__(msg)
+        self.exit_status = exit_status
 
 
 class Command(object):
