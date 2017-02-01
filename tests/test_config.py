@@ -1,9 +1,9 @@
-import os.path
+import os
 import tempfile
 import argparse
 import configparser
 from pathlib import Path
-from os.path import expandvars, expanduser, join, sep
+from os.path import expandvars, expanduser, join
 
 import pytest
 
@@ -279,8 +279,20 @@ mainkey = config3
 key = value
 """
 
+
 def test_configoverride_argtype():
     assert _config_override("sect:key=val") == ("sect", ("key", "val"))
     for val in ("sect", "sect:key", "sect:=val", ":key=", ":="):
         with pytest.raises(ValueError):
             _config_override(val)
+
+
+def test_env_config(tmpdir):
+    config_path = tmpdir.join("config.ini")
+    config_path.write(SAMPLE_CONFIG1)
+    os.environ["CONFIG_VAR"] = str(config_path)
+
+    c = Config("file.ini", config_env_var="CONFIG_VAR")
+    assert c.sections() == ["MAIN", "CONFIG1"]
+    assert c["MAIN"]["mainkey"] == "config1"
+    assert c["CONFIG1"]["key"] == "value"

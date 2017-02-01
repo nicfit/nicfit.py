@@ -79,11 +79,12 @@ def addCommandLineArgs(arg_parser):
 
 
 def applyLoggingOpts(log_levels, log_files):
-    """Apply logging options produced my LogLevelAction and LogFileAction.
+    """Apply logging options produced by LogLevelAction and LogFileAction.
 
     More often then not this function is not needed, the actions have already
-    been taken dur.ing the parse, but it can be used in the case they need to be
-    applied again.
+    been taken during the parse, but it can be used in the case they need to be
+    applied again (e.g. when command line opts take precedence but were
+    overridded by a fileConfig, etc.).
     """
     for l, lvl in log_levels:
         l.setLevel(lvl)
