@@ -45,10 +45,11 @@ class Command(object):
 
     @staticmethod
     def initAll(subparsers):
+        if not Command._all_commands:
+            raise ValueError("No commands have been registered")
+
         for cmd in Command._all_commands.values():
             cmd(subparsers)
-        else:
-            raise ValueError("No commands have been registered")
 
 
 __all__ = ["register", "CommandError", "Command"]
