@@ -3,6 +3,13 @@ from pathlib import Path
 import nicfit
 from . import version
 
+try:
+    from cookiecutter.main import cookiecutter
+    from cookiecutter.exceptions import CookiecutterException
+    import click.exceptions
+except ImportError:  # pragma: nocover
+    cookiecutter = None
+
 
 @nicfit.command.register
 class CookieCutter(nicfit.Command):
@@ -19,11 +26,7 @@ class CookieCutter(nicfit.Command):
                                  "cookiecutter.json file content")
 
     def _run(self):
-        try:
-            import click.exceptions
-            from cookiecutter.exceptions import CookiecutterException
-            from cookiecutter.main import cookiecutter
-        except ImportError:
+        if cookiecutter is None:
             print("CookieCutter not installed: pip install cookiecutter")
             return 1
 
@@ -40,7 +43,7 @@ class CookieCutter(nicfit.Command):
                          no_input=self.args.no_input, overwrite_if_exists=True,
                          output_dir=self.args.outdir)
         except click.exceptions.Abort as ex:
-            raise KeyboardInterrupt()
+            raise KeyboardInterrupt()  # pragma: nocover
         except CookiecutterException as ex:
             exstr = str(ex)
             print("CookieCutter error: {}"
@@ -65,4 +68,4 @@ class Nicfit(nicfit.Application):
 
 app = Nicfit()
 if __name__ == "__main__":
-    app.run()
+    app.run()  # pragma: nocover

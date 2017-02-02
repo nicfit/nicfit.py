@@ -19,7 +19,7 @@ LEVELS = [logging.DEBUG, logging.VERBOSE, logging.INFO,
 LEVEL_NAMES = [logging.getLevelName(l).lower() for l in LEVELS]
 
 
-def getLogger(name):
+def getLogger(name=None):
     OrigLoggerClass = logging.getLoggerClass()
     try:
         logging.setLoggerClass(Logger)

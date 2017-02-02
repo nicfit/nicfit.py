@@ -6,7 +6,7 @@ log = getLogger(__name__)
 
 try:
     import ipdb as _debugger
-except ImportError:
+except ImportError:                                            # pragma: nocover
     import pdb as _debugger
 def _pdb(): # noqa
     e, m, tb = sys.exc_info()
@@ -71,7 +71,7 @@ class Application:
         try:
             retval = self._run(args_list=args_list)
         except KeyboardInterrupt:
-            self.log.verbose("Interrupted")
+            self.log.verbose("Interrupted")                    # pragma: nocover
         except SystemExit as exit:
             self.log.verbose("Exited")
             retval = exit.code
