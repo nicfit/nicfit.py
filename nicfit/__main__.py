@@ -2,6 +2,8 @@
 from pathlib import Path
 import nicfit
 from . import version
+from .console import ansi
+from .console.ansi import Fg, Style
 
 try:
     from cookiecutter.main import cookiecutter
@@ -60,10 +62,11 @@ class Nicfit(nicfit.Application):
         nicfit.Command.initAll(subs)
 
     def _main(self, args):
+        ansi.init()
         if args.command:
             return args.command_func(args)
         else:
-            print("\m/ \m/")
+            print(Fg.red("\m/ {} \m/".format(Style.inverse("Slayer"))))
 
 
 app = Nicfit()
