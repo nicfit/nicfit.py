@@ -1,3 +1,4 @@
+import sys
 import pytest
 from unittest.mock import patch, Mock
 import nicfit.app
@@ -78,7 +79,10 @@ def test_pdb():
         try:
             app.run(["--pdb"])
         except SystemExit:
-            mock_pm.assert_called()
+            if sys.version_info[:2] >= (3, 6):
+                mock_pm.assert_called()
+            else:
+                assert mock_pm.call_count != 0
         else:
             pytest.fail("Expected ValueError")
 

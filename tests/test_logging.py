@@ -1,3 +1,4 @@
+import sys
 import pytest
 import logging
 import logging.config
@@ -112,7 +113,10 @@ def test_FileConfig():
 def test_FileConfig_auto():
     with patch("logging.config.fileConfig") as mock_fileConfig:
         LOGGING_CONFIG("INl3agueWitS4t4n", init_logging=True)
-        mock_fileConfig.assert_called()
+        if sys.version_info[:2] >= (3, 6):
+            mock_fileConfig.assert_called()
+        else:
+            assert mock_fileConfig.call_count != 0
 
 
 def test_optSplit():

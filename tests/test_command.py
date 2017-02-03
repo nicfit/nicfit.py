@@ -1,3 +1,4 @@
+import sys
 import pytest
 from unittest.mock import MagicMock as Mock
 from nicfit.command import Command, CommandError, register
@@ -71,7 +72,10 @@ def test_run(emptycommands):
     cmd._initArgParser.assert_called_once_with(mock_parser)
 
     cmd.run(mock_args)
-    cmd._run.assert_called_once()
+    if sys.version_info[:2] >= (3, 6):
+        cmd._run.assert_called_once()
+    else:
+        assert cmd._run.call_count == 1
     assert cmd.args is mock_args
     mock_parser.set_defaults.assert_called_once_with(command_func=cmd.run)
 

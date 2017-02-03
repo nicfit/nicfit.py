@@ -1,3 +1,4 @@
+import sys
 import pytest
 from unittest.mock import MagicMock as Mock
 from nicfit import ArgumentParser
@@ -80,5 +81,8 @@ def test_ArgumentParser_add_subparsers():
     with pytest.raises(SystemExit):
         args.command = None
         args.func(args, Mock())
-    p.print_help.assert_called_once()
+    if sys.version_info[:2] >= (3, 6):
+        p.print_help.assert_called_once()
+    else:
+        assert p.print_help.call_count == 1
     p.parse_args.assert_not_called()
