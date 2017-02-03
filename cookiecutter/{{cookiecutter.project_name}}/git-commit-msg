@@ -16,8 +16,8 @@ match = msg_regex.match(commit_msg) or \
 if not match:
     print("FAIL")
     print("\nCommit msg should match the pattern:\n{}\n"
-          "Or use 'git commit --no-verify'"
-          .format(msg_regex.pattern))
+          "Or use 'git commit --no-verify'. Original:\n{}"
+          .format(msg_regex.pattern, commit_msg))
     sys.exit(1)
 
 print("OK")
