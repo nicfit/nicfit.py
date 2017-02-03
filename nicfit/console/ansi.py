@@ -14,7 +14,7 @@ def init(enabled=os.isatty(sys.stdout.fileno())):
         _USE_ANSI = enabled
 
 
-class FgColors:
+class FgPalette:
     (GREY,
      RED,
      GREEN,
@@ -26,7 +26,7 @@ class FgColors:
     RESET = 39
 
 
-class BgColors:
+class BgPalette:
     (GREY,
      RED,
      GREEN,
@@ -38,7 +38,7 @@ class BgColors:
     RESET = 49
 
 
-class Styles:
+class StylePalette:
     (RESET_ALL,
      BRIGHT,
      DIM,
@@ -61,14 +61,14 @@ class Styles:
 
 
 class AnsiCodes(object):
-    _CSI = '\033['
+    _CSI = "\033["
 
     def __init__(self, codes):
         def code_to_chars(code):
             return AnsiCodes._CSI + str(code) + 'm'
 
         for name in dir(codes):
-            if not name.startswith('_'):
+            if name == name.upper():
                 value = getattr(codes, name)
                 setattr(self, name, code_to_chars(value))
 
@@ -109,9 +109,9 @@ class AnsiCodes(object):
         return getattr(self, name.upper())
 
 
-Fg = AnsiCodes(FgColors)
-Bg = AnsiCodes(BgColors)
-Style = AnsiCodes(Styles)
+Fg = AnsiCodes(FgPalette)
+Bg = AnsiCodes(BgPalette)
+Style = AnsiCodes(StylePalette)
 
 """
 
@@ -131,6 +131,10 @@ Examples:
     print(Fg.yellow("\m/ \m/", Style.BRIGHT, Style.UNDERLINE, Style.ITALICS))
     print("{b}\{g}m{r}{b}/{r}".format(b=Fg.BLUE, g=Fg.GREEN, r=Fg.RESET))
     print(Bg.green(Fg.yellow("\{}/".format(Style.strike_thru("mmmm")))))
+    print("%(BLUE)sNice%(RESET)s" % Fg)
+
+    # TODO
+    ################################################################################
 """
 
 __all__ = ["Fg", "Bg", "Style"]
