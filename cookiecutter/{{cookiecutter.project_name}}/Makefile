@@ -1,8 +1,8 @@
-.PHONY: clean-pyc clean-build clean-patch clean-local docs clean help lint \
-        test test-all coverage docs release dist tags build install \
-        build-release pre-release freeze-release _tag-release _upload-release \
-        _pypi-release _github-release clean-docs cookiecutter changelog \
-        _web-release
+.PHONY: help build test clean dist install coverage pre-release release \
+        docs clean-docs lint tags docs-dist docs-view coverage-view changelog \
+        clean-pyc clean-build clean-patch clean-local clean-test-data \
+        test-all test-data build-release freeze-release tag-release \
+        pypi-release web-release github-release
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
 TEMP_DIR ?= ./tmp
@@ -17,6 +17,7 @@ BITBUCKET_USER ?= {{ cookiecutter.bitbucket_username }}
 BITBUCKET_REPO ?= {{ cookiecutter.bitbucket_repo }}
 {%- endif %}
 PYPI_REPO = pypitest
+PROJECT_NAME = $(shell python setup.py --name 2> /dev/null)
 VERSION = $(shell python setup.py --version 2> /dev/null)
 RELEASE_NAME = $(shell python setup.py --release-name 2> /dev/null)
 CHANGELOG = HISTORY.rst
@@ -130,6 +131,11 @@ docs:
 docs-view: docs
 	$(BROWSER) docs/_build/html/index.html;\
 
+docs-dist: clean-docs docs
+	test -d dist || mkdir dist
+	cd docs/_build && \
+	    tar czvf ../../dist/${PROJECT_NAME}-${VERSION}_docs.tar.gz html
+
 clean-docs:
 	# TODO
 	#$(MAKE) -C docs clean
@@ -205,7 +211,7 @@ freeze-release:
         (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
          printf "\nCommit and try again.\n" && false)
 
-_tag-release:
+tag-release:
 {%- if cookiecutter.use_github == "yes" %}
 	git tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	git push --tags origin
@@ -215,10 +221,10 @@ _tag-release:
 	hg push --rev .
 {%- endif %}
 
-release: pre-release freeze-release build-release _tag-release _upload-release
+release: pre-release freeze-release build-release tag-release upload-release
 
 {% if cookiecutter.use_github == "yes" %}
-_github-release:
+github-release:
 	name="${RELEASE_TAG}"; \
     if test -n "${RELEASE_NAME}"; then \
         name="${RELEASE_TAG} (${RELEASE_NAME})"; \
@@ -238,29 +244,29 @@ _github-release:
                    --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
     done
 {% else %}
-_bitbucket-release:
+bitbucket-release:
 	# Not implemented
 	false
 {%- endif %}
 
-_web-release:
+web-release:
 	# TODO
 	#find dist -type f -exec scp register -r ${PYPI_REPO} {} \;
 	# Not implemented
 	true
 
 {% if cookiecutter.use_github == "yes" %}
-_upload-release: _github-release _pypi-release _web-release
+upload-release: github-release pypi-release web-release
 {% else %}
-_upload-release: _bitbucket-release _pypi-release _web-release
+upload-release: bitbucket-release pypi-release web-release
 {% endif %}
 
-_pypi-release:
+pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
 
-dist: clean
-	python setup.py sdist
+dist: clean docs-dist
+	python setup.py sdist --formats=gztar,zip
 	python setup.py bdist_egg
 	python setup.py bdist_wheel
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
