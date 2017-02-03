@@ -3,13 +3,14 @@ import sys
 import pytest
 from unittest.mock import patch, Mock
 from nicfit.__main__ import app
+from nicfit.console.ansi import Fg, Style
 
 
-def test_NicfitApp_default(capsys):
+def test_NicfitApp_default(capfd):
     with pytest.raises(SystemExit):
         app.run([])
-    out, _ = capsys.readouterr()
-    assert out == r"\m/ Slayer \m/" + "\n"
+    out, _ = capfd.readouterr()
+    assert out == Fg.red("\m/ {} \m/".format(Style.inverse("Slayer"))) + "\n"
 
 
 def test_NicfitApp_invalid():
