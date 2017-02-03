@@ -3,6 +3,30 @@ Release History
 
 .. :changelog:
 
+v0.5.6 (2017-02-02)
+------------------------
+
+New
+~~~
+
+- nicfit.console (moved from eyeD3)
+- nicfit.util.cd (a chdir context manager)
+- CommandError.exit_status.
+- Added py37 support.
+
+Changes
+~~~~~~~
+
+- Gitchangelog --author-format=email.
+- Command.initAll raises a ValueError if no commands are registered.
+
+Fix
+~~~
+
+- Fixed test for <=py35 missing features.
+- Use command name for _all_commands.
+
+
 v0.5.5 (2017-01-22)
 ------------------------
 
@@ -56,3 +80,9 @@ Other
 v0.5.2 (2014-01-14)
 -------------------
 * Initial release
+
+
+v0.4.0 (2016-12-28)
+-------------------
+
+- Python 3.4 compatible.
