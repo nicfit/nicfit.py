@@ -22,8 +22,7 @@ At the command line:
     $ tar zxf nicfit.py-|version|.tar.gz
     $ cd nicfit.py-|version|
     $ python setup.py install
-
-From BitBucket
+From GitHub
 --------------
 At the command line::
     $ git clone https://github.com/nicfit/nicfit.py
@@ -37,4 +36,4 @@ Additional dependencies should be installed if developing MishMash::
 Dependencies
 -------------
 All the required software dependencies are installed using either
-``requirements.txt`` files or by ``python install setup.py``.
+``requirements/default.txt`` files or by ``python install setup.py``.

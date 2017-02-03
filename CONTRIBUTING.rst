@@ -78,13 +78,15 @@ Ready to contribute? Here's how to set up `nicfit.py` for local development.
    Now you can make your changes locally.
 
 5. When you're done making changes, check that your changes pass flake8 and the
-   tests, including testing other Python versions with tox::
+   tests, including testing other Python versions with tox:
+
+.. code-block:: bash
 
     $ make lint
     $ make test
-    $ make test-all
+    $ make test-all    # Optional, requires multiple versions of Python
 
-   To get flake8 and tox, just pip install them into your virtualenv.
+To get flake8 and tox, just pip install them into your virtualenv.
 
 6. Commit your changes and push your branch to GitHub.::
 
