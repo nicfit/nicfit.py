@@ -3,7 +3,7 @@ import argparse
 
 
 class ArgumentParser(argparse.ArgumentParser):
-    """ArgumentParser with optional logging options."""
+    """ArgumentParser with optional logging, config, and sub-command support."""
 
     def __init__(self, add_log_args=False, config_opts=None, **kwargs):
         super().__init__(**kwargs)

@@ -52,7 +52,7 @@ def test_NicfitApp_cookiecutter_exception(tmpdir):
         assert sysexit.value.code == 1
 
 
-def test_NicfitApp_cookiecutter_real(tmpdir):
+def test_NicfitApp_cookiecutter_real(tmpdir, unshallowed_repo):
     with pytest.raises(SystemExit) as sysexit:
         app.run(["cookiecutter", str(tmpdir), "--no-input"])
     assert sysexit.value.code == 0
