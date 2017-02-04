@@ -25,6 +25,7 @@ python:
 
 cache:
     pip: true
+
 install:
     - pip install -U -r requirements/test.txt
     - pip install coveralls

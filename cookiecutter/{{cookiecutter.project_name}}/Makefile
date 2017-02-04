@@ -71,7 +71,7 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
-	rm -rf ${TEMP_DIR}
+	rm -rf ${CC_DIR}
 
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
@@ -289,8 +289,9 @@ README.html: README.rst
 	fi
 
 CC_DIFF ?= gvimdiff -geometry 169x60 -f
+GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
-	rm -rf ${TEMP_DIR}
+	rm -rf ${CC_DIR}
 {%- if cookiecutter.use_github == "yes" %}
 	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${CC_DIR}
 {%- else %}
@@ -305,12 +306,18 @@ cookiecutter:
 		for f in `git -C ${CC_DIR} status --porcelain | \
 		                 awk '{print $$2}'`; do \
 			if test -f ${CC_DIR}/$$f; then \
+				if test ! -f ./$$f; then \
+					touch ./$$f; \
+				fi; \
 				diff ${CC_DIR}/$$f ./$$f > /dev/null || \
 				  ${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
-			fi \
+			fi; \
 		done; \
-		diff ${CC_DIR}/.git/hooks/commit-msg .git/hooks/commit-msg >/dev/null || \
-		  ${CC_DIFF} ${CC_DIR}/.git/hooks/commit-msg ./.git/hooks/commit-msg; \
+		if test ! -f ${GIT_COMMIT_HOOK}; then \
+			touch ${GIT_COMMIT_HOOK}; \
+		fi; \
+		diff ${CC_DIR}/${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK} >/dev/null || \
+		     ${CC_DIFF} ${CC_DIR}/${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK}; \
 	fi
 {%- else %}
 	cd ${CC_DIR} && hg diff
