@@ -1,3 +1,5 @@
+cookiecutter/hooks/pre_gen_project.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
