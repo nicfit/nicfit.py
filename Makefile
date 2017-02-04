@@ -42,9 +42,11 @@ help:
 
 build:
 	python setup.py build
+	${MAKE} -C ./cookiecutter all
 
 clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
 	rm -rf tags
+	${MAKE} -C ./cookiecutter clean
 
 clean-local:
 	@# XXX Add new clean targets here.
@@ -226,9 +228,10 @@ README.html: README.rst
 
 CC_DIFF ?= gvimdiff -geometry 169x60 -f
 cookiecutter:
+	${MAKE} -C ./cookiecutter all
 	rm -rf ${TEMP_DIR}
 	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${CC_DIR}
-	nicfit cookiecutter --config-file ./.cookiecutter.json --no-input ${TEMP_DIR}
+	nicfit cookiecutter --config-file ./.cookiecutter.yml --no-input ${TEMP_DIR}
 	if test "${CC_DIFF}" == "no"; then \
 		git -C ${CC_DIR} diff; \
 		git -C ${CC_DIR} status -s -b; \

@@ -13,7 +13,7 @@ prune docs/_build
 
 recursive-include ./tests *.py
 
-exclude .cookiecutter.json
+exclude .cookiecutter.yml
 exclude .gitchangelog.rc
 global-exclude __pycache__
 global-exclude .editorconfig

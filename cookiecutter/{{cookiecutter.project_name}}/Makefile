@@ -296,7 +296,7 @@ cookiecutter:
 {%- else %}
 	hg clone --updaterev `hg branch` . ${CC_DIR}
 {%- endif %}
-	nicfit cookiecutter --config-file ./.cookiecutter.json --no-input ${TEMP_DIR}
+	nicfit cookiecutter --config-file ./.cookiecutter.yml --no-input ${TEMP_DIR}
 {%- if cookiecutter.use_github == "yes" %}
 	if test "${CC_DIFF}" == "no"; then \
 		git -C ${CC_DIR} diff; \

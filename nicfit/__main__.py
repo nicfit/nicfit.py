@@ -25,7 +25,7 @@ class CookieCutter(nicfit.Command):
                             help="User configuration file", default=None)
         parser.add_argument("--no-input", action="store_true",
                             help="Do not prompt for parameters and only use "
-                                 "cookiecutter.json file content")
+                                 "cookiecutter.yml file content")
 
     def _run(self):
         if cookiecutter is None:
@@ -40,9 +40,11 @@ class CookieCutter(nicfit.Command):
                 template_d = p
                 break
         assert template_d
+
         try:
             cookiecutter(str(template_d), config_file=self.args.config_file,
-                         no_input=self.args.no_input, overwrite_if_exists=True,
+                         no_input=self.args.no_input,
+                         overwrite_if_exists=True,
                          output_dir=self.args.outdir)
         except click.exceptions.Abort as ex:
             raise KeyboardInterrupt()  # pragma: nocover
