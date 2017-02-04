@@ -30,7 +30,7 @@ def test_NicfitApp_cookiecutter_mock(tmpdir):
     mock_cc = Mock()
     with patch("nicfit.__main__.cookiecutter", mock_cc):
         with pytest.raises(SystemExit) as sysexit:
-            app.run(["cookiecutter", str(tmpdir)])
+            app.run(["cookiecutter", "--no-clone", str(tmpdir)])
 
         assert sysexit.value.code == 0
         if sys.version_info[:2] >= (3, 6):

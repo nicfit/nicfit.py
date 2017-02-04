@@ -238,22 +238,12 @@ GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
 	${MAKE} -C ./cookiecutter all
 	rm -rf ${CC_DIR}
-	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${CC_DIR}
-	nicfit cookiecutter --config-file ./.cookiecutter.yml --no-input ${TEMP_DIR}
 	if test "${CC_DIFF}" == "no"; then \
+		nicfit cookiecutter --no-input ${TEMP_DIR}; \
 		git -C ${CC_DIR} diff; \
 		git -C ${CC_DIR} status -s -b; \
 	else \
-		for f in `git -C ${CC_DIR} status --porcelain | \
-		                 awk '{print $$2}'`; do \
-			if test -f ${CC_DIR}/$$f; then \
-				if test ! -f ./$$f; then \
-					touch ./$$f; \
-				fi; \
-				diff ${CC_DIR}/$$f ./$$f > /dev/null || \
-				  ${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
-			fi; \
-		done; \
+		nicfit cookiecutter --merge --no-input ${TEMP_DIR}; \
 		if test ! -f ${GIT_COMMIT_HOOK}; then \
 			touch ${GIT_COMMIT_HOOK}; \
 		fi; \

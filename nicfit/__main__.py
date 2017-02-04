@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+import os
+import shutil
+import subprocess
+from uuid import uuid4
 from pathlib import Path
+
 import nicfit
 from . import version
-from .console import ansi
+from .console import ansi, perr, pout
 from .console.ansi import Fg, Style
 
 try:
@@ -17,6 +22,7 @@ except ImportError:  # pragma: nocover
 class CookieCutter(nicfit.Command):
     NAME = "cookiecutter"
     HELP = "Create a nicfit.py Python project skeleton."
+    CC_USER_CONFIG = ".cookiecutter.yml"
 
     def _initArgParser(self, parser):
         parser.add_argument("outdir", metavar="PATH",
@@ -25,13 +31,17 @@ class CookieCutter(nicfit.Command):
                             help="User configuration file", default=None)
         parser.add_argument("--no-input", action="store_true",
                             help="Do not prompt for parameters and only use "
-                                 "cookiecutter.yml file content")
+                                 "{} file content".format(self.CC_USER_CONFIG))
+        parser.add_argument("--no-config", action="store_true",
+                            help="Use no user config (overrides --config_file)")
+        parser.add_argument("--no-clone", action="store_true",
+                            help="Do not clone a local repo if one is found.")
+        parser.add_argument("--merge", action="store_true",
+                            help="Merge CookieCutter output against local "
+                            "repository (if found). Ignored when used "
+                            "with --no-clone")
 
-    def _run(self):
-        if cookiecutter is None:
-            print("CookieCutter not installed: pip install cookiecutter")
-            return 1
-
+    def _findTemplateDir(self):
         template_d = None
         for p in [Path(__file__).parent / "cookiecutter",
                   Path(__file__).parent.parent / "cookiecutter",
@@ -40,19 +50,96 @@ class CookieCutter(nicfit.Command):
                 template_d = p
                 break
         assert template_d
+        return template_d
 
+    def _cookiecutter(self, template_d):
         try:
-            cookiecutter(str(template_d), config_file=self.args.config_file,
-                         no_input=self.args.no_input,
-                         overwrite_if_exists=True,
-                         output_dir=self.args.outdir)
+            cc_dir = cookiecutter(str(template_d),
+                                  config_file=self.args.config_file,
+                                  no_input=self.args.no_input,
+                                  overwrite_if_exists=True,
+                                  output_dir=self.args.outdir)
+            return cc_dir
         except click.exceptions.Abort as ex:
             raise KeyboardInterrupt()  # pragma: nocover
         except CookiecutterException as ex:
-            exstr = str(ex)
-            print("CookieCutter error: {}"
-                  .format(exstr if exstr else ex.__class__))
-            return 1
+            msg = str(ex)
+            raise nicfit.CommandError("CookieCutter error: {}"
+                                      .format(msg if msg else ex.__class__))
+
+    def _run(self):
+        if not cookiecutter:
+            raise nicfit.CommandError("CookierCutter not installed")
+
+        cwd = Path(os.getcwd())
+        clone_d = None
+        if (cwd / ".git").is_dir() and not self.args.no_clone:
+            pout("Cloning local repo for CookieCutter merging "
+                 "(use --no-clone to disable)")
+            clone_d = self._gitCloneRepo(cwd)
+
+        # Set up user config
+        if self.args.no_config:
+            self.args.config_file = None
+        elif not self.args.config_file:
+            local_config = Path(cwd) / self.CC_USER_CONFIG
+            if local_config.is_file():
+                self.args.config_file = str(local_config)
+        if self.args.config_file:
+            pout("Using user config ./{}, use --no-config to ignore."
+                 .format(self.CC_USER_CONFIG))
+
+        cc_dir = self._cookiecutter(self._findTemplateDir())
+        if clone_d:
+            copytree(str(cc_dir), str(clone_d))
+            shutil.rmtree(str(cc_dir))
+            os.rename(str(clone_d), str(cc_dir))
+
+            if self.args.merge:
+                self._merge(cc_dir)
+                # FIXME: Handle commit-hook
+
+    def _gitCloneRepo(self, repo_path):
+        try:
+            p = subprocess.run("git rev-parse --abbrev-ref HEAD", shell=True,
+                               stdout=subprocess.PIPE, check=True)
+            branch = str(p.stdout, "utf-8").strip()
+            clone_d = Path(self.args.outdir) / str(uuid4())
+            p = subprocess.run("git clone --branch {branch} . {clone_d}"
+                               .format(**locals()),
+                               shell=True, stdout=subprocess.PIPE, check=True)
+            return clone_d
+        except subprocess.CalledProcessError as err:
+            raise nicfit.CommandError(str(err))
+
+    def _merge(self, cc_dir):
+        try:
+            p = subprocess.run("git -C {cc_dir} status --porcelain -uall"
+                               .format(**locals()),
+                               shell=True, stdout=subprocess.PIPE,
+                               check=True)
+            merge_files = []
+            status = str(p.stdout, "utf-8").strip()
+            for line in [s.strip() for s in status.split("\n")]:
+                if line:
+                    merge_files.append(tuple(line.split()))
+        except subprocess.CalledProcessError as err:
+            raise nicfit.CommandError(str(err))
+
+        for st, file in merge_files:
+            dst = Path(file)
+            src = cc_dir / dst
+
+            if not dst.exists():
+                if not dst.parent.exists():
+                    dst.parent.mkdir(0o755, parents=True)
+                dst.touch()
+
+            if subprocess.run("diff {src} {dst} > /dev/null".format(**locals()),
+                              shell=True).returncode != 0:
+                # FIXME: Allow setting of merge-tool
+                subprocess.run("meld {src} {dst}".format(**locals()),
+                               shell=True, check=True)
 
 
 class Nicfit(nicfit.Application):
@@ -66,9 +153,54 @@ class Nicfit(nicfit.Application):
     def _main(self, args):
         ansi.init()
         if args.command:
-            return args.command_func(args)
+            try:
+                return args.command_func(args)
+            except nicfit.CommandError as err:
+                perr(err)
+                return err.exit_status
         else:
-            print(Fg.red("\m/ {} \m/".format(Style.inverse("Slayer"))))
+            pout(Fg.red("\m/ {} \m/".format(Style.inverse("Slayer"))))
+
+
+def copytree(src, dst, symlinks=True):
+    """
+    Modified from shutil.copytree docs code sample, merges files rather than
+    requiring dst to not exist.
+    """
+    from shutil import copy2, Error, copystat
+
+    names = os.listdir(src)
+
+    if not Path(dst).exists():
+        os.makedirs(dst)
+
+    errors = []
+    for name in names:
+        srcname = os.path.join(src, name)
+        dstname = os.path.join(dst, name)
+        try:
+            if symlinks and os.path.islink(srcname):
+                linkto = os.readlink(srcname)
+                os.symlink(linkto, dstname)
+            elif os.path.isdir(srcname):
+                copytree(srcname, dstname, symlinks)
+            else:
+                copy2(srcname, dstname)
+            # XXX What about devices, sockets etc.?
+        except OSError as why:
+            errors.append((srcname, dstname, str(why)))
+        # catch the Error from the recursive copytree so that we can
+        # continue with other files
+        except Error as err:
+            errors.extend(err.args[0])
+    try:
+        copystat(src, dst)
+    except OSError as why:
+        # can't copy file access times on Windows
+        if why.winerror is None:
+            errors.extend((src, dst, str(why)))
+    if errors:
+        raise Error(errors)
 
 
 app = Nicfit()
