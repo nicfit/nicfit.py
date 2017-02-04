@@ -3,6 +3,23 @@ Release History
 
 .. :changelog:
 
+v0.5.7 (2017-02-03)
+------------------------
+
+New
+~~~
+
+- Generate/save .cookiecutter.yml.
+- git commit hook echo failed commit msg to screen for easy cut-n-paste.
+- make doc-dist, removed _targets, etc.
+- Pip cache for Travis-CI.
+
+Fix
+~~~
+
+- Fixed docs Github pull request URL.
+
+
 v0.5.6 (2017-02-02)
 ------------------------
 
