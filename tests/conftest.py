@@ -10,6 +10,7 @@ def unshallowed_repo():
     bak = src + ".BACKUP"
 
     shallow_file = Path(src)
+    perr("$CWD: " + str(Path.cwd()))
     perr("$EXISTS: " + str(shallow_file.exists()))
     if shallow_file.exists():
         shallow_file.rename(bak)
