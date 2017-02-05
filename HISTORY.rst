@@ -3,6 +3,23 @@ Release History
 
 .. :changelog:
 
+v0.5.8 (2017-02-04)
+------------------------
+
+New
+~~~
+
+- Make clean-docs fix: cleaner setup with warning filter.
+- Application.enableCommands top ease make subcmd type apps.
+- Merging now done be 'nicfit cookiecutter'
+- Better CC diff handling of new files. new: .gitignore ./tmp.
+
+Fix
+~~~
+
+- Syntax error woth LGPL3 choice.
+
+
 v0.5.7 (2017-02-03)
 ------------------------
 
