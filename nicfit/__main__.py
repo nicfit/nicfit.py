@@ -116,7 +116,8 @@ class CookieCutter(nicfit.Command):
             cwd = Path.cwd()
             for f in cwd.iterdir():
                 perr(f)
-                if Path(".git") == f:
+                if f.name == ".git":
+                    perr(r"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
                     for g in f.iterdir():
                         perr(g)
             # FIXME: end
