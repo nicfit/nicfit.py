@@ -112,6 +112,14 @@ class CookieCutter(nicfit.Command):
                 shell=True, stdout=subprocess.PIPE, check=True)
             return clone_d
         except subprocess.CalledProcessError as err:
+            # FIXME: begin
+            cwd = Path.cwd()
+            for f in cwd.iterdir():
+                perr(f)
+                if Path(".git") == f:
+                    for g in f.iterdir():
+                        perr(g)
+            # FIXME: end
             raise nicfit.CommandError(str(err))
 
     def _merge(self, cc_dir):
