@@ -23,6 +23,7 @@ except ImportError:  # pragma: nocover
 class CookieCutter(nicfit.Command):
     NAME = "cookiecutter"
     HELP = "Create a nicfit.py Python project skeleton."
+    OLD_CC_USER_CONFIG = ".cookiecutter.json"
     CC_USER_CONFIG = ".cookiecutter.yml"
 
     def _initArgParser(self, parser):
@@ -84,8 +85,11 @@ class CookieCutter(nicfit.Command):
             self.args.config_file = None
         elif not self.args.config_file:
             local_config = Path(cwd) / self.CC_USER_CONFIG
+            old_local_config = Path(cwd) / self.OLD_CC_USER_CONFIG
             if local_config.is_file():
                 self.args.config_file = str(local_config)
+            elif old_local_config.is_file():
+                self.args.config_file = str(old_local_config)
         if self.args.config_file:
             pout("Using user config ./{}, use --no-config to ignore."
                  .format(self.CC_USER_CONFIG))
