@@ -5,7 +5,6 @@ from pathlib import Path
 
 @pytest.fixture
 def unshallowed_repo():
-    from nicfit.console import perr
     src = "./.git/shallow"
     bak = src + ".BACKUP"
 

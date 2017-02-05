@@ -64,9 +64,9 @@ class CookieCutter(nicfit.Command):
         except click.exceptions.Abort as ex:
             raise KeyboardInterrupt()  # pragma: nocover
         except CookiecutterException as ex:
-            msg = str(ex)
             raise nicfit.CommandError("CookieCutter error: {}"
-                                      .format(msg if msg else ex.__class__))
+                                      .format(str(ex) if str(ex)
+                                                      else ex.__class__))
 
     def _run(self):
         if not cookiecutter:
@@ -112,16 +112,6 @@ class CookieCutter(nicfit.Command):
                 shell=True, stdout=subprocess.PIPE, check=True)
             return clone_d
         except subprocess.CalledProcessError as err:
-            # FIXME: begin
-            cwd = Path.cwd()
-            perr("CWD: {cwd}".format(cwd))
-            for f in cwd.iterdir():
-                perr(f)
-                if f.name == ".git":
-                    perr(r"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-                    for g in f.iterdir():
-                        perr(g)
-            # FIXME: end
             raise nicfit.CommandError(str(err))
 
     def _merge(self, cc_dir):
@@ -164,14 +154,15 @@ class Nicfit(nicfit.Application):
 
     def _main(self, args):
         ansi.init()
-        if args.command:
-            try:
-                return args.command_func(args)
-            except nicfit.CommandError as err:
-                perr(err)
-                return err.exit_status
-        else:
+        if not args.command:
             pout(Fg.red("\m/ {} \m/".format(Style.inverse("Slayer"))))
+            return 0
+
+        try:
+            return args.command_func(args)
+        except nicfit.CommandError as err:
+            perr(err)
+            return err.exit_status
 
 
 app = Nicfit()
