@@ -114,6 +114,7 @@ class CookieCutter(nicfit.Command):
         except subprocess.CalledProcessError as err:
             # FIXME: begin
             cwd = Path.cwd()
+            perr("CWD: {cwd}".format(cwd))
             for f in cwd.iterdir():
                 perr(f)
                 if f.name == ".git":
