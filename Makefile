@@ -2,8 +2,7 @@
         docs clean-docs lint tags docs-dist docs-view coverage-view changelog \
         clean-pyc clean-build clean-patch clean-local clean-test-data \
         test-all test-data build-release freeze-release tag-release \
-        pypi-release web-release github-release \
-        cookiecutter
+        pypi-release web-release github-release cookiecutter
 SRC_DIRS = ./nicfit
 TEST_DIR = ./tests
 TEMP_DIR ?= ./tmp
@@ -146,22 +145,21 @@ pre-release: lint test changelog
 	@github-release --version    # Just a exe existence check
 
 changelog:
-	# FIXME: gitchangelog is broken, keeps grabbing tag 0.4.0
-	#last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
-	#if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
-	#	rm -f ${CHANGELOG}.new; \
-	#	if test -n "$$last"; then \
-	#		gitchangelog show --author-format=email ^$${last} |\
-	#		  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
-	#		  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
-	#		 > ${CHANGELOG}.new; \
-	#	else \
-	#		cat ${CHANGELOG} |\
-	#		  sed "s/^%%version%% .*/${CHANGELOG_HEADER}/" \
-	#		> ${CHANGELOG}.new;\
-	#	fi; \
-	#	mv ${CHANGELOG}.new ${CHANGELOG}; \
-	#fi
+	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
+	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
+		rm -f ${CHANGELOG}.new; \
+		if test -n "$$last"; then \
+			gitchangelog show --author-format=email $${last}..HEAD |\
+			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
+			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
+			 > ${CHANGELOG}.new; \
+		else \
+			cat ${CHANGELOG} |\
+			  sed "s/^%%version%% .*/${CHANGELOG_HEADER}/" \
+			> ${CHANGELOG}.new;\
+		fi; \
+		mv ${CHANGELOG}.new ${CHANGELOG}; \
+	fi
 
 build-release: test-all dist
 

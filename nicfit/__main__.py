@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 from uuid import uuid4
+from hashlib import md5
 from pathlib import Path
 
 import nicfit
@@ -18,6 +19,8 @@ try:
 except ImportError:  # pragma: nocover
     cookiecutter = None
 
+HASH_FILE = Path("./.cookiecutter.md5")
+
 
 @nicfit.command.register
 class CookieCutter(nicfit.Command):
@@ -25,6 +28,7 @@ class CookieCutter(nicfit.Command):
     HELP = "Create a nicfit.py Python project skeleton."
     OLD_CC_USER_CONFIG = ".cookiecutter.json"
     CC_USER_CONFIG = ".cookiecutter.yml"
+    ALIASES = ["cc"]
 
     def _initArgParser(self, parser):
         parser.add_argument("outdir", metavar="PATH",
@@ -42,6 +46,9 @@ class CookieCutter(nicfit.Command):
                             help="Merge CookieCutter output against local "
                             "repository (if found). Ignored when used "
                             "with --no-clone")
+        parser.add_argument("--ignore-md5s", action="store_true",
+                            help="Causes all files to be merged even if the "
+                            "saved md5sum matches from a previous merge.")
 
     def _findTemplateDir(self):
         template_d = None
@@ -119,6 +126,14 @@ class CookieCutter(nicfit.Command):
             raise nicfit.CommandError(str(err))
 
     def _merge(self, cc_dir):
+        md5_hashes = {}
+        if HASH_FILE.exists():
+            for line in [l.strip() for l in HASH_FILE.read_text().split("\n")]:
+                if line:
+                    values = line.rsplit(":", maxsplit=1)
+                    if len(values) == 2 and values[0] and values[1]:
+                        md5_hashes[values[0]] = values[1]
+
         try:
             p = subprocess.run("git -C {cc_dir} status --porcelain -uall"
                                .format(**locals()),
@@ -136,16 +151,30 @@ class CookieCutter(nicfit.Command):
             dst = Path(file)
             src = cc_dir / dst
 
+            hasher = md5()
+            hasher.update(src.read_bytes())
+            md5sum = hasher.hexdigest()
+            merge_file = (self.args.ignore_md5s or
+                          file not in md5_hashes or
+                          md5sum != md5_hashes[file])
+            md5_hashes[file] = hasher.hexdigest()
+
             if not dst.exists():
                 if not dst.parent.exists():
                     dst.parent.mkdir(0o755, parents=True)
                 dst.touch()
 
-            if subprocess.run("diff {src} {dst} > /dev/null".format(**locals()),
-                              shell=True).returncode != 0:
+            if (merge_file and
+                    subprocess.run("diff {src} {dst} > /dev/null"
+                                   .format(**locals()),
+                                   shell=True).returncode != 0):
                 # FIXME: Allow setting of merge-tool
                 subprocess.run("meld {src} {dst}".format(**locals()),
                                shell=True, check=True)
+
+        with HASH_FILE.open("w") as hash_file:
+            for f in sorted(md5_hashes.keys()):
+                hash_file.write("{}:{}\n".format(f, md5_hashes[f]))
 
 
 class Nicfit(nicfit.Application):

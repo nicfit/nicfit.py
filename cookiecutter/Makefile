@@ -9,8 +9,6 @@ ${PRE_GEN_SCRIPT}: cookiecutter.json ${PRE_GEN_SCRIPT_IN}
 	mkpregen.py cookiecutter.json ${PRE_GEN_SCRIPT_IN} >| $@
 
 clean:
-	-rm ${PRE_GEN_SCRIPT}
-
 
 test:
 	rm -rf sampleproject
