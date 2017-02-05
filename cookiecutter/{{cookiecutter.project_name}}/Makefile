@@ -148,12 +148,6 @@ servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 pre-release: lint test changelog
-{%- if cookiecutter.use_github == "yes" %}
-	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
-	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
-{%- else %}
-	@# TODO: Check bitbucket settings
-{%- endif %}
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
@@ -173,6 +167,8 @@ pre-release: lint test changelog
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
+	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
+	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	@github-release --version    # Just a exe existence check
 {%- else %}
 	@# TODO: Update AUTHORS.rst file
