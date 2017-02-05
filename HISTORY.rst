@@ -3,6 +3,15 @@ Release History
 
 .. :changelog:
 
+v0.5.9 (2017-02-04)
+------------------------
+
+New
+~~~
+
+- Load .cookiecutter.json enable migration.
+
+
 v0.5.8 (2017-02-04)
 ------------------------
 
@@ -17,7 +26,7 @@ New
 Fix
 ~~~
 
-- Syntax error woth LGPL3 choice.
+- Syntax error with LGPL3 choice.
 
 
 v0.5.7 (2017-02-03)
