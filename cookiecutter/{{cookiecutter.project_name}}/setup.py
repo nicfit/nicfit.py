@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+import warnings
 from setuptools import setup, find_packages
 
 
@@ -129,23 +130,26 @@ if sys.argv[1:] and sys.argv[1] == "--release-name":
     print(pkg_info["release_name"])
     sys.exit(0)
 else:
-    setup(classifiers=classifiers,
-          package_dir={"": "{{ cookiecutter.src_dir }}"},
-          packages=find_packages("{{ cookiecutter.src_dir }}",
-                                 exclude=["tests", "tests.*"]),
-          zip_safe=False,
-          platforms=["Any"],
-          keywords=["{{ cookiecutter.project_slug }}"],
-          install_requires=requirements("default.txt"),
-          tests_require=requirements("test.txt"),
-          test_suite="{{ cookiecutter.src_dir }}/tests",
-          long_description=readme + "\n\n" + history,
-          include_package_data=True,
-          package_data={},
-          entry_points={
-              "console_scripts": [
-                  "{{ cookiecutter.py_module }} = {{ cookiecutter.py_module }}.__main__:app.run",
-              ]
-          },
-          **pkg_info
-    )
+    # The extra command line options we added cause warnings, quell that.
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message="Unknown distribution option")
+        setup(classifiers=classifiers,
+              package_dir={"": "{{ cookiecutter.src_dir }}"},
+              packages=find_packages("{{ cookiecutter.src_dir }}",
+                                     exclude=["tests", "tests.*"]),
+              zip_safe=False,
+              platforms=["Any"],
+              keywords=["{{ cookiecutter.project_slug }}"],
+              install_requires=requirements("default.txt"),
+              tests_require=requirements("test.txt"),
+              test_suite="{{ cookiecutter.src_dir }}/tests",
+              long_description=readme + "\n\n" + history,
+              include_package_data=True,
+              package_data={},
+              entry_points={
+                  "console_scripts": [
+                      "{{ cookiecutter.py_module }} = {{ cookiecutter.py_module }}.__main__:app.run",
+                  ]
+              },
+              **pkg_info
+        )

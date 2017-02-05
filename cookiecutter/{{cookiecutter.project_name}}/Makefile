@@ -34,6 +34,8 @@ help:
 	@echo "clean-patch - remove patch artifacts (.rej, .orig)"
 	@echo "build - byte-compile python files and generate other build objects"
 	@echo "lint - check style with flake8"
+	@echo "test - run tests quickly with the default Python"
+	@echo "test-all - run tests on every Python version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "test-all - run tests on various Python versions with tox"
 	@echo "release - package and upload a release"
@@ -41,6 +43,7 @@ help:
 	@echo "pre-release - check repo and show version"
 	@echo "dist - package"
 	@echo "install - install the package to the active Python's site-packages"
+	@echo "build - build package source files"
 	@echo ""
 	@echo "Options:"
 	@echo "TEST_PDB - If defined PDB options are added when 'pytest' is invoked"
@@ -76,6 +79,9 @@ clean-test:
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
 	find . -name '*.orig' -exec rm -f '{}' \;
+
+clean-docs:
+	$(MAKE) -C docs clean
 
 lint:
 	flake8 $(SRC_DIRS)
