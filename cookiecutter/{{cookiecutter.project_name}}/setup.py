@@ -19,7 +19,7 @@ classifiers = [
 {%- elif cookiecutter.license == "GNU GPL v2.0" %}
     "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
 {%- elif cookiecutter.license == "GNU LGPL v3.0" %}
-    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
 {%- elif cookiecutter.license == "GNU LGPL v2.0" %}
     "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
 {%- elif cookiecutter.license == "Apache Software License 2.0" %}
