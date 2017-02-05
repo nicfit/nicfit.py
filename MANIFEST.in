@@ -6,8 +6,6 @@ include README.rst
 include Makefile
 include tox.ini
 
-graft cookiecutter
-
 graft docs
 prune docs/_build
 
@@ -21,4 +19,7 @@ global-exclude *.py[co]
 
 recursive-include requirements *.txt
 
+graft cookiecutter
+exclude cookiecutter/hooks/pre_gen_project.py.in
+include cookiecutter/hooks/pre_gen_project.py
 prune examples

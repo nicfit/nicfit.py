@@ -1,5 +1,3 @@
-cookiecutter/hooks/pre_gen_project.py
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -21,6 +19,7 @@ lib/
 lib64/
 parts/
 sdist/
+tags
 tmp/
 var/
 *.egg-info/

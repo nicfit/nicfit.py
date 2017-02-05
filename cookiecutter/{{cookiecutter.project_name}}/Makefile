@@ -80,9 +80,6 @@ clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
 	find . -name '*.orig' -exec rm -f '{}' \;
 
-clean-docs:
-	$(MAKE) -C docs clean
-
 lint:
 	flake8 $(SRC_DIRS)
 
@@ -143,8 +140,7 @@ docs-dist: clean-docs docs
 	    tar czvf ../../dist/${PROJECT_NAME}-${VERSION}_docs.tar.gz html
 
 clean-docs:
-	# TODO
-	#$(MAKE) -C docs clean
+	$(MAKE) -C docs clean
 	-rm README.html
 
 # FIXME: never been tested
@@ -271,7 +267,7 @@ pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
 
-dist: clean docs-dist
+dist: clean docs-dist build
 	python setup.py sdist --formats=gztar,zip
 	python setup.py bdist_egg
 	python setup.py bdist_wheel
@@ -298,34 +294,15 @@ CC_DIFF ?= gvimdiff -geometry 169x60 -f
 GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
 	rm -rf ${CC_DIR}
-{%- if cookiecutter.use_github == "yes" %}
-	git clone --branch `git rev-parse --abbrev-ref HEAD` . ${CC_DIR}
-{%- else %}
-	hg clone --updaterev `hg branch` . ${CC_DIR}
-{%- endif %}
-	nicfit cookiecutter --config-file ./.cookiecutter.yml --no-input ${TEMP_DIR}
-{%- if cookiecutter.use_github == "yes" %}
 	if test "${CC_DIFF}" == "no"; then \
+		nicfit cookiecutter --no-input ${TEMP_DIR}; \
 		git -C ${CC_DIR} diff; \
 		git -C ${CC_DIR} status -s -b; \
 	else \
-		for f in `git -C ${CC_DIR} status --porcelain | \
-		                 awk '{print $$2}'`; do \
-			if test -f ${CC_DIR}/$$f; then \
-				if test ! -f ./$$f; then \
-					touch ./$$f; \
-				fi; \
-				diff ${CC_DIR}/$$f ./$$f > /dev/null || \
-				  ${CC_DIFF} ${CC_DIR}/$$f ./$$f; \
-			fi; \
-		done; \
+		nicfit cookiecutter --merge --no-input ${TEMP_DIR}; \
 		if test ! -f ${GIT_COMMIT_HOOK}; then \
 			touch ${GIT_COMMIT_HOOK}; \
 		fi; \
 		diff ${CC_DIR}/${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK} >/dev/null || \
 		     ${CC_DIFF} ${CC_DIR}/${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK}; \
 	fi
-{%- else %}
-	cd ${CC_DIR} && hg diff
-	cd ${CC_DIR} && hg status
-{%- endif %}

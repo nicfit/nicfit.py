@@ -30,6 +30,8 @@ help:
 	@echo "clean-patch - remove patch artifacts (.rej, .orig)"
 	@echo "build - byte-compile python files and generate other build objects"
 	@echo "lint - check style with flake8"
+	@echo "test - run tests quickly with the default Python"
+	@echo "test-all - run tests on every Python version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "test-all - run tests on various Python versions with tox"
 	@echo "release - package and upload a release"
@@ -37,6 +39,7 @@ help:
 	@echo "pre-release - check repo and show version"
 	@echo "dist - package"
 	@echo "install - install the package to the active Python's site-packages"
+	@echo "build - build package source files"
 	@echo ""
 	@echo "Options:"
 	@echo "TEST_PDB - If defined PDB options are added when 'pytest' is invoked"
@@ -116,8 +119,7 @@ docs-dist: clean-docs docs
 	    tar czvf ../../dist/${PROJECT_NAME}-${VERSION}_docs.tar.gz html
 
 clean-docs:
-	# TODO
-	#$(MAKE) -C docs clean
+	$(MAKE) -C docs clean
 	-rm README.html
 
 # FIXME: never been tested
@@ -144,21 +146,22 @@ pre-release: lint test changelog
 	@github-release --version    # Just a exe existence check
 
 changelog:
-	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
-	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
-		rm -f ${CHANGELOG}.new; \
-		if test -n "$$last"; then \
-			gitchangelog show --author-format=email ^$${last} |\
-			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
-			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
-			 > ${CHANGELOG}.new; \
-		else \
-			cat ${CHANGELOG} |\
-			  sed "s/^%%version%% .*/${CHANGELOG_HEADER}/" \
-			> ${CHANGELOG}.new;\
-		fi; \
-		mv ${CHANGELOG}.new ${CHANGELOG}; \
-	fi
+	# FIXME: gitchangelog is broken, keeps grabbing tag 0.4.0
+	#last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
+	#if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
+	#	rm -f ${CHANGELOG}.new; \
+	#	if test -n "$$last"; then \
+	#		gitchangelog show --author-format=email ^$${last} |\
+	#		  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
+	#		  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
+	#		 > ${CHANGELOG}.new; \
+	#	else \
+	#		cat ${CHANGELOG} |\
+	#		  sed "s/^%%version%% .*/${CHANGELOG_HEADER}/" \
+	#		> ${CHANGELOG}.new;\
+	#	fi; \
+	#	mv ${CHANGELOG}.new ${CHANGELOG}; \
+	#fi
 
 build-release: test-all dist
 
@@ -210,7 +213,7 @@ pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
 
-dist: clean docs-dist
+dist: clean docs-dist build
 	python setup.py sdist --formats=gztar,zip
 	python setup.py bdist_egg
 	python setup.py bdist_wheel
