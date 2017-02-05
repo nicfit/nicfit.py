@@ -55,27 +55,23 @@ def addCommandLineArgs(arg_parser):
     """Add logging option to an ArgumentParser."""
     arg_parser.register("action", "log_levels", LogLevelAction)
     arg_parser.register("action", "log_files", LogFileAction)
+    arg_parser.register("action", "log_help", LogHelpAction)
 
     group = arg_parser.add_argument_group("Logging options")
     group.add_argument(
         "-l", "--log-level", dest="log_levels",
         action="log_levels", metavar="LOGGER:LEVEL", default=[],
-        help="Set logging levels (the option may be specified multiple "
-             "times). The level of a specific logger may be set with "
-             "the syntax LOGGER:LEVEL, but LOGGER is optional so "
-             "if only LEVEL is given it applies to the root logger. "
-             "Valid level names are: %s" % ", ".join(LEVEL_NAMES))
+        help="Set log levels for individual loggers. See --help-logging for "
+             "complete details.")
 
     group.add_argument(
         "-L", "--log-file", dest="log_files",
         action="log_files", metavar="LOGGER:FILE", default=[],
-        help="Set log files (the option may be specified multiple "
-             "times). The level of a specific logger may be set with "
-             "the syntax LOGGER:FILE, but LOGGER is optional so "
-             "if only FILE is given it applies to the root logger. "
-             "The special FILE values 'stdout', 'stderr', and 'null' "
-             "result on logging to the console, or /dev/null in the "
-             "latter case.")
+        help="Set log the output file for individual loggers. "
+             " See --help-logging for complete details.")
+
+    group.add_argument("--help-logging", action="log_help",
+                       help=argparse.SUPPRESS)
 
 
 def applyLoggingOpts(log_levels, log_files):
@@ -147,6 +143,12 @@ class LogFileAction(argparse._AppendAction):
         super().__call__(parser, namespace, values, option_string=option_string)
 
 
+class LogHelpAction(argparse._HelpAction):
+    def __call__(self, parser, namespace, values, option_string=None):
+        print(_LOGGING_OPTS_HELP)
+        parser.exit()
+
+
 # FIXME: metrics does not really belong in generic version
 def LOGGING_CONFIG(pkg_logger, root_level="WARN", log_format=LOG_FORMAT,
                    pkg_level="NOTSET", metrics_format=METRICS_FORMAT,
@@ -206,3 +208,28 @@ format = {metrics_format}
     if init_logging:
         logging.config.fileConfig(StringIO(cfg))
     return cfg
+
+
+_LOGGING_OPTS_HELP = """
+The command line options ``-l (--log-level)`` and ``-L (--log-file)`` can be
+used to set levels and output streams for any and all loggers, therefore each
+may be specified multiple times on a command line.
+
+Each argument requires a value of the form ``VALUE`` or ``LOGGER:VALUE``.
+When a LOGGER is not specified the VALUE is applied to the root logger.
+
+Valid level names (-l and --log-level) are:
+{level_names}
+
+Note, nicfit.py loggers add a VERBOSE level, where DEBUG < VERBOSE < INFO.
+
+Valid log file values (-L and --log-file) are any file path with the required
+permissions to open and write to the file. The special values 'stdout',
+'stderr', and 'null' result on logging to the console (stdout or stderr),
+or /dev/null in the last case.
+
+For example:
+
+example.py -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L mylib:./debug.log -L mylib.database:/dev/stderr
+
+""".format(level_names=", ".join(LEVEL_NAMES))  # noqa
