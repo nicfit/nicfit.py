@@ -7,6 +7,7 @@ __years__ = "{{ cookiecutter.year }}"
 
 __project_name__ = "{{ cookiecutter.project_name }}"
 __project_slug__ = "{{ cookiecutter.project_slug }}"
+__pypi_name__ = "{{ cookiecutter.pypi_repo_name }}"
 __author__ = "{{ cookiecutter.full_name }}"
 __author_email__ = "{{ cookiecutter.email }}"
 __url__ = "{{ cookiecutter.web }}"

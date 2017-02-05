@@ -2,8 +2,7 @@
         docs clean-docs lint tags docs-dist docs-view coverage-view changelog \
         clean-pyc clean-build clean-patch clean-local clean-test-data \
         test-all test-data build-release freeze-release tag-release \
-        pypi-release web-release github-release \
-        cookiecutter
+        pypi-release web-release github-release cookiecutter
 SRC_DIRS = ./nicfit
 TEST_DIR = ./tests
 TEMP_DIR ?= ./tmp

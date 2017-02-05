@@ -22,9 +22,11 @@ At the command line:
     $ tar zxf nicfit.py-|version|.tar.gz
     $ cd nicfit.py-|version|
     $ python setup.py install
+
 From GitHub
 --------------
 At the command line::
+
     $ git clone https://github.com/nicfit/nicfit.py
     $ cd mishmash
     $ python setup.py install

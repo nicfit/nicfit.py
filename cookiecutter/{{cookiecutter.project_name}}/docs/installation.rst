@@ -23,19 +23,11 @@ At the command line:
     $ cd {{ cookiecutter.project_slug }}-|version|
     $ python setup.py install
 
-{%- if cookiecutter.use_github == "yes" %}
 From GitHub
-{%- else %}
-From BitBucket
-{%- endif %}
 --------------
 At the command line::
 
-{%- if cookiecutter.use_github == "yes" %}
     $ git clone {{ cookiecutter.github_url }}
-{%- else %}
-    $ hg clone {{ cookiecutter.bitbucket_url }}
-{%- endif %}
     $ cd mishmash
     $ python setup.py install
 
