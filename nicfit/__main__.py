@@ -25,6 +25,7 @@ class CookieCutter(nicfit.Command):
     HELP = "Create a nicfit.py Python project skeleton."
     OLD_CC_USER_CONFIG = ".cookiecutter.json"
     CC_USER_CONFIG = ".cookiecutter.yml"
+    ALIASES = ["cc"]
 
     def _initArgParser(self, parser):
         parser.add_argument("outdir", metavar="PATH",

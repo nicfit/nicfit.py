@@ -93,10 +93,11 @@ class Application:
         self.log.debug("Application._run: {args_list}".format(**locals()))
         return self.main(args_list=args_list)
 
-    def enableCommands(self, title="Commands", add_help_subcmd=True,
-                       dest="command"):
+    def enableCommands(self, title="Commands", description=None,
+                       add_help_subcmd=True, dest="command"):
         from .command import Command
         subs = self.arg_parser.add_subparsers(title=title,
+                                              description=description,
                                               add_help_subcmd=add_help_subcmd,
                                               dest=dest)
         Command.initAll(subs)
