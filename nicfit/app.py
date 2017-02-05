@@ -17,9 +17,32 @@ class Application:
     UNCAUGHT_EXCEPTION_EXIT = 126
     NO_MAIN_EXIT = 127
 
+    def __init__(self, main_func=None, *, name=None, description=None,
+                 logging_args=True, config_opts=None, version=None,
+                 atexit=None, pdb_opt=False, extra_arg_parser_opts=None):
+        self._main_func = main_func
+        self._atexit_func = atexit
+
+        self.name = name
+        self.log = getLogger(name) if name else log
+
+        extra_arg_parser_opts = extra_arg_parser_opts or {}
+        parser = ArgumentParser(add_log_args=logging_args,
+                                config_opts=config_opts,
+                                prog=name, description=description,
+                                **extra_arg_parser_opts)
+        if version:
+            parser.add_argument("--version", action="version", version=version)
+        if pdb_opt:
+            parser.add_argument("--pdb", action="store_true", dest="debug_pdb",
+                                help="Drop into 'pdb' for unhandled exceptions")
+
+        parser.set_defaults(app=self)
+        self.arg_parser = self._addArguments(parser) or parser
+
     def _main(self, args):
         """
-        Subclasses should implement, or pass main_func top the constructor.
+        Subclasses should implement, or pass main_func to the constructor.
         """
         self.log.debug("Application._main: {args}".format(**locals()))
         assert args is self.args
@@ -35,27 +58,6 @@ class Application:
 
     def _addArguments(self, parser):
         return parser
-
-    def __init__(self, main_func=None, *, name=None, description=None,
-                 logging_args=True, config_opts=None, version=None,
-                 atexit=None, pdb_opt=False):
-        self._main_func = main_func
-        self._atexit_func = atexit
-
-        self.name = name
-        self.log = getLogger(name) if name else log
-
-        parser = ArgumentParser(add_log_args=logging_args,
-                                config_opts=config_opts,
-                                prog=name, description=description)
-        if version:
-            parser.add_argument("--version", action="version", version=version)
-        if pdb_opt:
-            parser.add_argument("--pdb", action="store_true", dest="debug_pdb",
-                                help="Drop into 'pdb' for unhandled exceptions")
-
-        parser.set_defaults(app=self)
-        self.arg_parser = self._addArguments(parser) or parser
 
     def main(self, args_list=None):
         self.log.debug("Application.main: {args_list}".format(**locals()))
@@ -90,6 +92,15 @@ class Application:
     def _run(self, args_list=None):
         self.log.debug("Application._run: {args_list}".format(**locals()))
         return self.main(args_list=args_list)
+
+    def enableCommands(self, title="Commands", add_help_subcmd=True,
+                       dest="command"):
+        from .command import Command
+        subs = self.arg_parser.add_subparsers(title=title,
+                                              add_help_subcmd=add_help_subcmd,
+                                              dest=dest)
+        Command.initAll(subs)
+        return subs
 
 
 class AsyncApplication(Application):
