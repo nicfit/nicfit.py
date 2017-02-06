@@ -110,7 +110,7 @@ docs:
 	$(MAKE) -C docs html
 
 docs-view: docs
-	$(BROWSER) docs/_build/html/index.html;\
+	$(BROWSER) docs/_build/html/index.html
 
 docs-dist: clean-docs docs
 	test -d dist || mkdir dist
@@ -126,8 +126,6 @@ servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 pre-release: lint test changelog
-	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
-	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
@@ -142,6 +140,8 @@ pre-release: lint test changelog
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
+	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
+	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	@github-release --version    # Just a exe existence check
 
 changelog:
@@ -234,7 +234,7 @@ README.html: README.rst
 		${BROWSER} README.html;\
 	fi
 
-CC_DIFF ?= gvimdiff -geometry 169x60 -f
+CC_DIFF ?= meld
 GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
 	${MAKE} -C ./cookiecutter all

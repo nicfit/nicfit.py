@@ -56,7 +56,8 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `nicfit.py` for local development.
+Ready to contribute? Here's how to set up nicfit.py for
+local development.
 
 1. Fork the `nicfit.py` repo on GitHub.
 2. Clone your fork locally::

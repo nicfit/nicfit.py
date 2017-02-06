@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
-from nicfit import Application
+{%- if cookiecutter.pyapp_type == "asyncio" -%}
+{%- set async = "async" -%}
+{%- set appmod = "nicfit.aio" -%}
+{%- else -%}
+{%- set async = "" -%}
+{%- set appmod = "nicfit" -%}
+{%- endif %}
+from {{ appmod }} import Application
+from nicfit.console import pout
 from . import version
 
 
-def main(args):
-    print("\m/")
+{{ async }} def main(args):
+    pout("\m/")
 
 
 app = Application(main, version=version)

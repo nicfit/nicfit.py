@@ -157,7 +157,10 @@ class CookieCutter(nicfit.Command):
             merge_file = (self.args.ignore_md5s or
                           file not in md5_hashes or
                           md5sum != md5_hashes[file])
-            md5_hashes[file] = hasher.hexdigest()
+            pout("Comparing {} hash({}): {}"
+                 .format(file, md5sum, Fg.blue("new")
+                                        if merge_file else Fg.green("merged")))
+            md5_hashes[file] = md5sum
 
             if not dst.exists():
                 if not dst.parent.exists():

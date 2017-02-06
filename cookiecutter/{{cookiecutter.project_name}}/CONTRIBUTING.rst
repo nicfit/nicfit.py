@@ -1,9 +1,7 @@
 {%- if cookiecutter.use_bitbucket == "yes" -%}
 {%- set repo_host = 'BitBucket' -%}
-{%- set repo = '{{ cookiecutter.bitbucket_repo }}' -%}
 {%- else -%}
 {%- set repo_host = 'GitHub' -%}
-{%- set repo = '{{ cookiecutter.github_repo }}' -%}
 {%- endif -%}
 ============
 Contributing
@@ -71,10 +69,10 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `{{ repo }}` for
+Ready to contribute? Here's how to set up {{ cookiecutter.project_name }} for
 local development.
 
-1. Fork the `{{ repo }}` repo on {{ repo_host }}.
+1. Fork the `{{ cookiecutter.github_repo }}` repo on {{ repo_host }}.
 2. Clone your fork locally::
 
 {%- if cookiecutter.use_bitbucket == "yes" %}

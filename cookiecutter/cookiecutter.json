@@ -25,8 +25,6 @@
     "py_module": "{{ cookiecutter.project_slug.replace('.', '') }}",
     "src_dir": [".", "./src"],
 
-    "_comment": "##### Project author info #####",
-
     "year": [
         "2017",
         "2016-2017",
@@ -62,10 +60,11 @@
     "use_pytest": ["yes", "no"],
     "use_rtd": ["no", "yes"],
 
+    "pyapp_type": ["normal", "asyncio"],
     "py26": ["no", "yes"],
-    "py27": ["yes", "no"],
+    "py27": ["no", "yes"],
     "py33": ["no", "yes"],
-    "py34": ["yes", "no"],
+    "py34": ["no", "yes"],
     "py35": ["yes", "no"],
     "py36": ["yes", "no"],
     "py37": ["yes", "no"],

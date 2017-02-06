@@ -132,7 +132,7 @@ docs:
 	$(MAKE) -C docs html
 
 docs-view: docs
-	$(BROWSER) docs/_build/html/index.html;\
+	$(BROWSER) docs/_build/html/index.html
 
 docs-dist: clean-docs docs
 	test -d dist || mkdir dist
@@ -181,7 +181,7 @@ changelog:
 	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
 		rm -f ${CHANGELOG}.new; \
 		if test -n "$$last"; then \
-			gitchangelog show --author-format=email ^$${last} |\
+			gitchangelog show --author-format=email $${last}..HEAD |\
 			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
 			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
 			 > ${CHANGELOG}.new; \

@@ -34,6 +34,8 @@ default_context:
     py36: "{{ cookiecutter.py36 }}"
     py37: "{{ cookiecutter.py37 }}"
     py_module: "{{ cookiecutter.py_module }}"
+    pyapp_type: "{{ cookiecutter.pyapp_type }}"
+    pypi_repo_name: "{{ cookiecutter.pypi_repo_name }}"
     pypi_username: "{{ cookiecutter.pypi_username }}"
     release_date: "{{ cookiecutter.release_date }}"
     src_dir: "{{ cookiecutter.src_dir }}"

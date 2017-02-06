@@ -22,6 +22,7 @@ default_context:
     py36: "yes"
     py37: "yes"
     py_module: "nicfit"
+    pyapp_type: "normal"
     pypi_repo_name: "nicfit.py"
     pypi_username: "nicfit"
     release_date: "today"
