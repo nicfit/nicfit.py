@@ -121,7 +121,7 @@ class CookieCutter(nicfit.Command):
             branch = str(p.stdout, "utf-8").strip()
             clone_d = Path(self.args.outdir) / str(uuid4())
             p = subprocess.run(
-                "git clone --depth=1 --branch {branch} file://`pwd` {clone_d}"
+                "git clone --depth=1 --branch {branch} file://`pwd` '{clone_d}'"
                 .format(**locals()),
                 shell=True, stdout=subprocess.PIPE, check=True)
             return clone_d
@@ -138,7 +138,7 @@ class CookieCutter(nicfit.Command):
                         md5_hashes[values[0]] = values[1]
 
         try:
-            p = subprocess.run("git -C {cc_dir} status --porcelain -uall"
+            p = subprocess.run("git -C \"{cc_dir}\" status --porcelain -uall"
                                .format(**locals()),
                                shell=True, stdout=subprocess.PIPE,
                                check=True)
@@ -175,13 +175,13 @@ class CookieCutter(nicfit.Command):
                 dst.touch()
 
             if merge_file:
-                diffs = subprocess.run("diff {src} {dst} >/dev/null"
+                diffs = subprocess.run("diff '{src}' '{dst}' >/dev/null"
                                        .format(**locals()), shell=True)\
                                   .returncode != 0
                 pout("Differences: {}".format(diffs))
                 if diffs:
                     # FIXME: Allow setting of merge-tool
-                    subprocess.run("meld {src} {dst}".format(**locals()),
+                    subprocess.run("meld '{src}' '{dst}'".format(**locals()),
                                    shell=True, check=True)
 
         with HASH_FILE.open("w") as hash_file:

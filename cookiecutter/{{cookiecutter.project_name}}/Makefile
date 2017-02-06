@@ -74,7 +74,7 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
-	rm -rf ${CC_DIR}
+	rm -rf "${CC_DIR}"
 
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
@@ -248,10 +248,8 @@ bitbucket-release:
 {%- endif %}
 
 web-release:
-	# TODO
-	#find dist -type f -exec scp register -r ${PYPI_REPO} {} \;
-	# Not implemented
-	true
+	@# Not implemented
+	@true
 
 {% if cookiecutter.use_github == "yes" %}
 upload-release: github-release pypi-release web-release
@@ -289,12 +287,12 @@ README.html: README.rst
 CC_DIFF ?= gvimdiff -geometry 169x60 -f
 GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
-	rm -rf ${CC_DIR}
+	rm -rf "${CC_DIR}"
 	if test "${CC_DIFF}" == "no"; then \
-		nicfit cookiecutter --no-input ${TEMP_DIR}; \
-		git -C ${CC_DIR} diff; \
-		git -C ${CC_DIR} status -s -b; \
+		nicfit cookiecutter --no-input "${TEMP_DIR}"; \
+		git -C "${CC_DIR}" diff; \
+		git -C "${CC_DIR}" status -s -b; \
 	else \
-		nicfit cookiecutter --merge --no-input ${TEMP_DIR} \
+		nicfit cookiecutter --merge --no-input "${TEMP_DIR}" \
 		       --extra-merge ${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK};\
 	fi
