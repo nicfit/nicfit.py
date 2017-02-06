@@ -3,6 +3,30 @@ Release History
 
 .. :changelog:
 
+v0.5.11 (2017-02-05)
+------------------------
+
+New
+~~~
+
+- Nicfit cc --extra-merge.
+- Don't CC merge src files that have not changed since last merge.
+- Command aliases.
+
+Changes
+~~~~~~~
+
+- Cleaned up logging opttions help and moved the large text to --help-
+  logging.
+- Move GITHUB var checks later in pre-release.
+
+Fix
+~~~
+
+- TONs of tweaks.
+- Better changelog tag ranges.
+
+
 v0.5.9 (2017-02-04)
 ------------------------
 
