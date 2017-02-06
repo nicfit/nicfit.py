@@ -295,10 +295,6 @@ cookiecutter:
 		git -C ${CC_DIR} diff; \
 		git -C ${CC_DIR} status -s -b; \
 	else \
-		nicfit cookiecutter --merge --no-input ${TEMP_DIR}; \
-		if test ! -f ${GIT_COMMIT_HOOK}; then \
-			touch ${GIT_COMMIT_HOOK}; \
-		fi; \
-		diff ${CC_DIR}/${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK} >/dev/null || \
-		     ${CC_DIFF} ${CC_DIR}/${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK}; \
+		nicfit cookiecutter --merge --no-input ${TEMP_DIR} \
+		       --extra-merge ${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK};\
 	fi

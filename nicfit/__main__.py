@@ -49,6 +49,9 @@ class CookieCutter(nicfit.Command):
         parser.add_argument("--ignore-md5s", action="store_true",
                             help="Causes all files to be merged even if the "
                             "saved md5sum matches from a previous merge.")
+        parser.add_argument("--extra-merge", action="append", nargs=2,
+                            metavar="FILE", default=[],
+                            help="FIXME")
 
     def _findTemplateDir(self):
         template_d = None
@@ -147,12 +150,16 @@ class CookieCutter(nicfit.Command):
         except subprocess.CalledProcessError as err:
             raise nicfit.CommandError(str(err))
 
-        for st, file in merge_files:
+        for st, file in merge_files + self.args.extra_merge:
             dst = Path(file)
             src = cc_dir / dst
 
             hasher = md5()
-            hasher.update(src.read_bytes())
+            try:
+                hasher.update(src.read_bytes())
+            except FileNotFoundError as notfound:
+                perr(notfound)
+                continue
             md5sum = hasher.hexdigest()
             merge_file = (self.args.ignore_md5s or
                           file not in md5_hashes or
@@ -167,13 +174,15 @@ class CookieCutter(nicfit.Command):
                     dst.parent.mkdir(0o755, parents=True)
                 dst.touch()
 
-            if (merge_file and
-                    subprocess.run("diff {src} {dst} > /dev/null"
-                                   .format(**locals()),
-                                   shell=True).returncode != 0):
-                # FIXME: Allow setting of merge-tool
-                subprocess.run("meld {src} {dst}".format(**locals()),
-                               shell=True, check=True)
+            if merge_file:
+                diffs = subprocess.run("diff {src} {dst} >/dev/null"
+                                       .format(**locals()), shell=True)\
+                                  .returncode != 0
+                pout("Differences: {}".format(diffs))
+                if diffs:
+                    # FIXME: Allow setting of merge-tool
+                    subprocess.run("meld {src} {dst}".format(**locals()),
+                                   shell=True, check=True)
 
         with HASH_FILE.open("w") as hash_file:
             for f in sorted(md5_hashes.keys()):
