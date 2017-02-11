@@ -67,7 +67,7 @@ def initGetText(domain, install=False, fallback=True):
         Path(sys.prefix) / "share" / "locale",
     ]
 
-    translation = None
+    locale_dir, translation = None, None
     for locale_dir in [d for d in locale_paths if d.exists()]:
         if gettext.find(domain, str(locale_dir)):
             log.debug("Loading message catalogs from {}".format(locale_dir))
