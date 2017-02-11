@@ -7,4 +7,6 @@ Sphinx
 check-manifest
 #gitchangelog
 git+https://github.com/nicfit/gitchangelog.git
+ipdb
 babel
+detox

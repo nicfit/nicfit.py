@@ -48,7 +48,7 @@ build:
 	python setup.py build
 
 clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs \
-       clean-i18n
+       clean-gettext
 	rm -rf tags
 
 clean-local:
@@ -77,45 +77,22 @@ clean-patch:
 	find . -name '*.orig' -exec rm -f '{}' \;
 
 lint:
-	flake8 $(SRC_DIRS)
+	flake8 --builtins=_ $(SRC_DIRS)
 
-{% if cookiecutter.use_pytest == "yes" -%}
 _PYTEST_OPTS=
-{% else %}
-_NOSE_OPTS=--verbosity=1 --detailed-errors
-{%- endif %}
 ifdef TEST_PDB
     _PDB_OPTS=--pdb -s
-{%- if cookiecutter.use_pytest == "no" %}
-    _PDB_OPTS+=--pdb-failures
-{%- endif %}
 endif
-
 test:
-{%- if cookiecutter.use_pytest == "yes" %}
 	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
-{%- else %}
-	nosetests $(_NOSE_OPTS) $(_PDB_OPTS)
-{%- endif %}
 
 test-all:
 	tox
 
-{% if cookiecutter.use_pytest != "yes" %}
-_COVERAGE_BUILD_D=build/tests/coverage
-{% endif %}
 coverage:
-{%- if cookiecutter.use_pytest == "yes" %}
 	pytest --cov={{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }} \
            --cov-report=html --cov-report term \
            --cov-config=setup.cfg ${TEST_DIR}
-{%- else %}
-	nosetests $(_NOSE_OPTS) $(_PDB_OPTS) --with-coverage \
-              --cover-erase --cover-tests --cover-inclusive \
-              --cover-package={{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }} \
-              --cover-branches --cover-html \
-              --cover-html-dir=$(_COVERAGE_BUILD_D) ${TEST_DIR}
-{%- endif %}
 
 coverage-view: coverage
 	${BROWSER} build/tests/coverage/index.html;\
@@ -223,8 +200,8 @@ pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
 
-{% if cookiecutter.support_i18n == "yes" -%}
-dist: clean i18n build docs-dist
+{% if cookiecutter.gettext_domain != "None" -%}
+dist: clean gettext build docs-dist
 {%- else -%}
 dist: clean build docs-dist
 {%- endif %}
@@ -250,30 +227,31 @@ README.html: README.rst
 		${BROWSER} README.html;\
 	fi
 
-CC_DIFF ?= gvimdiff -geometry 169x60 -f
+CC_MERGE ?= yes
+CC_OPTS ?= --no-input
 GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
 	rm -rf "${CC_DIR}"
-	if test "${CC_DIFF}" == "no"; then \
-		nicfit cookiecutter --no-input "${TEMP_DIR}"; \
+	if test "${CC_MERGE}" == "no"; then \
+		nicfit cookiecutter ${CC_OPTS} "${TEMP_DIR}"; \
 		git -C "${CC_DIR}" diff; \
 		git -C "${CC_DIR}" status -s -b; \
 	else \
-		nicfit cookiecutter --merge --no-input "${TEMP_DIR}" \
+		nicfit cookiecutter --merge ${CC_OPTS} "${TEMP_DIR}" \
 		       --extra-merge ${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK};\
 	fi
 
-{% if cookiecutter.support_i18n == "yes" -%}
-DEF_MSG_CAT = locale/{{ cookiecutter.default_locale }}/LC_MESSAGES/{{ cookiecutter.project_slug }}.po
-MSG_CAT_TMPL = locale/{{ cookiecutter.project_slug }}.pot
+{% if cookiecutter.gettext_domain != "None" -%}
+DEF_MSG_CAT = locale/{{ cookiecutter.default_locale }}/LC_MESSAGES/{{ cookiecutter.gettext_domain }}.po
+MSG_CAT_TMPL = locale/{{ cookiecutter.gettext_domain }}.pot
 
-i18n:
+gettext:
 	pybabel extract -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
 	test -f ${DEF_MSG_CAT} || \
-		pybabel init -D {{ cookiecutter.project_slug }} -i ${MSG_CAT_TMPL}  -d locale -l {{ cookiecutter.default_locale }}
-	pybabel update -D {{ cookiecutter.project_slug }} -i ${MSG_CAT_TMPL}  -d locale
-	pybabel compile --statistics -D {{ cookiecutter.project_slug }} -d locale
+		pybabel init -D {{ cookiecutter.gettext_domain }} -i ${MSG_CAT_TMPL}  -d locale -l {{ cookiecutter.default_locale }}
+	pybabel update -D {{ cookiecutter.gettext_domain }} -i ${MSG_CAT_TMPL}  -d locale
+	pybabel compile --statistics -D {{ cookiecutter.gettext_domain }} -d locale
 
-clean-i18n:
+clean-gettext:
 	find ./locale -name \*.mo -exec rm {} \;
 {%- endif %}

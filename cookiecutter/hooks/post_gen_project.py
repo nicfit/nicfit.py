@@ -88,5 +88,10 @@ if __name__ == "__main__":
         shutil.rmtree("{{ cookiecutter.py_module }}")
         shutil.rmtree("tests")
 
-    if '{{ cookiecutter.support_i18n }}' == 'no':
-        Path("locale").rmdir()
+    domain = "{{ cookiecutter.gettext_domain }}"
+    if domain == "None":
+        shutil.rmtree("locale")
+    else:
+        gk = Path("locale/.gitkeep")
+        if gk.exists():
+            gk.unlink()

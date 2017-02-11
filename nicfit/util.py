@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
+import gettext
 import contextlib
 from pathlib import Path
+
+from ._logging import getLogger
+
+log = getLogger(__name__)
 
 
 @contextlib.contextmanager
@@ -53,3 +59,29 @@ def copytree(src, dst, symlinks=True):
             errors.extend((src, dst, str(why)))
     if errors:
         raise Error(errors)
+
+
+def initGetText(domain, install=False, fallback=True):
+    locale_paths = [
+        Path(__file__).parent / ".." / "locale",
+        Path(sys.prefix) / "share" / "locale",
+    ]
+
+    translation = None
+    for locale_dir in [d for d in locale_paths if d.exists()]:
+        if gettext.find(domain, str(locale_dir)):
+            log.debug("Loading message catalogs from {}".format(locale_dir))
+            translation = gettext.translation(domain, str(locale_dir))
+            break
+
+    if translation is None:
+        # This with either throw FileNotFoundError (fallback=False) or set a
+        # gettext.NullTranslations
+        translation = gettext.translation(domain, str(locale_dir),
+                                          fallback=fallback)
+    assert translation
+
+    if install:
+        gettext.install(domain, str(locale_dir), names=["ngettext"])
+
+    return translation

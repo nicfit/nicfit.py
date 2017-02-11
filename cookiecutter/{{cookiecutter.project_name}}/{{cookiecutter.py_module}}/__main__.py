@@ -15,6 +15,11 @@ from . import version
     pout("\m/")
 
 
-app = Application(main, version=version)
+app = Application(main, version=version,
+{%- if cookiecutter.gettext_domain != "None" %}
+                  gettext_domain="{{ cookiecutter.gettext_domain }}")
+{% else %}
+                  gettext_domain=None)
+{% endif %}
 if __name__ == "__main__":
     app.run()

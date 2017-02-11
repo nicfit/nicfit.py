@@ -10,16 +10,10 @@ paver
 cogapp
 sphinxcontrib-paverutils
 {%- endif %}
-
-{%- if cookiecutter.use_bitbucket == "yes" %}
-# Upstream PR: https://bitbucket.org/dhellmann/sphinxcontrib-bitbucket/pull-requests/1/use-setuptools-over-distribute-python3/diff
-#sphinxcontrib-bitbucket
-hg+https://nicfit@bitbucket.org/nicfit/sphinxcontrib-bitbucket
-{%- else %}
 #gitchangelog
 git+https://github.com/nicfit/gitchangelog.git
-{%- endif %}
 ipdb
-{%- if cookiecutter.support_i18n == "yes" %}
+{%- if cookiecutter.gettext_domain != "None" %}
 babel
 {%- endif %}
+detox

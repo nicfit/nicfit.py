@@ -3,6 +3,21 @@ Release History
 
 .. :changelog:
 
+v0.5.12 (2017-02-11)
+------------------------
+
+New
+~~~
+
+- gettext support (see nicfit.util.initGetText)
+- ipdb and detox added in dev.txt
+
+Fix
+~~~
+
+- Merging quoting fixes.
+
+
 v0.5.11 (2017-02-05)
 ------------------------
 

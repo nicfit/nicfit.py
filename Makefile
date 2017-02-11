@@ -49,7 +49,7 @@ build:
 	${MAKE} -C ./cookiecutter all
 
 clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs \
-       clean-i18n
+       clean-gettext
 	rm -rf tags
 	${MAKE} -C ./cookiecutter clean
 
@@ -80,20 +80,17 @@ clean-patch:
 	find . -name '*.orig' -exec rm -f '{}' \;
 
 lint:
-	flake8 $(SRC_DIRS)
+	flake8 --builtins=_ $(SRC_DIRS)
 
 _PYTEST_OPTS=
-
 ifdef TEST_PDB
     _PDB_OPTS=--pdb -s
 endif
-
 test:
 	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
 
 test-all:
 	tox
-
 
 coverage:
 	pytest --cov=./nicfit \
@@ -206,7 +203,7 @@ pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
 
-dist: clean i18n build docs-dist
+dist: clean gettext build docs-dist
 	python setup.py sdist --formats=gztar,zip
 	python setup.py bdist_egg
 	python setup.py bdist_wheel
@@ -229,29 +226,30 @@ README.html: README.rst
 		${BROWSER} README.html;\
 	fi
 
-CC_DIFF ?= meld
+CC_MERGE ?= yes
+CC_OPTS ?= --no-input
 GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
 	${MAKE} -C ./cookiecutter all
 	rm -rf "${CC_DIR}"
-	if test "${CC_DIFF}" == "no"; then \
-		nicfit cookiecutter --no-input "${TEMP_DIR}"; \
+	if test "${CC_MERGE}" == "no"; then \
+		nicfit cookiecutter ${CC_OPTS} "${TEMP_DIR}"; \
 		git -C "${CC_DIR}" diff; \
 		git -C "${CC_DIR}" status -s -b; \
 	else \
-		nicfit cookiecutter --merge --no-input "${TEMP_DIR}" \
+		nicfit cookiecutter --merge ${CC_OPTS} "${TEMP_DIR}" \
 		       --extra-merge ${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK};\
 	fi
 
 DEF_MSG_CAT = locale/en_US/LC_MESSAGES/nicfit.py.po
 MSG_CAT_TMPL = locale/nicfit.py.pot
 
-i18n:
+gettext:
 	pybabel extract -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
 	test -f ${DEF_MSG_CAT} || \
 		pybabel init -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale -l en_US
 	pybabel update -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale
 	pybabel compile --statistics -D nicfit.py -d locale
 
-clean-i18n:
+clean-gettext:
 	find ./locale -name \*.mo -exec rm {} \;

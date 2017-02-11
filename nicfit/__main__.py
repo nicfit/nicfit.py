@@ -2,10 +2,10 @@
 import os
 import shutil
 import subprocess
+import collections
 from uuid import uuid4
 from hashlib import md5
 from pathlib import Path
-from gettext import gettext as _
 
 import nicfit
 from . import version
@@ -21,6 +21,11 @@ except ImportError:  # pragma: nocover
     cookiecutter = None
 
 HASH_FILE = Path("./.cookiecutter.md5")
+
+MERGE_TOOLS = collections.OrderedDict()
+MERGE_TOOLS["meld"] = None
+MERGE_TOOLS["gvimdiff"] = "-geometry 169x60 -f"
+MERGE_TOOLS["vimdiff"] = "-geometry 169x60 -f"
 
 
 @nicfit.command.register
@@ -52,7 +57,13 @@ class CookieCutter(nicfit.Command):
                             "saved md5sum matches from a previous merge.")
         parser.add_argument("--extra-merge", action="append", nargs=2,
                             metavar="FILE", default=[],
-                            help="FIXME")
+                            help="Merge two files there are outside the context"
+                            " of the git repo (e.g. untracked files, "
+                            ".git/hooks, etc.). This option may be specified "
+                            "multiple times.")
+        parser.add_argument("--merge-cmd", metavar="CMD",
+                            help="Merge command. Called with with 2 args: "
+                                 "<src> <dest>")
 
     def _findTemplateDir(self):
         template_d = None
@@ -113,7 +124,6 @@ class CookieCutter(nicfit.Command):
 
             if self.args.merge:
                 self._merge(cc_dir)
-                # FIXME: Handle commit-hook
 
     def _gitCloneRepo(self, repo_path):
         try:
@@ -181,9 +191,21 @@ class CookieCutter(nicfit.Command):
                                   .returncode != 0
                 pout("Differences: {}".format(diffs))
                 if diffs:
-                    # FIXME: Allow setting of merge-tool
-                    subprocess.run("meld '{src}' '{dst}'".format(**locals()),
-                                   shell=True, check=True)
+                    merge_cmd = self.args.merge_cmd
+                    if merge_cmd is None:
+                        for cmd, opts in MERGE_TOOLS.items():
+                            if shutil.which(cmd):
+                                merge_cmd = " ".join([cmd, opts or ""])
+                                break
+                    if merge_cmd is not None:
+                        subprocess.run("{merge_cmd} '{src}' '{dst}'"
+                                       .format(**locals()),
+                                       shell=True, check=True)
+                    else:
+                        perr("Merge disabled, no merge command found. Install "
+                             "a merge tool such as: {tools}.\nOr use "
+                             "--merge-cmd to specify your own."
+                             .format(tools=", ".join(MERGE_TOOLS.keys())))
 
         with HASH_FILE.open("w") as hash_file:
             for f in sorted(md5_hashes.keys()):
@@ -192,7 +214,7 @@ class CookieCutter(nicfit.Command):
 
 class Nicfit(nicfit.Application):
     def __init__(self):
-        super().__init__(version=version)
+        super().__init__(version=version, gettext_domain="nicfit.py")
         subs = self.arg_parser.add_subparsers(title="Commands",
                                               add_help_subcmd=True,
                                               dest="command")

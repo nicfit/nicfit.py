@@ -1,6 +1,9 @@
 import sys
-from ._argparse import ArgumentParser
+import logging
+
 from ._logging import getLogger
+from ._argparse import ArgumentParser
+from .util import initGetText
 
 log = getLogger(__name__)
 
@@ -8,7 +11,7 @@ try:
     import ipdb as _debugger
 except ImportError:                                            # pragma: nocover
     import pdb as _debugger
-def _pdb(): # noqa
+def _pdb():  # noqa: E302
     e, m, tb = sys.exc_info()
     _debugger.post_mortem(tb)
 
@@ -20,18 +23,20 @@ class Application:
     def __init__(self, main_func=None, *, name=None, description=None,
                  logging_args=True, config_opts=None, version=None,
                  atexit=None, pdb_opt=False, extra_arg_parser_opts=None,
-                 i18n=False):
+                 gettext_domain=None):
         self._main_func = main_func
         self._atexit_func = atexit
 
         self.log = getLogger(name) if name else log
-        self.name = name
+        logging.basicConfig()
 
         extra_arg_parser_opts = extra_arg_parser_opts or {}
         parser = ArgumentParser(add_log_args=logging_args,
                                 config_opts=config_opts,
                                 prog=name, description=description,
                                 **extra_arg_parser_opts)
+        self.name = parser.prog
+
         if version:
             parser.add_argument("--version", action="version", version=version)
         if pdb_opt:
@@ -41,9 +46,12 @@ class Application:
         parser.set_defaults(app=self)
         self.arg_parser = self._addArguments(parser) or parser
 
-        if i18n:
-            import gettext
-            gettext.install(ame)
+        if gettext_domain:
+            translation = initGetText(gettext_domain, install=True)
+            if translation is None:
+                raise ValueError("Unable to find gettext message catalog for "
+                                 "gettext_domain='{}'".format(gettext_domain))
+            self.translation = translation
 
     def _main(self, args):
         """
