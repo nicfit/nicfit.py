@@ -19,12 +19,13 @@ class Application:
 
     def __init__(self, main_func=None, *, name=None, description=None,
                  logging_args=True, config_opts=None, version=None,
-                 atexit=None, pdb_opt=False, extra_arg_parser_opts=None):
+                 atexit=None, pdb_opt=False, extra_arg_parser_opts=None,
+                 i18n=False):
         self._main_func = main_func
         self._atexit_func = atexit
 
-        self.name = name
         self.log = getLogger(name) if name else log
+        self.name = name
 
         extra_arg_parser_opts = extra_arg_parser_opts or {}
         parser = ArgumentParser(add_log_args=logging_args,
@@ -39,6 +40,10 @@ class Application:
 
         parser.set_defaults(app=self)
         self.arg_parser = self._addArguments(parser) or parser
+
+        if i18n:
+            import gettext
+            gettext.install(ame)
 
     def _main(self, args):
         """

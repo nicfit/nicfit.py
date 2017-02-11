@@ -5,6 +5,7 @@ import subprocess
 from uuid import uuid4
 from hashlib import md5
 from pathlib import Path
+from gettext import gettext as _
 
 import nicfit
 from . import version
@@ -200,7 +201,8 @@ class Nicfit(nicfit.Application):
     def _main(self, args):
         ansi.init()
         if not args.command:
-            pout(Fg.red("\m/ {} \m/".format(Style.inverse("Slayer"))))
+            pout(Fg.red("\m/ {} \m/"
+                       .format(Style.inverse(_("Listen to more Slayer")))))
             return 0
 
         try:

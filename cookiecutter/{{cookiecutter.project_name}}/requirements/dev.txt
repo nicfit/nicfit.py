@@ -20,3 +20,6 @@ hg+https://nicfit@bitbucket.org/nicfit/sphinxcontrib-bitbucket
 git+https://github.com/nicfit/gitchangelog.git
 {%- endif %}
 ipdb
+{%- if cookiecutter.support_i18n == "yes" %}
+babel
+{%- endif %}

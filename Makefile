@@ -48,7 +48,8 @@ build:
 	python setup.py build
 	${MAKE} -C ./cookiecutter all
 
-clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
+clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs \
+       clean-i18n
 	rm -rf tags
 	${MAKE} -C ./cookiecutter clean
 
@@ -175,7 +176,6 @@ tag-release:
 
 release: pre-release freeze-release build-release tag-release upload-release
 
-
 github-release:
 	name="${RELEASE_TAG}"; \
     if test -n "${RELEASE_NAME}"; then \
@@ -196,28 +196,25 @@ github-release:
                    --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
     done
 
-
 web-release:
 	@# Not implemented
 	@true
 
-
 upload-release: github-release pypi-release web-release
-
 
 pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
 
-dist: clean docs-dist build
+dist: clean i18n build docs-dist
 	python setup.py sdist --formats=gztar,zip
 	python setup.py bdist_egg
 	python setup.py bdist_wheel
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
 	cd dist && \
-    for f in $$(ls); do \
-        md5sum $${f} > $${f}.md5; \
-    done
+	for f in $$(ls); do \
+		md5sum $${f} > $${f}.md5; \
+	done
 	ls -l dist
 
 install: clean
@@ -245,3 +242,16 @@ cookiecutter:
 		nicfit cookiecutter --merge --no-input "${TEMP_DIR}" \
 		       --extra-merge ${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK};\
 	fi
+
+DEF_MSG_CAT = locale/en_US/LC_MESSAGES/nicfit.py.po
+MSG_CAT_TMPL = locale/nicfit.py.pot
+
+i18n:
+	pybabel extract -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
+	test -f ${DEF_MSG_CAT} || \
+		pybabel init -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale -l en_US
+	pybabel update -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale
+	pybabel compile --statistics -D nicfit.py -d locale
+
+clean-i18n:
+	find ./locale -name \*.mo -exec rm {} \;

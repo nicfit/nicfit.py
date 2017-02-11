@@ -10,7 +10,7 @@ def test_NicfitApp_default(capfd):
     with pytest.raises(SystemExit):
         app.run([])
     out, _ = capfd.readouterr()
-    assert out == Fg.red("\m/ {} \m/".format(Style.inverse("Slayer"))) + "\n"
+    assert out == Fg.red("\m/ {} \m/".format(Style.inverse("Listen to more Slayer"))) + "\n"
 
 
 def test_NicfitApp_invalid():

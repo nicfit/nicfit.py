@@ -87,3 +87,6 @@ if __name__ == "__main__":
         copytree("tests", str(src_d / "tests"))
         shutil.rmtree("{{ cookiecutter.py_module }}")
         shutil.rmtree("tests")
+
+    if '{{ cookiecutter.support_i18n }}' == 'no':
+        Path("locale").rmdir()
