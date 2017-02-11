@@ -47,7 +47,8 @@ help:
 build:
 	python setup.py build
 
-clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
+clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs \
+       clean-i18n
 	rm -rf tags
 
 clean-local:
@@ -270,8 +271,9 @@ i18n:
 	pybabel extract -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
 	test -f ${DEF_MSG_CAT} || \
 		pybabel init -D {{ cookiecutter.project_slug }} -i ${MSG_CAT_TMPL}  -d locale -l {{ cookiecutter.default_locale }}
-	for msgcat in `find locale -type f -name \*.po`; do \
-		echo $$msgcat; \
-		pybabel update -D {{ cookiecutter.project_slug }} -i ${MSG_CAT_TMPL}  -d locale; \
-	done
+	pybabel update -D {{ cookiecutter.project_slug }} -i ${MSG_CAT_TMPL}  -d locale
+	pybabel compile -D {{ cookiecutter.project_slug }} -d locale
+
+clean-i18n:
+	find ./locale -name \*.mo -exec rm {} \;
 {%- endif %}
