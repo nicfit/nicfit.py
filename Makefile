@@ -251,7 +251,7 @@ i18n:
 	test -f ${DEF_MSG_CAT} || \
 		pybabel init -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale -l en_US
 	pybabel update -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale
-	pybabel compile -D nicfit.py -d locale
+	pybabel compile --statistics -D nicfit.py -d locale
 
 clean-i18n:
 	find ./locale -name \*.mo -exec rm {} \;

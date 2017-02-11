@@ -272,7 +272,7 @@ i18n:
 	test -f ${DEF_MSG_CAT} || \
 		pybabel init -D {{ cookiecutter.project_slug }} -i ${MSG_CAT_TMPL}  -d locale -l {{ cookiecutter.default_locale }}
 	pybabel update -D {{ cookiecutter.project_slug }} -i ${MSG_CAT_TMPL}  -d locale
-	pybabel compile -D {{ cookiecutter.project_slug }} -d locale
+	pybabel compile --statistics -D {{ cookiecutter.project_slug }} -d locale
 
 clean-i18n:
 	find ./locale -name \*.mo -exec rm {} \;
