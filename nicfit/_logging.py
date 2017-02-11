@@ -138,6 +138,7 @@ class LogFileAction(argparse._AppendAction):
 
         h.setFormatter(formatter)
         handlers_logger.addHandler(h)
+        handlers_logger.propagate = False
 
         values = tuple([logger, h])
         super().__call__(parser, namespace, values, option_string=option_string)

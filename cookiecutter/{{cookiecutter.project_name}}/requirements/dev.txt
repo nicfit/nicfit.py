@@ -19,3 +19,4 @@ hg+https://nicfit@bitbucket.org/nicfit/sphinxcontrib-bitbucket
 #gitchangelog
 git+https://github.com/nicfit/gitchangelog.git
 {%- endif %}
+ipdb
