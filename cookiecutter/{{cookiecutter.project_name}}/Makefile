@@ -9,13 +9,8 @@ TEMP_DIR ?= ./tmp
 CC_DIR = ${TEMP_DIR}/{{ cookiecutter.project_name }}
 NAME ?= {{ cookiecutter.full_name }}
 EMAIL ?= {{ cookiecutter.email }}
-{%- if cookiecutter.use_github == "yes" %}
 GITHUB_USER ?= {{ cookiecutter.github_username }}
 GITHUB_REPO ?= {{ cookiecutter.github_repo }}
-{%- else %}
-BITBUCKET_USER ?= {{ cookiecutter.bitbucket_username }}
-BITBUCKET_REPO ?= {{ cookiecutter.bitbucket_repo }}
-{%- endif %}
 PYPI_REPO = pypitest
 PROJECT_NAME = $(shell python setup.py --name 2> /dev/null)
 VERSION = $(shell python setup.py --version 2> /dev/null)
@@ -153,15 +148,10 @@ pre-release: lint test changelog
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	check-manifest
-{%- if cookiecutter.use_github == "yes" %}
 	@if git tag -l | grep ${RELEASE_TAG} > /dev/null; then \
-{%- else %}
-	@if hg tags -q | grep ${RELEASE_TAG} > /dev/null; then \
-{%- endif %}
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
-{%- if cookiecutter.use_github == "yes" %}
 	IFS=$$'\n';\
 	for auth in `git authors --list`; do \
 		echo "Checking $$auth...";\
@@ -170,13 +160,8 @@ pre-release: lint test changelog
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
 	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	@github-release --version    # Just a exe existence check
-{%- else %}
-	@# TODO: Update AUTHORS.rst file
-	@# TODO: Check for tool for making bitbucket releases
-{%- endif %}
 
 changelog:
-{%- if cookiecutter.use_github == "yes" %}
 	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
 	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
 		rm -f ${CHANGELOG}.new; \
@@ -192,36 +177,21 @@ changelog:
 		fi; \
 		mv ${CHANGELOG}.new ${CHANGELOG}; \
 	fi
-{%- else %}
-	@# TODO
-{%- endif %}
 
 build-release: test-all dist
 
 freeze-release:
-{%- if cookiecutter.use_github == "yes" %}
 	@# TODO: check for incoming
 	@(git diff --quiet && git diff --quiet --staged) || \
-{%- else %}
-	@(test -z "`hg status --modified --added --deleted`" && \
-      hg incoming | grep 'no changes found') || \
-{%- endif %}
         (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
          printf "\nCommit and try again.\n" && false)
 
 tag-release:
-{%- if cookiecutter.use_github == "yes" %}
 	git tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	git push --tags origin
-{%- else %}
-	hg tag ${RELEASE_TAG}
-	-hg commit -m "Release $(RELEASE_TAG)"
-	hg push --rev .
-{%- endif %}
 
 release: pre-release freeze-release build-release tag-release upload-release
 
-{% if cookiecutter.use_github == "yes" %}
 github-release:
 	name="${RELEASE_TAG}"; \
     if test -n "${RELEASE_NAME}"; then \
@@ -241,35 +211,30 @@ github-release:
         github-release upload --user "${GITHUB_USER}" --repo ${GITHUB_REPO} \
                    --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
     done
-{% else %}
-bitbucket-release:
-	# Not implemented
-	false
-{%- endif %}
 
 web-release:
 	@# Not implemented
 	@true
 
-{% if cookiecutter.use_github == "yes" %}
 upload-release: github-release pypi-release web-release
-{% else %}
-upload-release: bitbucket-release pypi-release web-release
-{% endif %}
 
 pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
 
-dist: clean docs-dist build
+{% if cookiecutter.support_i18n == "yes" -%}
+dist: clean i18n build docs-dist
+{%- else -%}
+dist: clean build docs-dist
+{%- endif %}
 	python setup.py sdist --formats=gztar,zip
 	python setup.py bdist_egg
 	python setup.py bdist_wheel
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
 	cd dist && \
-    for f in $$(ls); do \
-        md5sum $${f} > $${f}.md5; \
-    done
+	for f in $$(ls); do \
+		md5sum $${f} > $${f}.md5; \
+	done
 	ls -l dist
 
 install: clean
@@ -296,3 +261,17 @@ cookiecutter:
 		nicfit cookiecutter --merge --no-input "${TEMP_DIR}" \
 		       --extra-merge ${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK};\
 	fi
+
+{% if cookiecutter.support_i18n == "yes" -%}
+DEF_MSG_CAT = locale/{{ cookiecutter.default_locale }}/LC_MESSAGES/{{ cookiecutter.project_slug }}.po
+MSG_CAT_TMPL = locale/{{ cookiecutter.project_slug }}.pot
+
+i18n:
+	pybabel extract -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
+	test -f ${DEF_MSG_CAT} || \
+		pybabel init -D {{ cookiecutter.project_slug }} -i ${MSG_CAT_TMPL}  -d locale -l {{ cookiecutter.default_locale }}
+	for msgcat in `find locale -type f -name \*.po`; do \
+		echo $$msgcat; \
+		pybabel update -D {{ cookiecutter.project_slug }} -i ${MSG_CAT_TMPL}  -d locale; \
+	done
+{%- endif %}

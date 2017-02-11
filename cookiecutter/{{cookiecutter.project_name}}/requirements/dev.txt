@@ -19,3 +19,6 @@ hg+https://nicfit@bitbucket.org/nicfit/sphinxcontrib-bitbucket
 #gitchangelog
 git+https://github.com/nicfit/gitchangelog.git
 {%- endif %}
+{%- if cookiecutter.support_i18n == "yes" %}
+babel
+{%- endif %}

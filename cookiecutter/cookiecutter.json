@@ -53,6 +53,8 @@
     "pypi_username": "{{ cookiecutter.github_username }}",
     "pypi_repo_name": "{{ cookiecutter.project_slug }}",
     "use_pypi_deployment_with_travis": ["no", "yes"],
+    "support_i18n": ["no", "yes"],
+    "default_locale": "en_US",
 
     "_comment": "##### Build tools #####",
     "use_make": ["yes", "no"],
