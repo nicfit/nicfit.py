@@ -245,7 +245,7 @@ DEF_MSG_CAT = locale/en_US/LC_MESSAGES/nicfit.py.po
 MSG_CAT_TMPL = locale/nicfit.py.pot
 
 gettext:
-	pybabel extract -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
+	pybabel extract --no-location -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
 	test -f ${DEF_MSG_CAT} || \
 		pybabel init -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale -l en_US
 	pybabel update -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale
