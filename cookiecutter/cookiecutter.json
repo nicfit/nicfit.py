@@ -53,7 +53,7 @@
     "pypi_username": "{{ cookiecutter.github_username }}",
     "pypi_repo_name": "{{ cookiecutter.project_slug }}",
     "use_pypi_deployment_with_travis": ["no", "yes"],
-    "gettext_domain": ["{{ cookiecutter.project_slug }}", "None"],
+    "gettext_domain": ["None", "{{ cookiecutter.project_slug }}"],
     "default_locale": "en_US",
 
     "_comment": "##### Build tools #####",
