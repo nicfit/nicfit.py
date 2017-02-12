@@ -123,7 +123,7 @@ clean-docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: lint test changelog
+pre-release: lint test gettext-po changelog
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
@@ -141,6 +141,7 @@ pre-release: lint test changelog
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
 	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	@github-release --version    # Just a exe existence check
+	git status -s -b
 
 changelog:
 	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
@@ -244,11 +245,13 @@ cookiecutter:
 DEF_MSG_CAT = locale/en_US/LC_MESSAGES/nicfit.py.po
 MSG_CAT_TMPL = locale/nicfit.py.pot
 
-gettext:
+gettext-po:
 	pybabel extract --no-location -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
 	test -f ${DEF_MSG_CAT} || \
 		pybabel init -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale -l en_US
 	pybabel update -D nicfit.py -i ${MSG_CAT_TMPL}  -d locale
+
+gettext:
 	pybabel compile --statistics -D nicfit.py -d locale
 
 clean-gettext:
