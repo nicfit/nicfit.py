@@ -58,6 +58,8 @@ clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs \
 clean-local:
 	@# XXX Add new clean targets here.
 	-rm *.log
+	-rm requirements/extra_example.in
+	rm -rf tmp
 
 clean-build:
 	rm -fr build/
