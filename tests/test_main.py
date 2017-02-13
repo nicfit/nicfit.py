@@ -44,8 +44,8 @@ def test_NicfitApp_cookiecutter_mock(tmpdir):
 
 
 def test_NicfitApp_cookiecutter_exception(tmpdir):
-    import nicfit
-    mock_cc = Mock(side_effect=nicfit.__main__.CookiecutterException)
+    from cookiecutter.exceptions import CookiecutterException
+    mock_cc = Mock(side_effect=CookiecutterException)
     with patch("nicfit.__main__.cookiecutter", mock_cc):
         with pytest.raises(SystemExit) as sysexit:
             app.run(["cookiecutter", str(tmpdir)])
