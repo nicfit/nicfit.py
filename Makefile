@@ -35,7 +35,7 @@ help:
 	@echo "test-all - run tests on various Python versions with tox"
 	@echo "release - package and upload a release"
 	@echo "          PYPI_REPO=[pypitest]|pypi"
-	@echo "pre-release - check repo and show version"
+	@echo "pre-release - check repo and show version, generate changelog, etc.
 	@echo "dist - package"
 	@echo "install - install the package to the active Python's site-packages"
 	@echo "build - build package source files"
@@ -43,6 +43,8 @@ help:
 	@echo "Options:"
 	@echo "TEST_PDB - If defined PDB options are added when 'pytest' is invoked"
 	@echo "BROWSER - HTML viewer used by docs-view/coverage-view"
+	@echo "CC_MERGE - Set to no to disable cookiecutter merging."
+	@echo "CC_OPTS - OVerrided the default options (--no-input) with your own."
 
 build:
 	python setup.py build
@@ -138,6 +140,7 @@ pre-release: lint test gettext-po changelog
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
+	pip-compile requirements/*.in -o ./requirements.txt
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
 	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	@github-release --version    # Just a exe existence check
@@ -204,10 +207,12 @@ pypi-release:
 	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
 	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
 
-dist: clean gettext build docs-dist
+sdist: build
 	python setup.py sdist --formats=gztar,zip
 	python setup.py bdist_egg
 	python setup.py bdist_wheel
+
+dist: clean sdist docs-dist
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
 	cd dist && \
 	for f in $$(ls); do \
