@@ -8,7 +8,7 @@ check-manifest==0.35
 {%- if cookiecutter.use_paver == "yes" %}
 paver==1.2.4
 cogapp==2.5.1
-sphinxcontrib-paverutils
+sphinxcontrib-paverutils==1.16.0
 {%- endif %}
 #gitchangelog
 git+https://github.com/nicfit/gitchangelog.git
