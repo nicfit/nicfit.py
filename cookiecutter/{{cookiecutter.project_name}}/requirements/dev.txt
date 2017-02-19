@@ -12,7 +12,7 @@ sphinxcontrib-paverutils==1.16.0
 {%- endif %}
 #gitchangelog
 git+https://github.com/nicfit/gitchangelog.git
-ipdb
+ipdb==0.10.2
 {%- if cookiecutter.gettext_domain != "None" %}
 babel
 {%- endif %}
