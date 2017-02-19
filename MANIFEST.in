@@ -17,7 +17,8 @@ global-exclude __pycache__
 global-exclude .editorconfig
 global-exclude *.py[co]
 
-recursive-include requirements *.txt
+include requirements.txt
+recursive-include requirements *.txt *.in
 graft locale
 graft cookiecutter
 exclude cookiecutter/hooks/pre_gen_project.py.in
