@@ -1,6 +1,6 @@
-wheel
+wheel==0.29.0
 watchdog
-tox
+tox==2.6.0
 flake8
 twine
 Sphinx
@@ -9,4 +9,4 @@ check-manifest
 git+https://github.com/nicfit/gitchangelog.git
 ipdb
 babel==2.3.4
-pip-tools
+pip-tools==1.8.0
