@@ -8,5 +8,5 @@ check-manifest
 #gitchangelog
 git+https://github.com/nicfit/gitchangelog.git
 ipdb
-babel
+babel==2.3.4
 pip-tools
