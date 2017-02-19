@@ -3,7 +3,7 @@ watchdog
 tox
 flake8
 twine
-Sphinx
+Sphinx==1.5.2
 check-manifest
 {%- if cookiecutter.use_paver == "yes" %}
 paver
