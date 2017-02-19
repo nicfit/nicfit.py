@@ -1,6 +1,6 @@
 pytest
 pytest-cov
 pytest-runner
-pytest-asyncio
+pytest-asyncio==0.5.0
 curio
 pytest-curio
