@@ -1,0 +1,4 @@
+requirements:
+    - requirements.txt
+    - requirements/test.txt
+    - requirements/dev.txt
