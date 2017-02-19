@@ -14,6 +14,6 @@ sphinxcontrib-paverutils
 git+https://github.com/nicfit/gitchangelog.git
 ipdb
 {%- if cookiecutter.gettext_domain != "None" %}
-babel
+babel==2.3.4
 {%- endif %}
 pip-tools
