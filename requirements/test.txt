@@ -3,4 +3,4 @@ pytest-cov
 pytest-runner==2.11.1
 pytest-asyncio
 curio
-pytest-curio
+pytest-curio==0.1.0
