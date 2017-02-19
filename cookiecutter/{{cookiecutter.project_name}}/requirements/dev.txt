@@ -8,7 +8,7 @@ check-manifest
 {%- if cookiecutter.use_paver == "yes" %}
 paver
 cogapp
-sphinxcontrib-paverutils
+sphinxcontrib-paverutils==1.16.0
 {%- endif %}
 #gitchangelog
 git+https://github.com/nicfit/gitchangelog.git
