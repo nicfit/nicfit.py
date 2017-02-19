@@ -6,7 +6,7 @@ twine==1.8.1
 Sphinx==1.5.2
 check-manifest==0.35
 {%- if cookiecutter.use_paver == "yes" %}
-paver
+paver==1.2.4
 cogapp
 sphinxcontrib-paverutils
 {%- endif %}
