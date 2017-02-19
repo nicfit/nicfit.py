@@ -1,3 +1,4 @@
+# pyup: ignore file
 wheel
 watchdog
 tox
