@@ -7,7 +7,7 @@ Sphinx
 check-manifest
 {%- if cookiecutter.use_paver == "yes" %}
 paver
-cogapp
+cogapp==2.5.1
 sphinxcontrib-paverutils
 {%- endif %}
 #gitchangelog
