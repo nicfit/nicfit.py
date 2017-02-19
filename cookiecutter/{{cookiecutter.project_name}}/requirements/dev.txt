@@ -4,7 +4,7 @@ tox==2.6.0
 flake8==3.3.0
 twine==1.8.1
 Sphinx==1.5.2
-check-manifest
+check-manifest==0.35
 {%- if cookiecutter.use_paver == "yes" %}
 paver
 cogapp
