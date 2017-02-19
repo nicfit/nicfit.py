@@ -16,4 +16,4 @@ ipdb
 {%- if cookiecutter.gettext_domain != "None" %}
 babel
 {%- endif %}
-pip-tools
+pip-tools==1.8.0
