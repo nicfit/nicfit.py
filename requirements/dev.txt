@@ -13,6 +13,6 @@ babel==2.3.4
 pip-tools==1.8.0
 =======
 ipdb
-babel
+babel==2.3.4
 pip-tools
 >>>>>>> deps
