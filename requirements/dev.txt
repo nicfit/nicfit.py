@@ -14,5 +14,5 @@ pip-tools==1.8.0
 =======
 ipdb
 babel
-pip-tools
+pip-tools==1.8.0
 >>>>>>> deps
