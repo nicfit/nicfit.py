@@ -6,6 +6,7 @@ import collections
 from uuid import uuid4
 from hashlib import md5
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
 import nicfit
 from . import version
@@ -25,7 +26,7 @@ HASH_FILE = Path("./.cookiecutter.md5")
 MERGE_TOOLS = collections.OrderedDict()
 MERGE_TOOLS["meld"] = None
 MERGE_TOOLS["gvimdiff"] = "-geometry 169x60 -f"
-MERGE_TOOLS["vimdiff"] = "-geometry 169x60 -f"
+MERGE_TOOLS["vimdiff"] = None
 
 
 @nicfit.command.register
@@ -180,13 +181,17 @@ class CookieCutter(nicfit.Command):
                                         if merge_file else Fg.green("merged")))
             md5_hashes[file] = md5sum
 
-            if not dst.exists():
-                if not dst.parent.exists():
-                    dst.parent.mkdir(0o755, parents=True)
-                dst.touch()
-
             if merge_file:
-                diffs = subprocess.run("diff '{src}' '{dst}' >/dev/null"
+                tmp_dst = None
+                if not dst.exists():
+                    tmp_dst = NamedTemporaryFile("w", suffix=dst.suffix,
+                                                 delete=False)
+                    # Write the file to exist on disk for diff and merge
+                    tmp_dst.close()
+                    tmp_dst = Path(tmp_dst.name)
+
+                dst_file = str(dst if tmp_dst is None else tmp_dst)
+                diffs = subprocess.run("diff '{src}' '{dst_file}' >/dev/null"
                                        .format(**locals()), shell=True)\
                                   .returncode != 0
                 pout("Differences: {}".format(diffs))
@@ -198,7 +203,7 @@ class CookieCutter(nicfit.Command):
                                 merge_cmd = " ".join([cmd, opts or ""])
                                 break
                     if merge_cmd is not None:
-                        subprocess.run("{merge_cmd} '{src}' '{dst}'"
+                        subprocess.run("{merge_cmd} '{src}' '{dst_file}'"
                                        .format(**locals()),
                                        shell=True, check=True)
                     else:
@@ -206,6 +211,14 @@ class CookieCutter(nicfit.Command):
                              "a merge tool such as: {tools}.\nOr use "
                              "--merge-cmd to specify your own."
                              .format(tools=", ".join(MERGE_TOOLS.keys())))
+
+                if tmp_dst and tmp_dst.stat().st_size == 0:
+                    tmp_dst.unlink()
+                elif tmp_dst:
+                    # Move tmp file into place and create parent dirs
+                    if not dst.parent.exists():
+                        dst.parent.mkdir(0o755, parents=True)
+                    shutil.move(str(tmp_dst), str(dst))
 
         with HASH_FILE.open("w") as hash_file:
             for f in sorted(md5_hashes.keys()):
