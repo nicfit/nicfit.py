@@ -49,12 +49,10 @@ help:
 build:
 	python setup.py build
 
-# FIXME: conditional clean-gettext
-clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs \
-       clean-gettext
-	rm -rf tags
+clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
 
 clean-local:
+	-rm tags
 	@# XXX Add new clean targets here.
 
 clean-build:
@@ -63,6 +61,7 @@ clean-build:
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
+	find ./locale -name \*.mo -exec rm {} \;
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -127,7 +126,7 @@ clean-docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: lint test gettext-po changelog requirements
+pre-release: lint test changelog requirements
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
@@ -273,7 +272,4 @@ gettext-po:
 
 gettext:
 	pybabel compile --statistics -D {{ cookiecutter.gettext_domain }} -d locale
-
-clean-gettext:
-	find ./locale -name \*.mo -exec rm {} \;
 {%- endif %}

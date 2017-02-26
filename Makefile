@@ -50,13 +50,11 @@ build:
 	python setup.py build
 	${MAKE} -C ./cookiecutter all
 
-clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs \
-       clean-gettext
-	rm -rf tags
-	${MAKE} -C ./cookiecutter clean
+clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
 
 clean-local:
-	@# XXX Add new clean targets here.
+	-rm tags
+	${MAKE} -C ./cookiecutter clean
 	-rm *.log
 	rm -rf tmp
 
@@ -66,6 +64,7 @@ clean-build:
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
+	find ./locale -name \*.mo -exec rm {} \;
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -126,7 +125,7 @@ clean-docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: lint test gettext-po changelog requirements
+pre-release: lint test changelog requirements
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
@@ -268,6 +267,3 @@ gettext-po:
 
 gettext:
 	pybabel compile --statistics -D nicfit.py -d locale
-
-clean-gettext:
-	find ./locale -name \*.mo -exec rm {} \;
