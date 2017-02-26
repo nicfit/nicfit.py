@@ -2,7 +2,7 @@
         docs clean-docs lint tags docs-dist docs-view coverage-view changelog \
         clean-pyc clean-build clean-patch clean-local clean-test-data \
         test-all test-data build-release freeze-release tag-release \
-        pypi-release web-release github-release cookiecutter
+        pypi-release web-release github-release cookiecutter requirements
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
 TEMP_DIR ?= ./tmp
@@ -35,7 +35,7 @@ help:
 	@echo "test-all - run tests on various Python versions with tox"
 	@echo "release - package and upload a release"
 	@echo "          PYPI_REPO=[pypitest]|pypi"
-	@echo "pre-release - check repo and show version, generate changelog, etc.
+	@echo "pre-release - check repo and show version, generate changelog, etc."
 	@echo "dist - package"
 	@echo "install - install the package to the active Python's site-packages"
 	@echo "build - build package source files"
@@ -49,6 +49,7 @@ help:
 build:
 	python setup.py build
 
+# FIXME: conditional clean-gettext
 clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs \
        clean-gettext
 	rm -rf tags
@@ -79,7 +80,11 @@ clean-patch:
 	find . -name '*.orig' -exec rm -f '{}' \;
 
 lint:
+{%- if cookiecutter.gettext_domain != "None" %}
 	flake8 --builtins=_ $(SRC_DIRS)
+{%- else %}
+	flake8 $(SRC_DIRS)
+{%- endif %}
 
 _PYTEST_OPTS=
 ifdef TEST_PDB
@@ -122,7 +127,7 @@ clean-docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: lint test changelog
+pre-release: lint test gettext-po changelog requirements
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
@@ -137,17 +142,22 @@ pre-release: lint test changelog
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
-	pip-compile requirements/*.in -o ./requirements.txt
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
 	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	@github-release --version    # Just a exe existence check
+	@git status -s -b
+
+requirements:
+	nicfit requirements
+	pip-compile -U requirements.txt -o ./requirements.txt
 
 changelog:
 	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
 	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
 		rm -f ${CHANGELOG}.new; \
 		if test -n "$$last"; then \
-			gitchangelog show --author-format=email $${last}..HEAD |\
+			gitchangelog show --author-format=email \
+			                  --omit-author="{{ cookiecutter.email }}" $${last}..HEAD |\
 			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
 			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
 			 > ${CHANGELOG}.new; \
@@ -162,7 +172,6 @@ changelog:
 build-release: test-all dist
 
 freeze-release:
-	@# TODO: check for incoming
 	@(git diff --quiet && git diff --quiet --staged) || \
         (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
          printf "\nCommit and try again.\n" && false)
@@ -200,8 +209,14 @@ web-release:
 upload-release: github-release pypi-release web-release
 
 pypi-release:
-	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
-	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
+	for f in `find dist -type f -name ${PROJECT_NAME}-${VERSION}.tar.gz \
+              -o -name \*.egg -o -name ${PROJECT_NAME}-${VERSION}.zip \
+              -o -name \*.whl`; do \
+        if test -f $$f ; then \
+            twine register -r ${PYPI_REPO} $$f && \
+            twine upload -r ${PYPI_REPO} --skip-existing $$f ; \
+        fi \
+	done
 
 sdist: build
 	python setup.py sdist --formats=gztar,zip
@@ -236,8 +251,8 @@ CC_MERGE ?= yes
 CC_OPTS ?= --no-input
 GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
-	rm -rf "${CC_DIR}"
-	if test "${CC_MERGE}" == "no"; then \
+	@rm -rf "${CC_DIR}"
+	@if test "${CC_MERGE}" == "no"; then \
 		nicfit cookiecutter ${CC_OPTS} "${TEMP_DIR}"; \
 		git -C "${CC_DIR}" diff; \
 		git -C "${CC_DIR}" status -s -b; \
@@ -250,11 +265,13 @@ cookiecutter:
 DEF_MSG_CAT = locale/{{ cookiecutter.default_locale }}/LC_MESSAGES/{{ cookiecutter.gettext_domain }}.po
 MSG_CAT_TMPL = locale/{{ cookiecutter.gettext_domain }}.pot
 
-gettext:
-	pybabel extract -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
+gettext-po:
+	pybabel extract --no-location -o ${MSG_CAT_TMPL} -w 80 ${SRC_DIRS}
 	test -f ${DEF_MSG_CAT} || \
-		pybabel init -D {{ cookiecutter.gettext_domain }} -i ${MSG_CAT_TMPL}  -d locale -l {{ cookiecutter.default_locale }}
+		pybabel init -D {{ cookiecutter.gettext_domain }} -i ${MSG_CAT_TMPL}  -d locale -l en_US
 	pybabel update -D {{ cookiecutter.gettext_domain }} -i ${MSG_CAT_TMPL}  -d locale
+
+gettext:
 	pybabel compile --statistics -D {{ cookiecutter.gettext_domain }} -d locale
 
 clean-gettext:

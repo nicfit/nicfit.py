@@ -31,6 +31,11 @@ MERGE_TOOLS["vimdiff"] = None
 
 @nicfit.command.register
 class Requirements(nicfit.Command):
+    """
+    TODO
+        - infile arg
+
+    """
     NAME = "requirements"
     ALIASES = ["reqs"]
 
@@ -53,11 +58,10 @@ class Requirements(nicfit.Command):
             reqs[pkg] = version
         return reqs
 
-    def _makeReqsFile(self, name, reqs, directory):
-        filename = directory / (name + ".txt")
-        with filename.open("r+" if filename.exists() else "w") as fp:
+    def _makeReqsFile(self, filepath, reqs):
+        with filepath.open("r+" if filepath.exists() else "w") as fp:
             new = {}
-            curr = self._readReq(fp) if filename.exists() else {}
+            curr = self._readReq(fp) if filepath.exists() else {}
 
             for r in [r.strip() for r in reqs if r and r.strip()]:
                 pkg, ver = self._splitPkg(r)
@@ -70,7 +74,7 @@ class Requirements(nicfit.Command):
             for pkg in sorted(new.keys()):
                 ver = new[pkg] or ""
                 fp.write("{pkg}{ver}\n".format(**locals()))
-            pout("Wrote {}".format(filename))
+            pout("Wrote {}".format(filepath))
 
     def _run(self):
         import yaml
@@ -82,9 +86,18 @@ class Requirements(nicfit.Command):
         reqs_dir = reqs_file.parent
 
         reqs_yaml = yaml.load(reqs_file.open())
+
+        # Make split .txt files
         for name in reqs_yaml.keys():
             if reqs_yaml[name]:
-                self._makeReqsFile(name, reqs_yaml[name], reqs_dir)
+                self._makeReqsFile(reqs_dir / (name + ".txt"), reqs_yaml[name])
+
+        # Make top-level requirements.txt files
+        pkg_reqs = []
+        for name, pkgs in reqs_yaml.items():
+            if name == "main" or name.startswith("extra_"):
+                pkg_reqs += pkgs or []
+        self._makeReqsFile(Path("requirements.txt"), pkg_reqs)
 
 
 @nicfit.command.register

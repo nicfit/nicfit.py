@@ -58,6 +58,7 @@ def getPackageInfo():
                  "description", "release_name", "github_url"]
     key_remap = {"name": "pypi_name"}
 
+    # __about__
     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
                            "{{ cookiecutter.src_dir }}",
                            "{{ cookiecutter.py_module }}",
@@ -78,42 +79,54 @@ def getPackageInfo():
     else:
         vparts = info_dict["version"].split("-", 1)
     info_dict["release"] = vparts[1] if len(vparts) > 1 else "final"
+
+    # Requirements
+    requirements, extras = requirements_yaml()
+    info_dict["install_requires"] = requirements["main"] \
+                                        if "main" in requirements else []
+    info_dict["tests_require"] = requirements["test"] \
+                                     if "test" in requirements else []
+    info_dict["extras_require"] = extras
+
+    # Info
+    readme = ""
+    if os.path.exists("README.rst"):
+        with open("README.rst") as readme_file:
+            readme = readme_file.read()
+    history = ""
+    if os.path.exists("HISTORY.rst"):
+        with open("HISTORY.rst") as history_file:
+            history = history_file.read().replace(".. :changelog:", "")
+    info_dict["long_description"] = readme + "\n\n" + history
+
     return info_dict
 
 
-readme = ""
-if os.path.exists("README.rst"):
-    with open("README.rst") as readme_file:
-        readme = readme_file.read()
-
-history = ""
-if os.path.exists("HISTORY.rst"):
-    with open("HISTORY.rst") as history_file:
-        history = history_file.read().replace(".. :changelog:", "")
-
-
-def requirements(filename):
-    reqfile = os.path.join("requirements", filename)
+def requirements_yaml():
+    EXTRA = "extra_"
+    reqs = {}
+    reqfile = os.path.join("requirements", "requirements.yml")
     if os.path.exists(reqfile):
-        return [l.strip() for l in open(reqfile).read().splitlines()
-                    if l.strip() and not l.strip().startswith("#")]
-    else:
-        return []
+        with open(reqfile) as fp:
+            curr = None
+            for line in [l for l in fp.readlines() if l.strip()]:
+                if curr is None or line.lstrip()[0] != "-":
+                    curr = line.split(":")[0]
+                    reqs[curr] = []
+                else:
+                    line = line.strip()
+                    assert line[0] == "-"
+                    r = line[1:].strip()
+                    if r:
+                        reqs[curr].append(r)
 
-
-def extra_requirements():
-    ereqs = {}
-    px, sx = "extra_", ".in"
-    for f in os.listdir("requirements"):
-        if (os.path.isfile(os.path.join("requirements", f)) and
-                f.startswith(px) and f.endswith(sx)):
-            ereqs[f[len(px):-len(sx)]] = requirements(f)
-    return ereqs
+    return (reqs, {x[len(EXTRA):]: vals
+                     for x, vals in reqs.items() if x.startswith(EXTRA)})
 
 
 class PipInstallCommand(install, object):
     def run(self):
-        reqs = " ".join(["'%s'" % r for r in requirements("requirements.in")])
+        reqs = " ".join(["'%s'" % r for r in pkg_info["install_requires"]])
         os.system("pip install " + reqs)
         # XXX: py27 compatible
         return super(PipInstallCommand, self).run()
@@ -138,11 +151,15 @@ pkg_info["download_url"] = (
 )
 
 
-def package_files(directory):
+def package_files(directory, prefix=".."):
     paths = []
     for (path, _, filenames) in os.walk(directory):
+        if "__pycache__" in path:
+            continue
         for filename in filenames:
-            paths.append(os.path.join("..", path, filename))
+            if filename.endswith(".pyc"):
+                continue
+            paths.append(os.path.join(prefix, path, filename))
     return paths
 
 
@@ -161,10 +178,7 @@ else:
               zip_safe=False,
               platforms=["Any"],
               keywords=["{{ cookiecutter.project_slug }}"],
-              install_requires=requirements("default.txt"),
-              tests_require=requirements("test.txt"),
               test_suite="{{ cookiecutter.src_dir }}/tests",
-              long_description=readme + "\n\n" + history,
               include_package_data=True,
               package_data={},
               entry_points={
@@ -175,6 +189,5 @@ else:
               cmdclass={
                   "install": PipInstallCommand,
               },
-              extras_require=extra_requirements(),
               **pkg_info
         )

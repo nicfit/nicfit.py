@@ -2,7 +2,7 @@
         docs clean-docs lint tags docs-dist docs-view coverage-view changelog \
         clean-pyc clean-build clean-patch clean-local clean-test-data \
         test-all test-data build-release freeze-release tag-release \
-        pypi-release web-release github-release cookiecutter
+        pypi-release web-release github-release cookiecutter requirements
 SRC_DIRS = ./nicfit
 TEST_DIR = ./tests
 TEMP_DIR ?= ./tmp
@@ -126,7 +126,7 @@ clean-docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: lint test gettext-po changelog
+pre-release: lint test gettext-po changelog requirements
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
@@ -141,24 +141,22 @@ pre-release: lint test gettext-po changelog
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
-	if test -f requirements/main.txt; then \
-		pip-compile requirements/main.txt -o ./requirements.txt; \
-	fi
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
 	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	@github-release --version    # Just a exe existence check
-	git status -s -b
+	@git status -s -b
 
-# FIXME
-reqs:
+requirements:
 	nicfit requirements
+	pip-compile -U requirements.txt -o ./requirements.txt
 
 changelog:
 	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
 	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
 		rm -f ${CHANGELOG}.new; \
 		if test -n "$$last"; then \
-			gitchangelog show --author-format=email $${last}..HEAD |\
+			gitchangelog show --author-format=email \
+			                  --omit-author="travis@pobox.com" $${last}..HEAD |\
 			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
 			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
 			 > ${CHANGELOG}.new; \
@@ -173,7 +171,6 @@ changelog:
 build-release: test-all dist
 
 freeze-release:
-	@# TODO: check for incoming
 	@(git diff --quiet && git diff --quiet --staged) || \
         (printf "\n!!! Working repo has uncommited/unstaged changes. !!!\n" && \
          printf "\nCommit and try again.\n" && false)
@@ -211,15 +208,21 @@ web-release:
 upload-release: github-release pypi-release web-release
 
 pypi-release:
-	find dist -type f -exec twine register -r ${PYPI_REPO} {} \;
-	find dist -type f -exec twine upload -r ${PYPI_REPO} --skip-existing {} \;
+	for f in `find dist -type f -name ${PROJECT_NAME}-${VERSION}.tar.gz \
+              -o -name \*.egg -o -name ${PROJECT_NAME}-${VERSION}.zip \
+              -o -name \*.whl`; do \
+        if test -f $$f ; then \
+            twine register -r ${PYPI_REPO} $$f && \
+            twine upload -r ${PYPI_REPO} --skip-existing $$f ; \
+        fi \
+	done
 
 sdist: build
 	python setup.py sdist --formats=gztar,zip
 	python setup.py bdist_egg
 	python setup.py bdist_wheel
 
-dist: clean sdist docs-dist
+dist: clean gettext sdist docs-dist
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
 	cd dist && \
 	for f in $$(ls); do \
@@ -243,9 +246,9 @@ CC_MERGE ?= yes
 CC_OPTS ?= --no-input
 GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
-	${MAKE} -C ./cookiecutter all
-	rm -rf "${CC_DIR}"
-	if test "${CC_MERGE}" == "no"; then \
+	@${MAKE} -C ./cookiecutter all
+	@rm -rf "${CC_DIR}"
+	@if test "${CC_MERGE}" == "no"; then \
 		nicfit cookiecutter ${CC_OPTS} "${TEMP_DIR}"; \
 		git -C "${CC_DIR}" diff; \
 		git -C "${CC_DIR}" status -s -b; \

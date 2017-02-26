@@ -1,4 +1,0 @@
-# pyup: ignore file
-pytest
-pytest-cov
-pytest-runner

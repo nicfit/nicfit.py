@@ -1,19 +1,19 @@
 main:
-extra_cookiecutter:
-    - cookiecutter
-extra_curio:
-    - curio
+
+#extra_example:
+#    - pkg
+#    - pkg2
 
 test:
     - pytest
     - pytest-cov
     - pytest-runner
-    - pytest-asyncio
-    - pytest-curio
 
 dev:
     - Sphinx
+    {%- if cookiecutter.gettext_domain != "None" %}
     - babel
+    {%- endif %}
     - check-manifest
     - flake8
     - git+https://github.com/nicfit/gitchangelog.git
@@ -23,3 +23,8 @@ dev:
     - twine
     - watchdog
     - wheel
+    {%- if cookiecutter.use_paver == "yes" %}
+    - paver
+    - cogapp
+    - sphinxcontrib-paverutils
+    {%- endif %}

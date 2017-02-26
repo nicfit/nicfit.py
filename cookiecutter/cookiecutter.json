@@ -13,16 +13,20 @@
         "Mozilla Public License 2.0"
     ],
 
+    "default_locale": "en_US",
+
     "_comment": "##### Project info #####",
     "project_name": "Project Name",
+    "project_slug":
+        "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
+    "py_module": "{{ cookiecutter.project_slug.replace('.', '') }}",
+    "gettext_domain": "None",
+    "default_locale": "en_US",
     "project_short_description": "Project description",
     "project_long_description": "",
     "intended_audience": ["End Users/Desktop", "Developers"],
     "version": "0.1.0",
     "web": "https://example.com",
-    "project_slug":
-        "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
-    "py_module": "{{ cookiecutter.project_slug.replace('.', '') }}",
     "src_dir": [".", "./src"],
 
     "year": [
@@ -53,8 +57,6 @@
     "pypi_username": "{{ cookiecutter.github_username }}",
     "pypi_repo_name": "{{ cookiecutter.project_slug }}",
     "use_pypi_deployment_with_travis": ["no", "yes"],
-    "gettext_domain": ["None", "{{ cookiecutter.project_slug }}"],
-    "default_locale": "en_US",
 
     "_comment": "##### Build tools #####",
     "use_make": ["yes", "no"],

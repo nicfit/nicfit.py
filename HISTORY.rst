@@ -3,6 +3,29 @@ Release History
 
 .. :changelog:
 
+v0.5.13 (2017-02-25)
+------------------------
+
+New
+~~~
+
+- 'nicfit requirements' for generated requirements txt files.
+- Clean up new unmerged files (fixes #17)
+
+Changes
+~~~~~~~
+
+- Tox installs root requirements.txt.
+- Less chatty gettext updates.
+- No default gettext_domain.
+- Removed detox.
+
+Fix
+~~~
+
+- Less needless gettext updating.
+
+
 v0.5.12 (2017-02-11)
 ------------------------
 
