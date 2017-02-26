@@ -1,0 +1,28 @@
+main:
+
+extra_cookiecutter:
+        - cookiecutter
+extra_curio:
+        - curio
+
+test:
+    - pytest
+    - pytest-cov
+    - pytest-runner
+    - pytest-asyncio
+    - curio
+    - pytest-curio
+
+dev:
+    - wheel
+    - watchdog
+    - tox
+    - flake8
+    - twine
+    - Sphinx
+    - check-manifest
+    - git+https://github.com/nicfit/gitchangelog.git
+    - ipdb
+    - babel
+    - pip-tools
+

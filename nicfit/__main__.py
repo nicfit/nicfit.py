@@ -30,6 +30,64 @@ MERGE_TOOLS["vimdiff"] = None
 
 
 @nicfit.command.register
+class Requirements(nicfit.Command):
+    NAME = "requirements"
+    ALIASES = ["reqs"]
+
+    def _splitPkg(self, line):
+        pkg, ver = line, None
+        for c in ("=", ">", "<"):
+            i = line.find(c)
+            if i != -1:
+                pkg = line[0:i]
+                ver = line[i:]
+                break
+        return pkg, ver
+
+    def _readReq(self, file):
+        reqs = {}
+        file.seek(0)
+        for line in [l.strip() for l in file.readlines()
+                                  if l.strip() and not l.startswith("#")]:
+            pkg, version = self._splitPkg(line)
+            reqs[pkg] = version
+        return reqs
+
+    def _makeReqsFile(self, name, reqs, directory):
+        filename = directory / (name + ".txt")
+        with filename.open("r+" if filename.exists() else "w") as fp:
+            new = {}
+            curr = self._readReq(fp) if filename.exists() else {}
+
+            for r in [r.strip() for r in reqs if r and r.strip()]:
+                pkg, ver = self._splitPkg(r)
+                if ver is None and pkg in curr:
+                    ver = curr[pkg]
+                new[pkg] = ver
+
+            fp.seek(0)
+            fp.truncate(0)
+            for pkg in sorted(new.keys()):
+                ver = new[pkg] or ""
+                fp.write("{pkg}{ver}\n".format(**locals()))
+            pout("Wrote {}".format(filename))
+
+    def _run(self):
+        import yaml
+
+        reqs_file = Path("./requirements/requirements.yml")
+        if not reqs_file.exists():
+            pout("Nothing to do...")
+            return
+        reqs_dir = reqs_file.parent
+
+        reqs_yaml = yaml.load(reqs_file.open())
+        for name in reqs_yaml.keys():
+            if reqs_yaml[name]:
+                self._makeReqsFile(name, reqs_yaml[name], reqs_dir)
+
+
+@nicfit.command.register
 class CookieCutter(nicfit.Command):
     NAME = "cookiecutter"
     HELP = "Create a nicfit.py Python project skeleton."
@@ -227,7 +285,8 @@ class CookieCutter(nicfit.Command):
 
 class Nicfit(nicfit.Application):
     def __init__(self):
-        super().__init__(version=version, gettext_domain="nicfit.py")
+        super().__init__(version=version, gettext_domain="nicfit.py",
+                         pdb_opt=True)
         subs = self.arg_parser.add_subparsers(title="Commands",
                                               add_help_subcmd=True,
                                               dest="command")
@@ -237,7 +296,7 @@ class Nicfit(nicfit.Application):
         ansi.init()
         if not args.command:
             pout(Fg.red("\m/ {} \m/"
-                       .format(Style.inverse(_("Listen to more Slayer")))))
+                       .format(Style.inverse(_("Welcome")))))
             return 0
 
         try:

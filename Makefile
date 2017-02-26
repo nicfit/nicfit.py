@@ -35,7 +35,7 @@ help:
 	@echo "test-all - run tests on various Python versions with tox"
 	@echo "release - package and upload a release"
 	@echo "          PYPI_REPO=[pypitest]|pypi"
-	@echo "pre-release - check repo and show version, generate changelog, etc.
+	@echo "pre-release - check repo and show version, generate changelog, etc."
 	@echo "dist - package"
 	@echo "install - install the package to the active Python's site-packages"
 	@echo "build - build package source files"
@@ -141,11 +141,17 @@ pre-release: lint test gettext-po changelog
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
-	pip-compile requirements/*.in -o ./requirements.txt
+	if test -f requirements/main.txt; then \
+		pip-compile requirements/main.txt -o ./requirements.txt; \
+	fi
 	@test -n "${GITHUB_USER}" || (echo "GITHUB_USER not set, needed for github" && false)
 	@test -n "${GITHUB_TOKEN}" || (echo "GITHUB_TOKEN not set, needed for github" && false)
 	@github-release --version    # Just a exe existence check
 	git status -s -b
+
+# FIXME
+reqs:
+	nicfit requirements
 
 changelog:
 	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\

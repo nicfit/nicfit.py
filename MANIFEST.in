@@ -18,9 +18,10 @@ global-exclude .editorconfig
 global-exclude *.py[co]
 
 include requirements.txt
-recursive-include requirements *.txt *.in
+recursive-include requirements *.txt *.yml
 graft locale
 graft cookiecutter
 exclude cookiecutter/hooks/pre_gen_project.py.in
 include cookiecutter/hooks/pre_gen_project.py
 prune examples
+exclude .pyup.yml
