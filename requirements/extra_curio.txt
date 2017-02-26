@@ -1,1 +1,1 @@
-curio
+curio==0.6
