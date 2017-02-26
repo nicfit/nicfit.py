@@ -99,7 +99,7 @@ def getPackageInfo():
             history = history_file.read().replace(".. :changelog:", "")
     info_dict["long_description"] = readme + "\n\n" + history
 
-    return info_dict
+    return info_dict, requirements
 
 
 def requirements_yaml():
@@ -126,28 +126,28 @@ def requirements_yaml():
 
 class PipInstallCommand(install, object):
     def run(self):
-        reqs = " ".join(["'%s'" % r for r in pkg_info["install_requires"]])
+        reqs = " ".join(["'%s'" % r for r in PKG_INFO["install_requires"]])
         os.system("pip install " + reqs)
         # XXX: py27 compatible
         return super(PipInstallCommand, self).run()
 
 
-pkg_info = getPackageInfo()
-if pkg_info["release"].startswith("a"):
+PKG_INFO, REQUIREMENTS = getPackageInfo()
+if PKG_INFO["release"].startswith("a"):
     #classifiers.append("Development Status :: 1 - Planning")
     #classifiers.append("Development Status :: 2 - Pre-Alpha")
     classifiers.append("Development Status :: 3 - Alpha")
-elif pkg_info["release"].startswith("b"):
+elif PKG_INFO["release"].startswith("b"):
     classifiers.append("Development Status :: 4 - Beta")
 else:
     classifiers.append("Development Status :: 5 - Production/Stable")
     #classifiers.append("Development Status :: 6 - Mature")
     #classifiers.append("Development Status :: 7 - Inactive")
 
-gz = "{name}-{version}.tar.gz".format(**pkg_info)
-pkg_info["download_url"] = (
+gz = "{name}-{version}.tar.gz".format(**PKG_INFO)
+PKG_INFO["download_url"] = (
     "{github_url}/releases/downloads/v{version}/{gz}"
-    .format(gz=gz, **pkg_info)
+    .format(gz=gz, **PKG_INFO)
 )
 
 
@@ -164,7 +164,7 @@ def package_files(directory, prefix=".."):
 
 
 if sys.argv[1:] and sys.argv[1] == "--release-name":
-    print(pkg_info["release_name"])
+    print(PKG_INFO["release_name"])
     sys.exit(0)
 else:
     # The extra command line options we added cause warnings, quell that.
@@ -189,5 +189,5 @@ else:
               cmdclass={
                   "install": PipInstallCommand,
               },
-              **pkg_info
+              **PKG_INFO
         )
