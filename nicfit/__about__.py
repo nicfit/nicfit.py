@@ -1,10 +1,24 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 
+
+def __parse_version(v):
+    ver, rel = v, "final"
+    for c in ("a", "b", "c"):
+        parsed = v.split(c)
+        if len(parsed) == 2:
+            ver, rel = (parsed[0], c + parsed[1])
+
+    v = tuple((int(v) for v in ver.split(".")))
+    ver_info = namedtuple("Version", "major, minor, maint, release")(
+        *(v + (tuple((0,)) * (3 - len(v))) + tuple((rel,))))
+    return ver, rel, ver_info
+
 __version__ = "0.5.14"
 __release_name__ = ""
 __years__ = "2016-2017"
 
+_, __release__, __version_info__ = __parse_version(__version__)
 __project_name__ = "nicfit.py"
 __project_slug__ = "nicfit.py"
 __pypi_name__ = "nicfit.py"
@@ -15,14 +29,6 @@ __description__ = "Common Python utils (App, logging, config, etc.)"
 __long_description__ = ""
 __license__ = "MIT"
 __github_url__ = "https://github.com/nicfit/nicfit.py",
-
-__release__ = __version__.split("-")[1] if "-" in __version__ else "final"
-_v = tuple((int(v) for v in __version__.split("-")[0].split(".")))
-__version_info__ = \
-    namedtuple("Version", "major, minor, maint, release")(
-        *(_v + (tuple((0,)) * (3 - len(_v))) +
-          tuple((__release__,))))
-del _v
 __version_txt__ = """
 %(__name__)s %(__version__)s (C) Copyright %(__years__)s %(__author__)s
 This program comes with ABSOLUTELY NO WARRANTY! See LICENSE for details.
