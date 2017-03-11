@@ -31,12 +31,18 @@ class Command(object):
         return Class.HELP if hasattr(Class, "HELP") else None
 
     @classmethod
+    def desc(Class):
+        return Class.DESC if hasattr(Class, "DESC") else Class.help()
+
+    @classmethod
     def aliases(Class):
         return Class.ALIASES if hasattr(Class, "ALIASES") else []
 
     def __init__(self, subparsers):
         self.subparsers = subparsers
-        self.parser = self.subparsers.add_parser(self.name(), help=self.help(),
+        self.parser = self.subparsers.add_parser(self.name(),
+                                                 help=self.help(),
+                                                 description=self.desc(),
                                                  aliases=self.aliases())
         self._initArgParser(self.parser)
         self.parser.set_defaults(command_func=self.run)
