@@ -125,7 +125,7 @@ clean-docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: lint test changelog requirements
+pre-release: lint test changelog requirements docs
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
@@ -178,7 +178,7 @@ tag-release:
 	git tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	git push --tags origin
 
-release: pre-release freeze-release build-release tag-release upload-release
+release: clean pre-release freeze-release build-release tag-release upload-release
 
 github-release:
 	name="${RELEASE_TAG}"; \
@@ -220,7 +220,7 @@ sdist: build
 	python setup.py bdist_egg
 	python setup.py bdist_wheel
 
-dist: clean gettext sdist docs-dist
+dist: gettext sdist docs-dist
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
 	cd dist && \
 	for f in $$(ls); do \

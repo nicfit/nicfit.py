@@ -1,6 +1,7 @@
 main:
 extra_cookiecutter:
     - cookiecutter
+
 extra_curio:
     - curio
 

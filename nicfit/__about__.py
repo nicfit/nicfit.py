@@ -14,7 +14,8 @@ def __parse_version(v):
         *(v + (tuple((0,)) * (3 - len(v))) + tuple((rel,))))
     return ver, rel, ver_info
 
-__version__ = "0.5.14"
+
+__version__ = "0.5.15"
 __release_name__ = ""
 __years__ = "2016-2017"
 

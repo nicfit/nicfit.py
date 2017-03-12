@@ -61,7 +61,9 @@ clean-build:
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
+{%- if cookiecutter.gettext_domain != "None" %}
 	find ./locale -name \*.mo -exec rm {} \;
+{%- endif %}
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -126,7 +128,7 @@ clean-docs:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-pre-release: lint test changelog requirements
+pre-release: lint test changelog requirements docs
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
@@ -179,7 +181,7 @@ tag-release:
 	git tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	git push --tags origin
 
-release: pre-release freeze-release build-release tag-release upload-release
+release: clean pre-release freeze-release build-release tag-release upload-release
 
 github-release:
 	name="${RELEASE_TAG}"; \
@@ -222,9 +224,9 @@ sdist: build
 	python setup.py bdist_wheel
 
 {% if cookiecutter.gettext_domain != "None" -%}
-dist: clean gettext sdist docs-dist
+dist: gettext sdist docs-dist
 {%- else -%}
-dist: clean sdist docs-dist
+dist: sdist docs-dist
 {%- endif %}
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
 	cd dist && \
