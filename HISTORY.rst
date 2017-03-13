@@ -3,12 +3,26 @@ Release History
 
 .. :changelog:
 
+v0.5.15 (2017-03-12)
+------------------------
+
+Changes
+~~~~~~~
+- Better __about__ version handling.
+
+Other
+~~~~~
+- Add descriptions to subparsers, defaulting to the (short) help if not
+  defined. <redshodan@gmail.com>
+- Update markupsafe from 0.23 to 1.0. <github-bot@pyup.io>
+- Update sphinx from 1.5.2 to 1.5.3. <github-bot@pyup.io>
+
+
 v0.5.14 (2017-02-26)
 ------------------------
 
 New
 ~~~
-
 - Initial locale skel.
 
 
@@ -17,13 +31,11 @@ v0.5.13 (2017-02-25)
 
 New
 ~~~
-
 - 'nicfit requirements' for generated requirements txt files.
 - Clean up new unmerged files (fixes #17)
 
 Changes
 ~~~~~~~
-
 - Tox installs root requirements.txt.
 - Less chatty gettext updates.
 - No default gettext_domain.
@@ -31,7 +43,6 @@ Changes
 
 Fix
 ~~~
-
 - Less needless gettext updating.
 
 
@@ -40,13 +51,11 @@ v0.5.12 (2017-02-11)
 
 New
 ~~~
-
 - gettext support (see nicfit.util.initGetText)
 - ipdb and detox added in dev.txt
 
 Fix
 ~~~
-
 - Merging quoting fixes.
 
 
@@ -55,21 +64,18 @@ v0.5.11 (2017-02-05)
 
 New
 ~~~
-
 - Nicfit cc --extra-merge.
 - Don't CC merge src files that have not changed since last merge.
 - Command aliases.
 
 Changes
 ~~~~~~~
-
 - Cleaned up logging opttions help and moved the large text to --help-
   logging.
 - Move GITHUB var checks later in pre-release.
 
 Fix
 ~~~
-
 - TONs of tweaks.
 - Better changelog tag ranges.
 
