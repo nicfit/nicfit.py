@@ -9,7 +9,7 @@ binaryornot==0.4.0        # via cookiecutter
 chardet==2.3.0            # via binaryornot
 click==6.7                # via cookiecutter
 cookiecutter==1.5.1
-curio==0.6
+curio==0.7
 future==0.16.0            # via cookiecutter
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.9.5             # via cookiecutter, jinja2-time
