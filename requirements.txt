@@ -5,7 +5,7 @@
 #    pip-compile --output-file ./requirements.txt requirements.txt
 #
 arrow==0.10.0             # via jinja2-time
-binaryornot==0.4.0        # via cookiecutter
+binaryornot==0.4.3        # via cookiecutter
 chardet==2.3.0            # via binaryornot
 click==6.7                # via cookiecutter
 cookiecutter==1.5.1
