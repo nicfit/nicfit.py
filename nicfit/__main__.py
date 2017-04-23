@@ -59,9 +59,10 @@ class Requirements(nicfit.Command):
         return reqs
 
     def _makeReqsFile(self, filepath, reqs):
-        with filepath.open("r+" if filepath.exists() else "w") as fp:
+        file_exists = filepath.exists()
+        with filepath.open("r+" if file_exists else "w") as fp:
             new = {}
-            curr = self._readReq(fp) if filepath.exists() else {}
+            curr = self._readReq(fp) if file_exists else {}
 
             for r in [r.strip() for r in reqs if r and r.strip()]:
                 pkg, ver = self._splitPkg(r)

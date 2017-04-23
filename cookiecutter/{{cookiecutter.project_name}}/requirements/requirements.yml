@@ -21,7 +21,6 @@ dev:
     - pip-tools
     - tox
     - twine
-    - watchdog
     - wheel
     {%- if cookiecutter.use_paver == "yes" %}
     - paver

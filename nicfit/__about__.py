@@ -15,7 +15,7 @@ def __parse_version(v):
     return ver, rel, ver_info
 
 
-__version__ = "0.5.15"
+__version__ = "0.5.16"
 __release_name__ = ""
 __years__ = "2016-2017"
 
