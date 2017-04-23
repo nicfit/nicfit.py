@@ -20,6 +20,7 @@ dev:
     - git+https://github.com/nicfit/gitchangelog.git
     - ipdb
     - pip-tools
+    - pyaml
     - tox
     - twine
     - watchdog
