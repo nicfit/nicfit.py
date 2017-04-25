@@ -17,4 +17,4 @@ MarkupSafe==1.0           # via jinja2
 poyo==0.4.1               # via cookiecutter
 python-dateutil==2.6.0    # via arrow
 six==1.10.0               # via python-dateutil
-whichcraft==0.4.0         # via cookiecutter
+whichcraft==0.4.1         # via cookiecutter
