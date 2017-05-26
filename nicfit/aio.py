@@ -1,5 +1,7 @@
 import asyncio
+
 from .app import AsyncApplication
+from .command import Command as BaseCommand
 
 
 class Application(AsyncApplication):
@@ -26,3 +28,12 @@ class Application(AsyncApplication):
         self.log.debug("Application::stop(exit_status=%d)" % exit_status)
         self._exit_status = exit_status
         self._main_task.cancel()
+
+
+class Command(BaseCommand):
+    async def run(self, args):
+        self.args = args
+        return await self._run()
+
+    async def _run(self):
+        raise NotImplementedError("Must implement a _run function")
