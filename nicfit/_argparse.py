@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import argparse
 
 
@@ -9,8 +8,8 @@ class ArgumentParser(argparse.ArgumentParser):
         super().__init__(**kwargs)
 
         if add_log_args:
-            from . import _logging
-            _logging.addCommandLineArgs(self)
+            from . import logger
+            logger.addCommandLineArgs(self)
         self._add_log_args = add_log_args
 
         if config_opts:
@@ -19,7 +18,7 @@ class ArgumentParser(argparse.ArgumentParser):
         self._config_opts = config_opts
 
     def parse_known_args(self, args=None, namespace=None):
-        from . import _logging
+        from . import logger
 
         parsed, remaining = super().parse_known_args(args=args,
                                                      namespace=namespace)
@@ -40,7 +39,7 @@ class ArgumentParser(argparse.ArgumentParser):
             # does not return
 
         if self._add_log_args:
-            parsed.applyLoggingOpts = _logging.applyLoggingOpts
+            parsed.applyLoggingOpts = logger.applyLoggingOpts
 
         return parsed, remaining
 

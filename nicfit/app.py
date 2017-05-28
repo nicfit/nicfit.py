@@ -1,7 +1,7 @@
 import sys
 import logging
 
-from ._logging import getLogger
+from .logger import getLogger
 from ._argparse import ArgumentParser
 from .util import initGetText
 

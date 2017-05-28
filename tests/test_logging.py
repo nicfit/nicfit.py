@@ -4,8 +4,8 @@ import logging
 import logging.config
 from uuid import uuid4
 from io import StringIO
-from nicfit._logging import LOGGING_CONFIG, getLogger
-from nicfit import _logging
+from nicfit.logger import LOGGING_CONFIG, getLogger
+from nicfit import logger
 from nicfit import ArgumentParser
 from unittest.mock import patch, Mock, call
 
@@ -13,19 +13,19 @@ from unittest.mock import patch, Mock, call
 def test_log():
     # No handlers by default
     mylog = getLogger("test")
-    assert isinstance(mylog, _logging.Logger)
+    assert isinstance(mylog, logger.Logger)
     assert mylog.name == "test"
     assert len(mylog.handlers) == 0
 
     pkglog = getLogger("nicfit")
-    assert isinstance(mylog, _logging.Logger)
+    assert isinstance(mylog, logger.Logger)
     assert pkglog.name == "nicfit"
 
-    for logger in [mylog, pkglog]:
-        assert(logger.propagate)
-        assert(isinstance(logger, _logging.Logger))
-        with patch.object(logger, "log") as mock_log:
-            logger.verbose("Honey's Dead")
+    for log in [mylog, pkglog]:
+        assert(log.propagate)
+        assert(isinstance(log, logger.Logger))
+        with patch.object(log, "log") as mock_log:
+            log.verbose("Honey's Dead")
             mock_log.assert_called_with(logging.VERBOSE, "Honey's Dead")
 
 
@@ -120,10 +120,10 @@ def test_FileConfig_auto():
 
 
 def test_optSplit():
-    assert(_logging._optSplit("foo") == (None, "foo"))
-    assert(_logging._optSplit("foo:bazz") == ("foo", "bazz"))
-    assert(_logging._optSplit("foo:bar:bazz") == ("foo", "bar:bazz"))
-    assert(_logging._optSplit(":bazz") == (None, "bazz"))
+    assert(logger._optSplit("foo") == (None, "foo"))
+    assert(logger._optSplit("foo:bazz") == ("foo", "bazz"))
+    assert(logger._optSplit("foo:bar:bazz") == ("foo", "bar:bazz"))
+    assert(logger._optSplit(":bazz") == (None, "bazz"))
 
 
 def test_applyLogOpts():

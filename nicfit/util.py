@@ -1,17 +1,19 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 import gettext
 import contextlib
 from pathlib import Path
 
-from ._logging import getLogger
+from .logger import getLogger
 
 log = getLogger(__name__)
 
 
 @contextlib.contextmanager
 def cd(path):
+    """Context manager that changes to directory `path` and return to CWD
+    when exited.
+    """
     old_path = os.getcwd()
     os.chdir(path)
     try:

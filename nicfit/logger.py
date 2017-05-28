@@ -1,22 +1,24 @@
-# -*- coding: utf-8 -*-
 import sys
+import time
+import argparse
 import logging
 import logging.config
-import argparse
 from io import StringIO
 
-"""
-TODO
-"""
 
-LOG_FORMAT = "[%(asctime)s] %(name)-25s [%(levelname)-8s]: %(message)s"
-METRICS_FORMAT = "<metrics time='%(asctime)s'>%(message)s</metrics>"
+class Logger(logging.getLoggerClass()):
+    """Base class for all package loggers"""
 
-logging.VERBOSE = logging.DEBUG + ((logging.INFO - logging.DEBUG) // 2)
-logging.addLevelName(logging.VERBOSE, "VERBOSE")
-LEVELS = [logging.DEBUG, logging.VERBOSE, logging.INFO,
-          logging.WARNING, logging.ERROR, logging.CRITICAL]
-LEVEL_NAMES = [logging.getLevelName(l).lower() for l in LEVELS]
+    def __init__(self, name):
+        super().__init__(name)
+
+        # Using propogation of child to parent, by default
+        self.propagate = True
+        self.setLevel(logging.NOTSET)
+
+    def verbose(self, msg, *args, **kwargs):
+        """Log msg at 'verbose' level, debug < verbose < info"""
+        self.log(logging.VERBOSE, msg, *args, **kwargs)
 
 
 def getLogger(name=None):
@@ -28,19 +30,35 @@ def getLogger(name=None):
         logging.setLoggerClass(OrigLoggerClass)
 
 
-class Logger(logging.getLoggerClass()):
-    '''Base class for all package loggers'''
+def _initConsoleLogger(name, level, handler=None):
+    handler = handler or logging.StreamHandler(sys.stdout)
+    l = getLogger(name)
+    l.propagate = False
+    l.setLevel(level)
+    l.addHandler(handler)
+    return l
 
-    def __init__(self, name):
-        super().__init__(name)
 
-        # Using propogation of child to parent, by default
-        self.propagate = True
-        self.setLevel(logging.NOTSET)
+stdout = _initConsoleLogger("_stdout", logging.DEBUG,
+                            logging.StreamHandler(sys.stdout))
+stderr = _initConsoleLogger("_stderr", logging.WARNING,
+                            logging.StreamHandler(sys.stderr))
+try:
+    import logging_spinner
+    progress = _initConsoleLogger(
+        "_progress", logging.DEBUG,
+        logging_spinner.SpinnerHandler(stream=sys.stdout))
+except ImportError:
+    progress = None
 
-    def verbose(self, msg, *args, **kwargs):
-        '''Log \a msg at 'verbose' level, debug < verbose < info'''
-        self.log(logging.VERBOSE, msg, *args, **kwargs)
+LOG_FORMAT = "[%(asctime)s] %(name)-25s [%(levelname)-8s]: %(message)s"
+METRICS_FORMAT = "<metrics time='%(asctime)s'>%(message)s</metrics>"
+
+logging.VERBOSE = logging.DEBUG + ((logging.INFO - logging.DEBUG) // 2)
+logging.addLevelName(logging.VERBOSE, "VERBOSE")
+LEVELS = [logging.DEBUG, logging.VERBOSE, logging.INFO,
+          logging.WARNING, logging.ERROR, logging.CRITICAL]
+LEVEL_NAMES = [logging.getLevelName(l).lower() for l in LEVELS]
 
 
 def _optSplit(opt):
@@ -161,13 +179,13 @@ def LOGGING_CONFIG(pkg_logger, root_level="WARN", log_format=LOG_FORMAT,
 ###
 
 [loggers]
-keys = root, {pkg_logger}, {pkg_logger}.metrics
+keys = root, {pkg_logger}
 
 [handlers]
-keys = console, metrics
+keys = console
 
 [formatters]
-keys = generic, metrics
+keys = generic
 
 [logger_root]
 level = {root_level}
@@ -189,21 +207,6 @@ formatter = generic
 
 [formatter_generic]
 format = {log_format}
-
-[logger_{pkg_logger}.metrics]
-level = NOTSET
-qualname = {pkg_logger}.metrics
-handlers = metrics
-propagate = 0
-
-[handler_metrics]
-class = FileHandler
-args = ("{pkg_logger}-metrics.log", "w", None, True)
-level = NOTSET
-formatter = metrics
-
-[formatter_metrics]
-format = {metrics_format}
 
 """.format(**locals())
     if init_logging:
@@ -234,3 +237,29 @@ For example:
 example.py -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L mylib:./debug.log -L mylib.database:/dev/stderr
 
 """.format(level_names=", ".join(LEVEL_NAMES))  # noqa
+
+
+__all__ = ["stdout", "stderr"]
+
+
+if __name__ == "__main__":
+    logging.getLogger().setLevel(logging.DEBUG)
+    for log in stdout, stderr:
+        print("root L:", logging.getLogger().getEffectiveLevel())
+        print("nicfit L:", logging.getLogger("nicfit").getEffectiveLevel())
+        print("L:", log.getEffectiveLevel())
+        log.debug(str((log, "debug")))
+        log.verbose(str((log, "verbose")))
+        log.info(str((log, "info")))
+        log.warning(str((log, "warning")))
+        log.error(str((log, "error")))
+        log.critical(str((log, "critical")), extra={"user_waiting": False})
+
+    if progress:
+        progress.debug("Doing shit...", extra={'user_waiting': True})
+        time.sleep(2)
+        progress.debug("Still doing shit...", extra={'user_waiting': True})
+        time.sleep(3)
+        progress.debug("Almost done doing shit...", extra={'user_waiting': True})
+        time.sleep(2)
+        progress.debug("Done doing shit...", extra={'user_waiting': False})

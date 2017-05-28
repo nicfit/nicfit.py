@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 from . import command
 from .app import Application
-from ._logging import getLogger
+from .logger import getLogger
 from ._argparse import ArgumentParser
 from ._config import Config, ConfigOpts
 from .command import Command, CommandError
