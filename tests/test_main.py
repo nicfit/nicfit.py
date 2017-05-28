@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 import pytest
 from unittest.mock import patch, Mock
-from nicfit.__main__ import app
+from nicfit.__main__ import app, Nicfit
 from nicfit.console.ansi import Fg, Style
 
 
@@ -12,6 +11,19 @@ def test_NicfitApp_default(capfd):
         app.run([])
     out, _ = capfd.readouterr()
     assert out == Fg.red("\m/ {} \m/".format(Style.inverse("Welcome"))) + "\n"
+
+
+def test_NicfitApp_español(capfd):
+    lang = os.environ["LANG"] if "LANG" in os.environ else None
+    with pytest.raises(SystemExit):
+        os.environ["LANG"] = "es"
+        Nicfit().run([])
+
+    out, _ = capfd.readouterr()
+    assert out == Fg.red("\m/ {} \m/"
+                         .format(Style.inverse("Bienvenido"))) + "\n"
+
+    os.environ["LANG"] = lang
 
 
 def test_NicfitApp_invalid():
