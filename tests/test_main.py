@@ -67,11 +67,9 @@ def test_NicfitApp_cookiecutter_exception(tmpdir):
         assert sysexit.value.code == 1
 
 
-'''
 @pytest.mark.skipif("TRAVIS" in os.environ,
                     reason="Failing on Travis-CI only, unshallowed_repo not "
                            "working.")
-'''
 def test_NicfitApp_cookiecutter_real(tmpdir, unshallowed_repo):
     with pytest.raises(SystemExit) as sysexit:
         app.run(["cookiecutter", str(tmpdir), "--no-input"])
