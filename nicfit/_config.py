@@ -64,7 +64,7 @@ class ConfigFileType(argparse.FileType):
         if filename:
             try:
                 fp = super().__call__(filename)
-                config.readfp(fp)
+                config.read_file(fp)
             except Exception as ex:
                 if not self._opts.default_config:
                     raise
