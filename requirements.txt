@@ -6,7 +6,7 @@
 #
 arrow==0.10.0             # via jinja2-time
 binaryornot==0.4.3        # via cookiecutter
-chardet==3.0.3            # via binaryornot
+chardet==3.0.4            # via binaryornot
 click==6.7                # via cookiecutter
 cookiecutter==1.5.1
 curio==0.7
