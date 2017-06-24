@@ -2,6 +2,78 @@ Release History
 ===============
 
 .. :changelog:
+v0.6b0 (2017-06-23)
+------------------------
+
+New
+~~~
+- First class logger.
+- Added an async Command.
+- Add asyncio classifier when appropriate.
+
+Changes
+~~~~~~~
+- Added pyaml and removed watchdog from dev.
+- Gitchangelog 'show' argument was removed.
+
+Fix
+~~~
+- Travis-CI, yay!
+- Handle case where reqs files does not exist. Fixes #89.
+
+Other
+~~~~~
+- Update chardet from 3.0.3 to 3.0.4 (#116) <github-bot@pyup.io>
+- Update pytest from 3.1.1 to 3.1.2 (#117) <github-bot@pyup.io>
+- Update pytest from 3.1.0 to 3.1.1 (#115) <github-bot@pyup.io>
+- Update sphinx from 1.6.1 to 1.6.2 (#113) <github-bot@pyup.io>
+- Update pytest-asyncio from 0.5.0 to 0.6.0 (#114) <github-bot@pyup.io>
+- Merge branch 'master' of github.com:nicfit/nicfit.py.
+
+  * 'master' of github.com:nicfit/nicfit.py:
+    Update twine from 1.9.0 to 1.9.1 (#111)
+    Update sphinx from 1.5.5 to 1.6.1 (#107)
+- Update twine from 1.9.0 to 1.9.1 (#111) <github-bot@pyup.io>
+- Update sphinx from 1.5.5 to 1.6.1 (#107) <github-bot@pyup.io>
+- Inew: intl test.
+- Update twine from 1.8.1 to 1.9.0 (#109) <github-bot@pyup.io>
+- Update chardet from 3.0.2 to 3.0.3 (#108) <github-bot@pyup.io>
+- Update pytest from 3.0.7 to 3.1.0 (#110) <github-bot@pyup.io>
+- Update pytest-cov from 2.4.0 to 2.5.1 (#105) <github-bot@pyup.io>
+- Update whichcraft from 0.4.0 to 0.4.1 (#103) <github-bot@pyup.io>
+- Update ipdb from 0.10.2 to 0.10.3 (#101) <github-bot@pyup.io>
+- Update pip-tools from 1.8.2 to 1.9.0 (#99) <github-bot@pyup.io>
+- Update chardet from 2.3.0 to 3.0.2 (#97) <github-bot@pyup.io>
+- Update binaryornot from 0.4.0 to 0.4.3. <github-bot@pyup.io>
+- Pin pyaml to latest version 16.12.2. <github-bot@pyup.io>
+- Merge branch 'master' of github.com:nicfit/nicfit.py.
+
+  * 'master' of github.com:nicfit/nicfit.py:
+    Update sphinx from 1.5.3 to 1.5.5 (#93)
+    Update pip-tools from 1.8.1 to 1.8.2 (#90)
+    Update babel from 2.3.4 to 2.4.0
+    Update jinja2 from 2.9.5 to 2.9.6
+    Update tox from 2.6.0 to 2.7.0
+- Update sphinx from 1.5.3 to 1.5.5 (#93) <github-bot@pyup.io>
+- Update pip-tools from 1.8.1 to 1.8.2 (#90) <github-bot@pyup.io>
+- Update babel from 2.3.4 to 2.4.0. <github-bot@pyup.io>
+- Update jinja2 from 2.9.5 to 2.9.6. <github-bot@pyup.io>
+- Update tox from 2.6.0 to 2.7.0. <github-bot@pyup.io>
+- Merge branch 'master' of github.com:nicfit/nicfit.py.
+
+  * 'master' of github.com:nicfit/nicfit.py:
+    Update poyo from 0.4.0 to 0.4.1
+    Update pip-tools from 1.8.0 to 1.8.1
+    Update curio from 0.6 to 0.7
+    Update curio from 0.6 to 0.7
+    Update pytest from 3.0.6 to 3.0.7
+- Update poyo from 0.4.0 to 0.4.1. <github-bot@pyup.io>
+- Update pip-tools from 1.8.0 to 1.8.1. <github-bot@pyup.io>
+- Update curio from 0.6 to 0.7. <github-bot@pyup.io>
+- Update curio from 0.6 to 0.7. <github-bot@pyup.io>
+- Update pytest from 3.0.6 to 3.0.7. <github-bot@pyup.io>
+
+
 
 v0.5.15 (2017-03-12)
 ------------------------
