@@ -4,10 +4,11 @@ import logging
 import logging.config
 from uuid import uuid4
 from io import StringIO
+from unittest.mock import patch, Mock, call
+
 from nicfit.logger import LOGGING_CONFIG, getLogger
 from nicfit import logger
 from nicfit import ArgumentParser
-from unittest.mock import patch, Mock, call
 
 
 def test_log():

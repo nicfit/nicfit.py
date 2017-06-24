@@ -260,6 +260,6 @@ if __name__ == "__main__":
         time.sleep(2)
         progress.debug("Still doing shit...", extra={'user_waiting': True})
         time.sleep(3)
-        progress.debug("Almost done doing shit...", extra={'user_waiting': True})
+        progress.debug("Almost done doing shit..", extra={'user_waiting': True})
         time.sleep(2)
         progress.debug("Done doing shit...", extra={'user_waiting': False})

@@ -88,7 +88,7 @@ _PYTEST_OPTS=
 ifdef TEST_PDB
     _PDB_OPTS=--pdb -s
 endif
-test:
+test: gettext
 	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
 
 test-all:
@@ -144,7 +144,7 @@ pre-release: lint test changelog requirements
 	@git status -s -b
 
 requirements:
-	nicfit requirements
+	python -m nicfit requirements
 	pip-compile -U requirements.txt -o ./requirements.txt
 
 changelog:
