@@ -94,7 +94,7 @@ test: gettext
 test-all:
 	tox
 
-coverage:
+coverage: gettext
 	pytest --cov=./nicfit \
            --cov-report=html --cov-report term \
            --cov-config=setup.cfg ${TEST_DIR}
