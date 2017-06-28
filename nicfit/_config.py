@@ -55,6 +55,8 @@ class ConfigFileType(argparse.FileType):
             return None
 
         assert(issubclass(self._opts.ConfigClass, Config))
+        if filename:
+            filename = os.path.expanduser(os.path.expandvars(filename))
         config = self._opts.ConfigClass(filename,
                                         config_env_var=self._opts.env_var)
 
