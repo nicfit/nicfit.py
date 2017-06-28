@@ -3,6 +3,14 @@ Release History
 
 .. :changelog:
 
+v0.6.1 (2017-06-27)
+------------------------
+
+Fix
+~~~
+- Use os.path.expanduser/expandvars on cnfig file arguments.
+
+
 v0.6 (2017-06-24)
 ------------------------
 
