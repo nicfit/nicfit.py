@@ -211,7 +211,6 @@ pypi-release:
 	for f in `find dist -type f -name ${PROJECT_NAME}-${VERSION}.tar.gz \
               -o -name \*.egg -o -name \*.whl`; do \
         if test -f $$f ; then \
-            twine register -r ${PYPI_REPO} $$f && \
             twine upload -r ${PYPI_REPO} --skip-existing $$f ; \
         fi \
 	done

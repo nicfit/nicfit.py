@@ -1,3 +1,4 @@
+.idea
 .cookiecutter.md5
 _misc/
 
@@ -54,6 +55,7 @@ htmlcov
 *.mo
 
 # Django stuff:
+*.log
 local_settings.py
 
 # Flask stuff:
