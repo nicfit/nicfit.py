@@ -4,7 +4,7 @@ flake8==3.4.1
 git+https://github.com/nicfit/gitchangelog.git
 ipdb==0.10.3
 pip-tools==1.9.0
-pyaml==17.7.2
+pyaml==17.8.0
 tox==2.7.0
 twine==1.9.1
 watchdog==0.8.3
