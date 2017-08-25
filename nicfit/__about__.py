@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 
-def __parse_version(v):
+def __parse_version(v):                                       # pragma: nocover
     ver, rel = v, "final"
     for c in ("a", "b", "c"):
         parsed = v.split(c)

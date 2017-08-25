@@ -32,8 +32,8 @@ def getPackageInfo():
         for line in infof:
             for what in info_keys:
                 rex = re.compile(r"__{what}__\s*=\s*['\"](.*?)['\"]"
-                                 .format(what=what if what not in key_remap
-                                                   else key_remap[what]))
+                                  .format(what=what if what not in key_remap
+                                                    else key_remap[what]))
 
                 m = rex.match(line.strip())
                 if not m:
