@@ -3,12 +3,18 @@ Release History
 
 .. :changelog:
 
+v0.6.2 (2017-08-26)
+------------------------
+- Cookiecutter updates.
+- Update pyaml from 17.7.2 to 17.8.0 (#127) <github-bot@pyup.io>
+
+
 v0.6.1 (2017-06-27)
 ------------------------
 
 Fix
 ~~~
-- Use os.path.expanduser/expandvars on cnfig file arguments.
+- Use os.path.expanduser/expandvars on config file arguments.
 
 
 v0.6 (2017-06-24)
@@ -27,7 +33,7 @@ Changes
 
 Fix
 ~~~
-- Babel requiremnents.
+- Babel requirements.
 - Travis-CI builds.
 - Gettext tests
 - Handle case where reqs files does not exist. Fixes #89.
