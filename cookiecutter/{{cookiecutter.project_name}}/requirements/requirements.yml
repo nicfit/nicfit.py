@@ -27,3 +27,4 @@ dev:
     - cogapp
     - sphinxcontrib-paverutils
     {%- endif %}
+    - pyaml
