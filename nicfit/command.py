@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 from collections import OrderedDict
 
 
@@ -38,12 +39,18 @@ class Command(object):
     def aliases(Class):
         return Class.ALIASES if hasattr(Class, "ALIASES") else []
 
-    def __init__(self, subparsers):
+    def __init__(self, subparsers=None):
         self.subparsers = subparsers
-        self.parser = self.subparsers.add_parser(self.name(),
-                                                 help=self.help(),
-                                                 description=self.desc(),
-                                                 aliases=self.aliases())
+        if subparsers:
+            self.parser = self.subparsers.add_parser(self.name(),
+                                                     help=self.help(),
+                                                     description=self.desc(),
+                                                     aliases=self.aliases())
+        else:
+            # FIXME: aliases()
+            self.parser = argparse.ArgumentParser(prog=self.name(),
+                                                  description=self.desc(),
+                                                  epilog=self.help())
         self._initArgParser(self.parser)
         self.parser.set_defaults(command_func=self.run)
 
@@ -57,8 +64,9 @@ class Command(object):
     def _run(self):
         raise NotImplementedError("Must implement a _run function")
 
+    # TODO: deprecate me
     @staticmethod
-    def initAll(subparsers):
+    def initAll(subparsers=None):
         if not Command._all_commands:
             raise ValueError("No commands have been registered")
 
@@ -66,6 +74,11 @@ class Command(object):
         for Cmd in Command._all_commands.values():
             cmds.append(Cmd(subparsers))
         return cmds
+    
+    @classmethod
+    def iterCommands(Class):
+        return iter(Class._all_commands.values())
+    
 
 
 __all__ = ["register", "CommandError", "Command"]
