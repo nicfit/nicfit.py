@@ -19,6 +19,18 @@ class Config(configparser.ConfigParser):
         self.filename = Path(os.path.expandvars(filename)).expanduser() \
                             if filename else None
 
+    def getlist(self, section, option, *, raw=False, vars=None,
+                fallback=None):
+        """Return the [section] option values as a list.
+        The list items must be delimited with commas and/or newlines.
+        """
+        val = self.get(section, option, raw=raw, vars=vars, fallback=fallback)
+        values = []
+        if val:
+            for line in val.split("\n"):
+                values += [s.strip() for s in line.split(",")]
+        return values
+
     def read(self, filenames=None, encoding=None, touch=False):
         super().read(filenames or [], encoding=encoding)
 

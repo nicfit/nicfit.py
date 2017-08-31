@@ -296,3 +296,33 @@ def test_env_config(tmpdir):
     assert c.sections() == ["MAIN", "CONFIG1"]
     assert c["MAIN"]["mainkey"] == "config1"
     assert c["CONFIG1"]["key"] == "value"
+
+
+def test_Config_getlist():
+    c = Config(None)
+    c.add_section("section")
+
+    c.set("section", "key", "")
+    assert c.getlist("section", "key") == []
+
+    c.set("section", "key", "1")
+    assert c.getlist("section", "key") == ["1"]
+
+    c.set("section", "key", "1,2")
+    assert c.getlist("section", "key") == ["1", "2"]
+    c.set("section", "key", "1,2 ")
+    assert c.getlist("section", "key") == ["1", "2"]
+    c.set("section", "key", " 1, 2 ")
+    assert c.getlist("section", "key") == ["1", "2"]
+
+    c.set("section", "key", ",2")
+    assert c.getlist("section", "key") == ["", "2"]
+    c.set("section", "key", "1,")
+    assert c.getlist("section", "key") == ["1", ""]
+    c.set("section", "key", ",2,")
+    assert c.getlist("section", "key") == ["", "2", ""]
+
+    c.set("section", "key", "1,2,3,4,5\n6\n7\n8,9\n10")
+    assert c.getlist("section", "key") == [str(i) for i in range(1, 11)]
+    c.set("section", "key", "\n6\n7\n8,9\n\n\n10")
+    assert c.getlist("section", "key") == ["", "6", "7", "8", "9", "", "", "10"]
