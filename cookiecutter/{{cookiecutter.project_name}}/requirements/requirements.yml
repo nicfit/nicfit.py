@@ -28,3 +28,4 @@ dev:
     - sphinxcontrib-paverutils
     {%- endif %}
     - pyaml
+    - pss
