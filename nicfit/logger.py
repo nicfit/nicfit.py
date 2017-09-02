@@ -4,6 +4,8 @@ import argparse
 import logging
 import logging.config
 from io import StringIO
+from .deprecation import deprecated
+#from deprecation import deprecated
 
 
 class Logger(logging.getLoggerClass()):
@@ -52,7 +54,6 @@ except ImportError:
     progress = None
 
 LOG_FORMAT = "[%(asctime)s] %(name)-25s [%(levelname)-8s]: %(message)s"
-METRICS_FORMAT = "<metrics time='%(asctime)s'>%(message)s</metrics>"
 
 logging.VERBOSE = logging.DEBUG + ((logging.INFO - logging.DEBUG) // 2)
 logging.addLevelName(logging.VERBOSE, "VERBOSE")
@@ -168,10 +169,40 @@ class LogHelpAction(argparse._HelpAction):
         parser.exit()
 
 
-# FIXME: metrics does not really belong in generic version
+def DEFAULT_LOGGING_CONFIG(level=logging.WARN, format=LOG_FORMAT):
+    """Returns a default logging config in dict format.
+
+     Compatible with logging.config.dictConfig(), this default set the root
+     logger to `level` with `sys.stdout` console handler using a formatter
+     initialized with `format`. A simple 'brief' formatter is defined that
+     shows only the message portion any log entries."""
+    return {
+        "formatters": {"generic": format,
+                       "brief": "%(message)s",
+                      },
+        "handlers": {"console": {"class": "logging.StreamHandler",
+                                 "level": "NOTSET",
+                                 "formatter": "generic",
+                                 "stream": "ext://sys.stdout",
+                                },
+                    },
+        "root": {"level": level,
+                 "handlers": ["console"],
+                },
+        "loggers": {},
+    }
+
+
+def PKG_LOGGING_CONFIG(pkg_logger, propagate=True, pkg_level=logging.NOTSET):
+    return {pkg_logger: {"level": pkg_level,
+                         "propagate": propagate,
+                        }
+           }
+
+
+@deprecated("Foo")
 def LOGGING_CONFIG(pkg_logger, root_level="WARN", log_format=LOG_FORMAT,
-                   pkg_level="NOTSET", metrics_format=METRICS_FORMAT,
-                   init_logging=False):
+                   pkg_level="NOTSET", init_logging=False):
     cfg = """
 ###
 #logging configuration
