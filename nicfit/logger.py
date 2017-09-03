@@ -5,6 +5,9 @@ import logging
 import logging.config
 from io import StringIO
 
+from deprecation import deprecated
+from .__about__ import __version__
+
 
 class Logger(logging.getLoggerClass()):
     """Base class for all package loggers"""
@@ -52,7 +55,6 @@ except ImportError:
     progress = None
 
 LOG_FORMAT = "[%(asctime)s] %(name)-25s [%(levelname)-8s]: %(message)s"
-METRICS_FORMAT = "<metrics time='%(asctime)s'>%(message)s</metrics>"
 
 logging.VERBOSE = logging.DEBUG + ((logging.INFO - logging.DEBUG) // 2)
 logging.addLevelName(logging.VERBOSE, "VERBOSE")
@@ -168,10 +170,95 @@ class LogHelpAction(argparse._HelpAction):
         parser.exit()
 
 
-# FIXME: metrics does not really belong in generic version
+class DictConfig:
+    @staticmethod
+    def DEFAULT_LOGGING_CONFIG(level=logging.WARN, format=LOG_FORMAT):
+        """Returns a default logging config in dict format.
+
+         Compatible with logging.config.dictConfig(), this default set the root
+         logger to `level` with `sys.stdout` console handler using a formatter
+         initialized with `format`. A simple 'brief' formatter is defined that
+         shows only the message portion any log entries."""
+        return {
+            "version": 1,
+            "formatters": {"generic": {"format": format},
+                           "brief": {"format": "%(message)s"},
+                          },
+            "handlers": {"console": {"class": "logging.StreamHandler",
+                                     "level": "NOTSET",
+                                     "formatter": "generic",
+                                     "stream": "ext://sys.stdout",
+                                    },
+                        },
+            "root": {"level": level,
+                     "handlers": ["console"],
+                    },
+            "loggers": {},
+        }
+
+    @staticmethod
+    def PKG_LOGGING_CONFIG(pkg_logger, propagate=True,
+                           pkg_level=logging.NOTSET):
+        return {pkg_logger: {"level": pkg_level,
+                             "propagate": propagate,
+                            }
+               }
+
+
+class FileConfig:
+    @staticmethod
+    def DEFAULT_LOGGING_CONFIG(level="WARN", format=LOG_FORMAT):
+        """Returns a default logging config in file (ini) format.
+
+         Compatible with logging.config.fileConfig(), this default set the root
+         logger to `level` with `sys.stdout` console handler using a formatter
+         initialized with `format`. A simple 'brief' formatter is defined that
+         shows only the message portion any log entries."""
+        return """
+[loggers]
+keys = root
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic, brief
+
+[logger_root]
+level = {level}
+handlers = console
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = {format}
+
+[formatter_brief]
+format = "%(message)s"
+        """.format(**locals())
+
+    @staticmethod
+    def PKG_LOGGING_CONFIG(pkg_logger, propagate=True, pkg_level="NOTSET"):
+        return """
+[logger_{pkg_logger}]
+level = {pkg_level}
+qualname = {pkg_logger}
+; When adding more specific handlers than what exists on the root you'll
+; likely want to set propagate to false.
+propagate = {propagate}
+handlers =
+        """.format(**locals())
+
+
+@deprecated(details="Use FileConfig.DEFAULT_LOGGING_CONFIG",
+            deprecated_in="0.6.3", removed_in="0.7",
+            current_version=__version__)
 def LOGGING_CONFIG(pkg_logger, root_level="WARN", log_format=LOG_FORMAT,
-                   pkg_level="NOTSET", metrics_format=METRICS_FORMAT,
-                   init_logging=False):
+                   pkg_level="NOTSET", init_logging=False):
     cfg = """
 ###
 #logging configuration
@@ -207,7 +294,6 @@ formatter = generic
 
 [formatter_generic]
 format = {log_format}
-
 """.format(**locals())
     if init_logging:
         logging.config.fileConfig(StringIO(cfg))
@@ -242,7 +328,7 @@ example.py -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L my
 __all__ = ["stdout", "stderr"]
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":                                     # pragma: nocover
     logging.getLogger().setLevel(logging.DEBUG)
     for log in stdout, stderr:
         print("root L:", logging.getLogger().getEffectiveLevel())

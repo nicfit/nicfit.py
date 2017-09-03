@@ -183,10 +183,16 @@ def test_ConfigFileType(tmpdir):
     assert [i for i in existing.items()] == [i for i in config.items()]
 
 
-def test_ConfigArgumentParser(tmpdir):
+def test_ConfigArgumentParserDNE():
     # A config is optional, so a -c/--config arg was added
     p = ArgumentParser(config_opts=ConfigOpts())
     args = p.parse_args([])
+
+    # Arg value, but config does not exist
+    with pytest.raises(SystemExit):
+        args = p.parse_args(["-c", "dne"])
+    with pytest.raises(SystemExit):
+        args = p.parse_args(["--config", "dne"])
 
     # No arg value
     with pytest.raises(SystemExit):
@@ -194,11 +200,11 @@ def test_ConfigArgumentParser(tmpdir):
     with pytest.raises(SystemExit):
         args = p.parse_args(["--config"])
 
-    # Arg value, but config does not exist
-    with pytest.raises(SystemExit):
-        args = p.parse_args(["-c", "dne"])
-    with pytest.raises(SystemExit):
-        args = p.parse_args(["--config", "dne"])
+
+def test_ConfigArgumentParser(tmpdir):
+    # A config is optional, so a -c/--config arg was added
+    p = ArgumentParser(config_opts=ConfigOpts())
+    args = p.parse_args([])
 
     # Arg value, config does not exist, but a default was given.
     p = ArgumentParser(config_opts=ConfigOpts(default_config=SAMPLE_CONFIG1))
@@ -263,14 +269,12 @@ mainkey = config1
 [CONFIG1]
 key = value
 """
-
 SAMPLE_CONFIG2 = """
 [MAIN]
 mainkey = config2
 [CONFIG2]
 KEY = value
 """
-
 SAMPLE_CONFIG3 = """
 [MAIN]
 mainkey = config3
@@ -326,3 +330,34 @@ def test_Config_getlist():
     assert c.getlist("section", "key") == [str(i) for i in range(1, 11)]
     c.set("section", "key", "\n6\n7\n8,9\n\n\n10")
     assert c.getlist("section", "key") == ["", "6", "7", "8", "9", "", "", "10"]
+
+
+def test_Config_touch(tmpdir):
+    filename = Path(str(tmpdir)) / "subdir" / "config.ini"
+
+    cfg = Config(filename)
+    assert str(filename) == str(cfg.filename)
+    assert filename.exists() == False
+
+    cfg = Config(filename, touch=True)
+    assert str(filename) == str(cfg.filename)
+    assert filename.exists() == True
+
+
+def test_Config_mode(tmpdir):
+    filename1 = Path(str(tmpdir)) / "subdir" / "config.ini"
+    filename2 = Path(str(tmpdir)) / "subdir" / "config2.ini"
+
+    curr_umask = os.umask(0)
+    os.umask(curr_umask)
+
+    # Touch without mode should produce a file per umask
+    cfg = Config(filename1, touch=True)
+    assert str(filename1) == str(cfg.filename)
+    assert filename1.exists() == True
+    assert (filename1.stat().st_mode & 0o000777) == (0o666 ^ curr_umask)
+
+    cfg = Config(filename2, touch=True, mode=0o600)
+    assert str(filename2) == str(cfg.filename)
+    assert filename2.exists() == True
+    assert (filename2.stat().st_mode & 0o000777) == 0o600

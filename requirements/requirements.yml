@@ -1,4 +1,5 @@
 main:
+    - deprecation
 
 extra_cookiecutter:
     - cookiecutter
