@@ -8,7 +8,8 @@ from collections import namedtuple
 
 class Config(configparser.ConfigParser):
     """Class for storing, reading, and writing config."""
-    def __init__(self, filename, *, config_env_var=None, **kwargs):
+    def __init__(self, filename, *, config_env_var=None, touch=False, mode=None,
+                 **kwargs):
         super().__init__(**kwargs)
 
         if (config_env_var and config_env_var in os.environ and
@@ -18,6 +19,14 @@ class Config(configparser.ConfigParser):
 
         self.filename = Path(os.path.expandvars(filename)).expanduser() \
                             if filename else None
+        if self.filename:
+            if touch:
+                if not self.filename.parent.exists():
+                    self.filename.parent.mkdir(parents=True)
+                if not self.filename.exists():
+                    self.filename.touch()
+            if mode and self.filename.exists():
+                self.filename.chmod(mode)
 
     def getlist(self, section, option, *, raw=False, vars=None,
                 fallback=None):
@@ -70,7 +79,8 @@ class ConfigFileType(argparse.FileType):
         if filename:
             filename = os.path.expanduser(os.path.expandvars(filename))
         config = self._opts.ConfigClass(filename,
-                                        config_env_var=self._opts.env_var)
+                                        config_env_var=self._opts.env_var,
+                                        **self._opts.extra_config_opts)
 
         if self._opts.default_config:
             config.read_string(self._opts.default_config)
@@ -93,14 +103,38 @@ class ConfigOpts(namedtuple("_ConfigOptions", ["required",
                                                "ConfigClass",
                                                "default_config_opt",
                                                "env_var",
+                                               "extra_config_opts",
                                               ])):
-    # XXX: attrs lib could make this go away
+    """A namedtuple to describe configuration properties for an application."""
     def __new__(cls, required=False, default_file=None, default_config=None,
                 override_arg=False, ConfigClass=Config,
-                default_config_opt=None, env_var=None):
+                default_config_opt=None, env_var=None,
+                extra_config_opts=None):
+        """
+        :param required: A boolean stating whether the config argument is
+            required. When ``True`` a positional argument ``config`` is added
+            to the command line parser. This argument is required unless
+            the ``default_file`` option is set. When ``False`` the arguments
+            ``-c/--config`` are added to the argument parser.
+        :param default_file: Default config file path.
+        :param default_config: A default config string.
+        :param override_arg: If True a ``--config-override`` option is added
+            to the argument parser to allow command-line over rides of config
+            values. See :class:`nicfit._argparse.ArgumentParser`.
+        :param ConfigClass: The class type for the configuration object. This
+            MUST be either :class:`nicfit._config.Config` or a subclass thereof.
+        :param default_config_opt: If not ``None`` it should be a command line
+            optional in either short OR long form. When used the the default
+            configuration data is printed to stdout.
+        :param env_var: When not ``None`` it is the name of an environment
+            variable that will be read (if the path exists, not errors when it
+            does not) in addition to any other config filenames.
+        :param extra_config_opts: A dict of extra keyward arguments to pass to
+               the ``ConfigClass`` constructor.
+        """
         return super().__new__(cls, required, default_file, default_config,
                                override_arg, ConfigClass, default_config_opt,
-                               env_var)
+                               env_var, extra_config_opts or {})
 
 
 def addCommandLineArgs(arg_parser, opts):

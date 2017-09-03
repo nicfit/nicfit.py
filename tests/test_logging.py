@@ -5,8 +5,8 @@ import logging.config
 from uuid import uuid4
 from io import StringIO
 from unittest.mock import patch, Mock, call
-
-from nicfit.logger import LOGGING_CONFIG, getLogger
+import deprecation
+from nicfit.logger import getLogger, FileConfig, DictConfig
 from nicfit import logger
 from nicfit import ArgumentParser
 
@@ -105,19 +105,35 @@ def test_logFileArguments(tmpdir):
         # FIXME: actually test
 
 
-def test_FileConfig():
+@deprecation.fail_if_not_removed
+def test_FileConfig_OLD():
+    from nicfit.logger import LOGGING_CONFIG
     cfg = LOGGING_CONFIG("INl3agueWitS4t4n")
     cfg_file = StringIO(cfg)
     logging.config.fileConfig(cfg_file)
 
 
-def test_FileConfig_auto():
+@deprecation.fail_if_not_removed
+def test_FileConfig_auto_OLD():
+    from nicfit.logger import LOGGING_CONFIG
     with patch("logging.config.fileConfig") as mock_fileConfig:
         LOGGING_CONFIG("INl3agueWitS4t4n", init_logging=True)
         if sys.version_info[:2] >= (3, 6):
             mock_fileConfig.assert_called()
         else:
             assert mock_fileConfig.call_count != 0
+
+
+def test_FileConfig():
+    cfg = "\n".join([FileConfig.DEFAULT_LOGGING_CONFIG(),
+                     FileConfig.PKG_LOGGING_CONFIG("INl3agueWitS4t4n")])
+    cfg_file = StringIO(cfg)
+    logging.config.fileConfig(cfg_file)
+
+def test_DictConfig():
+    cfg = DictConfig.DEFAULT_LOGGING_CONFIG()
+    #cfg.update(DictConfig.PKG_LOGGING_CONFIG("INl3agueWitS4t4n"))
+    logging.config.dictConfig(cfg)
 
 
 def test_optSplit():

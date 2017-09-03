@@ -4,8 +4,9 @@ import argparse
 import logging
 import logging.config
 from io import StringIO
-from .deprecation import deprecated
-#from deprecation import deprecated
+
+from deprecation import deprecated
+from .__about__ import __version__
 
 
 class Logger(logging.getLoggerClass()):
@@ -169,38 +170,93 @@ class LogHelpAction(argparse._HelpAction):
         parser.exit()
 
 
-def DEFAULT_LOGGING_CONFIG(level=logging.WARN, format=LOG_FORMAT):
-    """Returns a default logging config in dict format.
+class DictConfig:
+    @staticmethod
+    def DEFAULT_LOGGING_CONFIG(level=logging.WARN, format=LOG_FORMAT):
+        """Returns a default logging config in dict format.
 
-     Compatible with logging.config.dictConfig(), this default set the root
-     logger to `level` with `sys.stdout` console handler using a formatter
-     initialized with `format`. A simple 'brief' formatter is defined that
-     shows only the message portion any log entries."""
-    return {
-        "formatters": {"generic": format,
-                       "brief": "%(message)s",
-                      },
-        "handlers": {"console": {"class": "logging.StreamHandler",
-                                 "level": "NOTSET",
-                                 "formatter": "generic",
-                                 "stream": "ext://sys.stdout",
-                                },
+         Compatible with logging.config.dictConfig(), this default set the root
+         logger to `level` with `sys.stdout` console handler using a formatter
+         initialized with `format`. A simple 'brief' formatter is defined that
+         shows only the message portion any log entries."""
+        return {
+            "version": 1,
+            "formatters": {"generic": {"format": format},
+                           "brief": {"format": "%(message)s"},
+                          },
+            "handlers": {"console": {"class": "logging.StreamHandler",
+                                     "level": "NOTSET",
+                                     "formatter": "generic",
+                                     "stream": "ext://sys.stdout",
+                                    },
+                        },
+            "root": {"level": level,
+                     "handlers": ["console"],
                     },
-        "root": {"level": level,
-                 "handlers": ["console"],
-                },
-        "loggers": {},
-    }
+            "loggers": {},
+        }
+
+    @staticmethod
+    def PKG_LOGGING_CONFIG(pkg_logger, propagate=True,
+                           pkg_level=logging.NOTSET):
+        return {pkg_logger: {"level": pkg_level,
+                             "propagate": propagate,
+                            }
+               }
 
 
-def PKG_LOGGING_CONFIG(pkg_logger, propagate=True, pkg_level=logging.NOTSET):
-    return {pkg_logger: {"level": pkg_level,
-                         "propagate": propagate,
-                        }
-           }
+class FileConfig:
+    @staticmethod
+    def DEFAULT_LOGGING_CONFIG(level="WARN", format=LOG_FORMAT):
+        """Returns a default logging config in file (ini) format.
+
+         Compatible with logging.config.fileConfig(), this default set the root
+         logger to `level` with `sys.stdout` console handler using a formatter
+         initialized with `format`. A simple 'brief' formatter is defined that
+         shows only the message portion any log entries."""
+        return f"""
+[loggers]
+keys = root
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic, brief
+
+[logger_root]
+level = {level}
+handlers = console
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = {format}
+
+[formatter_brief]
+format = "%(message)s"
+        """
+
+    @staticmethod
+    def PKG_LOGGING_CONFIG(pkg_logger, propagate=True, pkg_level="NOTSET"):
+        return f"""
+[logger_{pkg_logger}]
+level = {pkg_level}
+qualname = {pkg_logger}
+; When adding more specific handlers than what exists on the root you'll
+; likely want to set propagate to false.
+propagate = {propagate}
+handlers =
+        """
 
 
-@deprecated("Foo")
+@deprecated(details="Use FileConfig.DEFAULT_LOGGING_CONFIG",
+            deprecated_in="0.6.3", removed_in="0.7",
+            current_version=__version__)
 def LOGGING_CONFIG(pkg_logger, root_level="WARN", log_format=LOG_FORMAT,
                    pkg_level="NOTSET", init_logging=False):
     cfg = """
@@ -238,7 +294,6 @@ formatter = generic
 
 [formatter_generic]
 format = {log_format}
-
 """.format(**locals())
     if init_logging:
         logging.config.fileConfig(StringIO(cfg))

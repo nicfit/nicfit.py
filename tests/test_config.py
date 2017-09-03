@@ -183,10 +183,16 @@ def test_ConfigFileType(tmpdir):
     assert [i for i in existing.items()] == [i for i in config.items()]
 
 
-def test_ConfigArgumentParser(tmpdir):
+def test_ConfigArgumentParserDNE():
     # A config is optional, so a -c/--config arg was added
     p = ArgumentParser(config_opts=ConfigOpts())
     args = p.parse_args([])
+
+    # Arg value, but config does not exist
+    with pytest.raises(SystemExit):
+        args = p.parse_args(["-c", "dne"])
+    with pytest.raises(SystemExit):
+        args = p.parse_args(["--config", "dne"])
 
     # No arg value
     with pytest.raises(SystemExit):
@@ -194,11 +200,11 @@ def test_ConfigArgumentParser(tmpdir):
     with pytest.raises(SystemExit):
         args = p.parse_args(["--config"])
 
-    # Arg value, but config does not exist
-    with pytest.raises(SystemExit):
-        args = p.parse_args(["-c", "dne"])
-    with pytest.raises(SystemExit):
-        args = p.parse_args(["--config", "dne"])
+
+def test_ConfigArgumentParser(tmpdir):
+    # A config is optional, so a -c/--config arg was added
+    p = ArgumentParser(config_opts=ConfigOpts())
+    args = p.parse_args([])
 
     # Arg value, config does not exist, but a default was given.
     p = ArgumentParser(config_opts=ConfigOpts(default_config=SAMPLE_CONFIG1))
