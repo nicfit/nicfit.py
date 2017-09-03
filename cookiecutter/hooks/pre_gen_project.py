@@ -39,6 +39,8 @@ default_context:
     pyapp_type: "{{ cookiecutter.pyapp_type }}"
     pypi_repo_name: "{{ cookiecutter.pypi_repo_name }}"
     pypi_username: "{{ cookiecutter.pypi_username }}"
+    pypy: "{{ cookiecutter.pypy }}"
+    pypy3: "{{ cookiecutter.pypy3 }}"
     release_date: "{{ cookiecutter.release_date }}"
     src_dir: "{{ cookiecutter.src_dir }}"
     use_bitbucket: "{{ cookiecutter.use_bitbucket }}"

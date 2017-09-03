@@ -67,11 +67,13 @@
     "pyapp_type": ["normal", "asyncio"],
     "py26": ["no", "yes"],
     "py27": ["no", "yes"],
+    "pypy": ["no", "yes"],
     "py33": ["no", "yes"],
     "py34": ["no", "yes"],
     "py35": ["yes", "no"],
     "py36": ["yes", "no"],
     "py37": ["yes", "no"],
+    "pypy3": ["yes", "no"],
 
     "_comment": "##### end #####"
 }
