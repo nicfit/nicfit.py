@@ -5,8 +5,6 @@
         pypi-release web-release github-release cookiecutter requirements
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
-TEMP_DIR ?= ./tmp
-CC_DIR = ${TEMP_DIR}/{{ cookiecutter.project_name }}
 NAME ?= {{ cookiecutter.full_name }}
 EMAIL ?= {{ cookiecutter.email }}
 GITHUB_USER ?= {{ cookiecutter.github_username }}
@@ -74,7 +72,6 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
-	rm -rf "${CC_DIR}"
 
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
@@ -250,15 +247,16 @@ CC_MERGE ?= yes
 CC_OPTS ?= --no-input
 GIT_COMMIT_HOOK = .git/hooks/commit-msg
 cookiecutter:
-	@rm -rf "${CC_DIR}"
-	@if test "${CC_MERGE}" == "no"; then \
-		nicfit cookiecutter ${CC_OPTS} "${TEMP_DIR}"; \
-		git -C "${CC_DIR}" diff; \
-		git -C "${CC_DIR}" status -s -b; \
+	tmp_d=`mktemp -d`; cc_d=$$tmp_d/{{ cookiecutter.project_name }}; \
+	if test "${CC_MERGE}" == "no"; then \
+		nicfit cookiecutter ${CC_OPTS} "$${tmp_d}"; \
+		git -C "$$cc_d" diff; \
+		git -C "$$cc_d" status -s -b; \
 	else \
-		nicfit cookiecutter --merge ${CC_OPTS} "${TEMP_DIR}" \
+		nicfit cookiecutter --merge ${CC_OPTS} "$${tmp_d}" \
 		       --extra-merge ${GIT_COMMIT_HOOK} ${GIT_COMMIT_HOOK};\
-	fi
+	fi; \
+	rm -rf $$tmp_d
 
 {% if cookiecutter.gettext_domain != "None" -%}
 DEF_MSG_CAT = locale/{{ cookiecutter.default_locale }}/LC_MESSAGES/{{ cookiecutter.gettext_domain }}.po
