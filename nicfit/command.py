@@ -47,7 +47,6 @@ class Command(object):
                                                      description=self.desc(),
                                                      aliases=self.aliases())
         else:
-            # FIXME: aliases()
             self.parser = argparse.ArgumentParser(prog=self.name(),
                                                   description=self.desc(),
                                                   epilog=self.help())
@@ -74,11 +73,10 @@ class Command(object):
         for Cmd in Command._all_commands.values():
             cmds.append(Cmd(subparsers))
         return cmds
-    
+
     @classmethod
     def iterCommands(Class):
         return iter(Class._all_commands.values())
-    
 
 
 __all__ = ["register", "CommandError", "Command"]

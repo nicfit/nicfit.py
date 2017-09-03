@@ -3,6 +3,24 @@ Release History
 
 .. :changelog:
 
+v0.6.3 (2017-09-03)
+--------------------
+
+New
+~~~
+- :meth:`nicfit.Config.getlist` - Returns a list splitting on '\n' and ','
+- :class:`nicfit.command.Command` will create its own ArgumentParser if not
+  provided a subparser. This makes the API usable for top-level commands.
+- [cookiecutter] pytest-asyncio package is added as a dependency when the
+  app type is asyncio.
+- [cookiecutter] PyPy and PyPy3 cookiecutter options.
+- [cookiecutter] Added ``pss`` and ``pyaml` to dev requirements.
+
+Fix
+~~~
+- Clean up cookiecutter temp dir.
+
+
 v0.6.2 (2017-08-26)
 ------------------------
 - Cookiecutter updates.
