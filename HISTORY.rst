@@ -8,17 +8,29 @@ v0.6.3 (2017-09-03)
 
 New
 ~~~
+- :class:`nicfit.Config` has two new keyword args. ``touch=True`` to create
+  default configs that do not exist and ``mode=int`` to set the file's perms.
+- :class:`nicfit.ConfigOpts` has two new member ``extra_config_opts`` to enable
+  passing additional kwargs when constructiong the ConfigClass.
+  default configs that do not exist and ``mode=int`` to set the file's perms.
 - :meth:`nicfit.Config.getlist` - Returns a list splitting on '\n' and ','
-- :class:`nicfit.command.Command` will create its own ArgumentParser if not
+- New :class:`nicfit.logger.FileConfig` and :class:`nicfit.logger.DictConfig`
+  classes for create default logging configs for root and package loggers.
+- :class:`nicfit.Command` will create its own ArgumentParser if not
   provided a subparser. This makes the API usable for top-level commands.
 - [cookiecutter] pytest-asyncio package is added as a dependency when the
   app type is asyncio.
 - [cookiecutter] PyPy and PyPy3 cookiecutter options.
-- [cookiecutter] Added ``pss`` and ``pyaml` to dev requirements.
+- [cookiecutter] Added ``pss`` and ``pyaml`` to dev requirements.
 
 Fix
 ~~~
 - Clean up cookiecutter temp dir.
+
+Deprecation
+~~~~~~~~~~~~
+- :func:`nicfit.logger.LOGGING_CONFIG` deprecated in favor of
+  :class:`nicfit.logger.FileConfig`
 
 
 v0.6.2 (2017-08-26)

@@ -325,7 +325,7 @@ example.py -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L my
 """.format(level_names=", ".join(LEVEL_NAMES))  # noqa
 
 
-__all__ = ["stdout", "stderr"]
+__all__ = ["stdout", "stderr", "FileConfig", "DictConfig"]
 
 
 if __name__ == "__main__":                                     # pragma: nocover
