@@ -333,7 +333,7 @@ def test_Config_getlist():
 
 
 def test_Config_touch(tmpdir):
-    filename = Path(tmpdir) / "subdir" / "config.ini"
+    filename = Path(str(tmpdir)) / "subdir" / "config.ini"
 
     cfg = Config(filename)
     assert str(filename) == str(cfg.filename)
@@ -345,8 +345,8 @@ def test_Config_touch(tmpdir):
 
 
 def test_Config_mode(tmpdir):
-    filename1 = Path(tmpdir) / "subdir" / "config.ini"
-    filename2 = Path(tmpdir) / "subdir" / "config2.ini"
+    filename1 = Path(str(tmpdir)) / "subdir" / "config.ini"
+    filename2 = Path(str(tmpdir)) / "subdir" / "config2.ini"
 
     curr_umask = os.umask(0)
     os.umask(curr_umask)
@@ -361,4 +361,3 @@ def test_Config_mode(tmpdir):
     assert str(filename2) == str(cfg.filename)
     assert filename2.exists() == True
     assert (filename2.stat().st_mode & 0o000777) == 0o600
-
