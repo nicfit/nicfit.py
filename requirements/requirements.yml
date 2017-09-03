@@ -26,3 +26,4 @@ dev:
     - twine
     - wheel
     - pyaml
+    - pss
