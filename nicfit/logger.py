@@ -328,7 +328,7 @@ example.py -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L my
 __all__ = ["stdout", "stderr"]
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":                                     # pragma: nocover
     logging.getLogger().setLevel(logging.DEBUG)
     for log in stdout, stderr:
         print("root L:", logging.getLogger().getEffectiveLevel())

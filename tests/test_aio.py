@@ -60,3 +60,23 @@ def test_stop(event_loop):
     with pytest.raises(SystemExit):
         app.run([])
     assert app.retval == 14
+
+
+def test_command(event_loop):
+    with pytest.raises(NotImplementedError):
+        event_loop.run_until_complete(aio.Command().run(None))
+
+    class MyCommand(aio.Command):
+        def __init__(self):
+            self.was_run = False
+        async def _run(self):
+            self.was_run = True
+            return 5
+
+    cmd = MyCommand()
+    assert not cmd.was_run
+    dummy_args = object()
+    res = event_loop.run_until_complete(cmd.run(dummy_args))
+    assert cmd.args == dummy_args
+    assert cmd.was_run
+    assert res == 5

@@ -130,6 +130,7 @@ def test_FileConfig():
     cfg_file = StringIO(cfg)
     logging.config.fileConfig(cfg_file)
 
+
 def test_DictConfig():
     cfg = DictConfig.DEFAULT_LOGGING_CONFIG()
     #cfg.update(DictConfig.PKG_LOGGING_CONFIG("INl3agueWitS4t4n"))
