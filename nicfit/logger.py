@@ -214,7 +214,7 @@ class FileConfig:
          logger to `level` with `sys.stdout` console handler using a formatter
          initialized with `format`. A simple 'brief' formatter is defined that
          shows only the message portion any log entries."""
-        return f"""
+        return """
 [loggers]
 keys = root
 
@@ -239,11 +239,11 @@ format = {format}
 
 [formatter_brief]
 format = "%(message)s"
-        """
+        """.format(**locals())
 
     @staticmethod
     def PKG_LOGGING_CONFIG(pkg_logger, propagate=True, pkg_level="NOTSET"):
-        return f"""
+        return """
 [logger_{pkg_logger}]
 level = {pkg_level}
 qualname = {pkg_logger}
@@ -251,7 +251,7 @@ qualname = {pkg_logger}
 ; likely want to set propagate to false.
 propagate = {propagate}
 handlers =
-        """
+        """.format(**locals())
 
 
 @deprecated(details="Use FileConfig.DEFAULT_LOGGING_CONFIG",
