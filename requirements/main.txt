@@ -1,1 +1,1 @@
-deprecation
+deprecation==1.0.1
