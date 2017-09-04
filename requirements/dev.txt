@@ -7,6 +7,6 @@ ipdb==0.10.3
 pip-tools==1.9.0
 pss==1.41
 pyaml==17.8.0
-tox==2.8.0
+tox==2.8.1
 twine==1.9.1
 wheel==0.29.0
