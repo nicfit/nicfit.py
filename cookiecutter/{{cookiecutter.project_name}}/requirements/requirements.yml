@@ -13,6 +13,7 @@ test:
     {%- endif %}
 
 dev:
+    - nicfit[cookiecutter]
     - Sphinx
     {%- if cookiecutter.gettext_domain != "None" %}
     - babel
