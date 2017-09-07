@@ -1,19 +1,20 @@
 import sys
 import logging
+import traceback
 
 from .logger import getLogger
 from ._argparse import ArgumentParser
 from .util import initGetText
 
-log = getLogger(__name__)
-
 try:
     import ipdb as _debugger
 except ImportError:                                            # pragma: nocover
     import pdb as _debugger
-def _pdb():  # noqa: E302
+def _pdb():                                                    # noqa: E302
     e, m, tb = sys.exc_info()
     _debugger.post_mortem(tb)
+
+log = getLogger(__name__)
 
 
 class Application:
@@ -90,11 +91,12 @@ class Application:
         except SystemExit as exit:
             self.log.verbose("Exited")
             retval = exit.code
-        except Exception as ex:
+        except Exception as unexpected:
+            print("Uncaught exception", file=sys.stderr)
+            traceback.print_exc()
             if "debug_pdb" in self.args and self.args.debug_pdb:
                 _pdb()
             retval = Application.UNCAUGHT_EXCEPTION_EXIT
-            self.log.exception("Uncaught exception")
             raise
         finally:
             try:
