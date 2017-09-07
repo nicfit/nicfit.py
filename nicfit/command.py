@@ -22,6 +22,7 @@ class CommandError(Exception):
 class Command(object):
     """Base class for commands."""
     _all_commands = OrderedDict()
+    register = register
 
     @classmethod
     def name(Class):
