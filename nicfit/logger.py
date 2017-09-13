@@ -87,6 +87,7 @@ example.py -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L my
 
 """.format(level_names=", ".join(LEVEL_NAMES))  # noqa
 
+
 def _optSplit(opt):
     if ':' in opt:
         first, second = opt.split(":", maxsplit=1)
