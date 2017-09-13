@@ -44,7 +44,11 @@ class ArgumentParser(argparse.ArgumentParser):
         return parsed, remaining
 
     def add_subparsers(self, add_help_subcmd=False, **kwargs):
+        if "parser_class" not in kwargs:
+            kwargs["parser_class"] = ArgumentParser
+
         subparser = super().add_subparsers(**kwargs)
+
         if add_help_subcmd:
             # 'help' subcommand; turns it into the less intuitive --help format.
             # e.g.  cmd help subcmd  ==> cmd subcmd --help

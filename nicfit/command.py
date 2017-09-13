@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import argparse
 from collections import OrderedDict
+from ._argparse import ArgumentParser
 
 
 def register(CommandSubClass):
@@ -48,9 +48,9 @@ class Command(object):
                                                      description=self.desc(),
                                                      aliases=self.aliases())
         else:
-            self.parser = argparse.ArgumentParser(prog=self.name(),
-                                                  description=self.desc(),
-                                                  epilog=self.help())
+            self.parser = ArgumentParser(prog=self.name(),
+                                         description=self.desc(),
+                                         epilog=self.help())
         self._initArgParser(self.parser)
         self.parser.set_defaults(command_func=self.run)
 
