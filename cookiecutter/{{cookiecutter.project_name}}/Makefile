@@ -116,10 +116,6 @@ clean-docs:
 	$(MAKE) -C docs clean
 	-rm README.html
 
-# FIXME: never been tested
-servedocs: docs
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
-
 pre-release: lint test changelog requirements
 	@# Keep docs off pre-release target list, else it is pruned during 'release' but
 	@# after a clean.
