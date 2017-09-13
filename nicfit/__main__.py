@@ -21,7 +21,7 @@ try:
 except ImportError:  # pragma: nocover
     cookiecutter = None
 
-HASH_FILE = Path("./.cookiecutter.md5")
+HASH_FILES = [Path("./.nicfit.md5"), Path("./.cookiecutter.md5")]
 
 MERGE_TOOLS = collections.OrderedDict()
 MERGE_TOOLS["meld"] = None
@@ -105,8 +105,9 @@ class Requirements(nicfit.Command):
 class CookieCutter(nicfit.Command):
     NAME = "cookiecutter"
     HELP = "Create a nicfit.py Python project skeleton."
-    OLD_CC_USER_CONFIG = ".cookiecutter.json"
-    CC_USER_CONFIG = ".cookiecutter.yml"
+    CC_USER_CONFIGS = [Path(".nicfit.yml"),
+                       Path("./.cookiecutter.yml"),
+                       Path(".cookiecutter.json")]
     ALIASES = ["cc"]
 
     def _initArgParser(self, parser):
@@ -115,8 +116,9 @@ class CookieCutter(nicfit.Command):
         parser.add_argument("--config-file", metavar="PATH",
                             help="User configuration file", default=None)
         parser.add_argument("--no-input", action="store_true",
-                            help="Do not prompt for parameters and only use "
-                                 "{} file content".format(self.CC_USER_CONFIG))
+                 help="Do not prompt for parameters and only use "
+                      "{} file content"
+                      .format(", ".join([str(c)for c in self.CC_USER_CONFIGS])))
         parser.add_argument("--no-config", action="store_true",
                             help="Use no user config (overrides --config_file)")
         parser.add_argument("--no-clone", action="store_true",
@@ -179,15 +181,13 @@ class CookieCutter(nicfit.Command):
         if self.args.no_config:
             self.args.config_file = None
         elif not self.args.config_file:
-            local_config = Path(cwd) / self.CC_USER_CONFIG
-            old_local_config = Path(cwd) / self.OLD_CC_USER_CONFIG
-            if local_config.is_file():
-                self.args.config_file = str(local_config)
-            elif old_local_config.is_file():
-                self.args.config_file = str(old_local_config)
+            for config in [Path(cwd) / c for c in self.CC_USER_CONFIGS]:
+                if config.is_file():
+                    self.args.config_file = str(config)
+                    break
         if self.args.config_file:
-            pout("Using user config ./{}, use --no-config to ignore."
-                 .format(self.CC_USER_CONFIG))
+            pout("Using user config {}, use --no-config to ignore."
+                 .format(self.args.config_file))
 
         cc_dir = self._cookiecutter(self._findTemplateDir())
         if clone_d:
@@ -214,12 +214,14 @@ class CookieCutter(nicfit.Command):
 
     def _merge(self, cc_dir):
         md5_hashes = {}
-        if HASH_FILE.exists():
-            for line in [l.strip() for l in HASH_FILE.read_text().split("\n")]:
-                if line:
-                    values = line.rsplit(":", maxsplit=1)
-                    if len(values) == 2 and values[0] and values[1]:
-                        md5_hashes[values[0]] = values[1]
+        for hash_file in HASH_FILES:
+            if hash_file.exists():
+                for line in [l.strip() for l in hash_file.read_text().split("\n")]:
+                    if line:
+                        values = line.rsplit(":", maxsplit=1)
+                        if len(values) == 2 and values[0] and values[1]:
+                            md5_hashes[values[0]] = values[1]
+                break
 
         try:
             p = subprocess.run("git -C \"{cc_dir}\" status --porcelain -uall"
@@ -292,7 +294,7 @@ class CookieCutter(nicfit.Command):
                         dst.parent.mkdir(0o755, parents=True)
                     shutil.move(str(tmp_dst), str(dst))
 
-        with HASH_FILE.open("w") as hash_file:
+        with HASH_FILES[0].open("w") as hash_file:
             for f in sorted(md5_hashes.keys()):
                 hash_file.write("{}:{}\n".format(f, md5_hashes[f]))
 
