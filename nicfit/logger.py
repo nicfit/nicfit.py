@@ -8,6 +8,8 @@ from io import StringIO
 from deprecation import deprecated
 from .__about__ import __version__
 
+__all__ = ["stdout", "stderr", "FileConfig", "DictConfig"]
+
 
 class Logger(logging.getLoggerClass()):
     """Base class for all package loggers"""
@@ -61,7 +63,29 @@ logging.addLevelName(logging.VERBOSE, "VERBOSE")
 LEVELS = [logging.DEBUG, logging.VERBOSE, logging.INFO,
           logging.WARNING, logging.ERROR, logging.CRITICAL]
 LEVEL_NAMES = [logging.getLevelName(l).lower() for l in LEVELS]
+_LOGGING_OPTS_HELP = """
+The command line options ``-l (--log-level)`` and ``-L (--log-file)`` can be
+used to set levels and output streams for any and all loggers, therefore each
+may be specified multiple times on a command line.
 
+Each argument requires a value of the form ``VALUE`` or ``LOGGER:VALUE``.
+When a LOGGER is not specified the VALUE is applied to the root logger.
+
+Valid level names (-l and --log-level) are:
+{level_names}
+
+Note, nicfit.py loggers add a VERBOSE level, where DEBUG < VERBOSE < INFO.
+
+Valid log file values (-L and --log-file) are any file path with the required
+permissions to open and write to the file. The special values 'stdout',
+'stderr', and 'null' result on logging to the console (stdout or stderr),
+or /dev/null in the last case.
+
+For example:
+
+example.py -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L mylib:./debug.log -L mylib.database:/dev/stderr
+
+""".format(level_names=", ".join(LEVEL_NAMES))  # noqa
 
 def _optSplit(opt):
     if ':' in opt:
@@ -298,34 +322,6 @@ format = {log_format}
     if init_logging:
         logging.config.fileConfig(StringIO(cfg))
     return cfg
-
-
-_LOGGING_OPTS_HELP = """
-The command line options ``-l (--log-level)`` and ``-L (--log-file)`` can be
-used to set levels and output streams for any and all loggers, therefore each
-may be specified multiple times on a command line.
-
-Each argument requires a value of the form ``VALUE`` or ``LOGGER:VALUE``.
-When a LOGGER is not specified the VALUE is applied to the root logger.
-
-Valid level names (-l and --log-level) are:
-{level_names}
-
-Note, nicfit.py loggers add a VERBOSE level, where DEBUG < VERBOSE < INFO.
-
-Valid log file values (-L and --log-file) are any file path with the required
-permissions to open and write to the file. The special values 'stdout',
-'stderr', and 'null' result on logging to the console (stdout or stderr),
-or /dev/null in the last case.
-
-For example:
-
-example.py -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L mylib:./debug.log -L mylib.database:/dev/stderr
-
-""".format(level_names=", ".join(LEVEL_NAMES))  # noqa
-
-
-__all__ = ["stdout", "stderr", "FileConfig", "DictConfig"]
 
 
 if __name__ == "__main__":                                     # pragma: nocover
