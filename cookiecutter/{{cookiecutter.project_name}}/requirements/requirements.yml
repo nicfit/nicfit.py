@@ -15,6 +15,7 @@ test:
 dev:
     - nicfit[cookiecutter]
     - Sphinx
+    - sphinx_rtd_theme
     {%- if cookiecutter.gettext_domain != "None" %}
     - babel
     {%- endif %}

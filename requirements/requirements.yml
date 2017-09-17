@@ -17,6 +17,7 @@ test:
 
 dev:
     - Sphinx
+    - sphinx_rtd_theme
     - babel
     - check-manifest
     - flake8

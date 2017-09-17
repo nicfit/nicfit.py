@@ -17,5 +17,5 @@ jinja2==2.9.6             # via cookiecutter, jinja2-time
 markupsafe==1.0           # via jinja2
 poyo==0.4.1               # via cookiecutter
 python-dateutil==2.6.1    # via arrow
-six==1.10.0               # via python-dateutil
+six==1.11.0               # via python-dateutil
 whichcraft==0.4.1         # via cookiecutter
