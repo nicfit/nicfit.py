@@ -1,5 +1,5 @@
 ===============================
-{{ cookiecutter.project_name }}
+{{ cookiecutter.project_name }} README
 ===============================
 
 {{ cookiecutter.project_short_description}}
