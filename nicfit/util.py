@@ -11,6 +11,7 @@ except ImportError:                                            # pragma: nocover
 
 log = getLogger(__name__)
 
+
 @contextlib.contextmanager
 def cd(path):
     """Context manager that changes to directory `path` and return to CWD
@@ -101,4 +102,3 @@ def debugger():
         _debugger.post_mortem(tb)
     else:
         _debugger.set_trace()
-
