@@ -3,6 +3,15 @@ Release History
 
 .. :changelog:
 
+v0.6.5 (2017-09-21)
+------------------------
+
+Fix
+~~~
+- Typo for nicfit.py[cookiecutter] dev.txt requirement.
+
+
+
 v0.6.4 (2017-09-18)
 -------------------
 
