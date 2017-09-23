@@ -70,7 +70,7 @@
     "pypy": ["no", "yes"],
     "py33": ["no", "yes"],
     "py34": ["no", "yes"],
-    "py35": ["yes", "no"],
+    "py35": ["no", "no"],
     "py36": ["yes", "no"],
     "py37": ["yes", "no"],
     "pypy3": ["yes", "no"],
