@@ -4,9 +4,11 @@ import argparse
 import logging
 import logging.config
 from io import StringIO
+from textwrap import dedent
 
 from deprecation import deprecated
 from .__about__ import __version__
+from ._config import Config
 
 __all__ = ["stdout", "stderr", "FileConfig", "DictConfig"]
 
@@ -56,7 +58,10 @@ try:
 except ImportError:
     progress = None
 
-LOG_FORMAT = "[%(asctime)s] %(name)-25s [%(levelname)-8s]: %(message)s"
+DEFAULT_LEVEL = "WARN"
+DEFAULT_FORMAT = "[%(asctime)s] %(name)-25s [%(levelname)-8s]: %(message)s"
+LOG_FORMAT = DEFAULT_FORMAT
+"""XXX: prefer DEFAULT_FORMAT over LOG_FORMAT"""
 
 logging.VERBOSE = logging.DEBUG + ((logging.INFO - logging.DEBUG) // 2)
 logging.addLevelName(logging.VERBOSE, "VERBOSE")
@@ -230,9 +235,11 @@ class DictConfig:
                }
 
 
-class FileConfig:
+class FileConfig(Config):
+
     @staticmethod
-    def DEFAULT_LOGGING_CONFIG(level="WARN", format=LOG_FORMAT):
+    def DEFAULT_LOGGING_CONFIG(level=DEFAULT_LEVEL,
+                               format=DEFAULT_FORMAT):
         """Returns a default logging config in file (ini) format.
 
          Compatible with logging.config.fileConfig(), this default set the root
@@ -268,15 +275,58 @@ format = "%(message)s"
 
     @staticmethod
     def PKG_LOGGING_CONFIG(pkg_logger, propagate=True, pkg_level="NOTSET"):
-        return """
-[logger_{pkg_logger}]
-level = {pkg_level}
-qualname = {pkg_logger}
-; When adding more specific handlers than what exists on the root you'll
-; likely want to set propagate to false.
-propagate = {propagate}
-handlers =
-        """.format(**locals())
+        return dedent(f"""
+        [logger_{pkg_logger}]
+        level = {pkg_level}
+        qualname = {pkg_logger}
+        propagate = {1 if propagate else 0}
+        handlers =
+        """)
+
+    @staticmethod
+    def HANDLER_LOGGING_CONFIG(name, class_=True, args=tuple([]),
+                               level="NOTSET", formatter="generic"):
+        return dedent(f"""
+        [handler_{name}]
+        class = {class_}
+        args = {args}
+        level = {level}
+        formatter = {formatter}
+        """)
+
+    def __init__(self, level=DEFAULT_LEVEL, format=DEFAULT_FORMAT):
+        super().__init__(None)
+
+        self.read_string(self.DEFAULT_LOGGING_CONFIG(level=level,
+                                                     format=format))
+
+    def addPackageLogger(self, pkg_logger, propagate=True, pkg_level="NOTSET"):
+        self.read_string(self.PKG_LOGGING_CONFIG(pkg_logger=pkg_logger,
+                                                 propagate=propagate,
+                                                 pkg_level=pkg_level))
+        loggers = self.getlist("loggers", "keys")
+        if pkg_logger not in loggers:
+            loggers.append(pkg_logger)
+            self.setlist("loggers", "keys", loggers)
+
+        return self
+
+    def addHandler(self, name, class_=True, args=tuple([]), level="NOTSET",
+                   formatter="generic"):
+        self.read_string(self.HANDLER_LOGGING_CONFIG(name, class_, args,
+                                                     level, formatter))
+        handlers = self.getlist("handlers", "keys")
+        if name not in handlers:
+            handlers.append(name)
+            self.setlist("handlers", "keys", handlers)
+
+        return self
+        
+    def __str__(self):
+        out = StringIO()
+        self.write(out)
+        out.seek(0)
+        return out.read()
 
 
 @deprecated(details="Use FileConfig.DEFAULT_LOGGING_CONFIG",
