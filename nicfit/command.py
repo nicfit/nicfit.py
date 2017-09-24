@@ -51,8 +51,8 @@ class Command(object):
             self.parser = ArgumentParser(prog=self.name(),
                                          description=self.desc(),
                                          epilog=self.help())
-        self._initArgParser(self.parser)
         self.parser.set_defaults(command_func=self.run)
+        self._initArgParser(self.parser)
 
     def _initArgParser(self, parser):
         pass
