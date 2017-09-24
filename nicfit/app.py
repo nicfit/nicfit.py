@@ -15,7 +15,7 @@ class Application:
 
     def __init__(self, main_func=None, *, name=None, description=None,
                  logging_args=True, config_opts=None, version=None,
-                 atexit=None, pdb_opt=False, extra_arg_parser_opts=None,
+                 atexit=None, pdb_opt=True, extra_arg_parser_opts=None,
                  gettext_domain=None):
         self._main_func = main_func
         self._atexit_func = atexit
