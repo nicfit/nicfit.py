@@ -40,6 +40,9 @@ class Config(configparser.ConfigParser):
                 values += [s.strip() for s in line.split(",")]
         return values
 
+    def setlist(self, section, option, value, *, delim=", "):
+        self.set(section, option, delim.join(value))
+
     def read(self, filenames=None, encoding=None, touch=False):
         super().read(filenames or [], encoding=encoding)
 

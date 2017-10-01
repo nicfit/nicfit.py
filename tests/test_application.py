@@ -75,7 +75,7 @@ def test_pdb():
     app = Application(pdb_opt=True)
     app._main = Mock(side_effect=ValueError)
 
-    with patch.object(nicfit.app._debugger, "post_mortem") as mock_pm:
+    with patch.object(nicfit.util._debugger, "post_mortem") as mock_pm:
         try:
             app.run(["--pdb"])
         except SystemExit:

@@ -4,16 +4,7 @@ import traceback
 
 from .logger import getLogger
 from ._argparse import ArgumentParser
-from .util import initGetText
-
-try:
-    import ipdb as _debugger
-except ImportError:                                            # pragma: nocover
-    import pdb as _debugger
-def _pdb():                                                    # noqa: E302
-    e, m, tb = sys.exc_info()
-    _debugger.post_mortem(tb)
-
+from .util import initGetText, debugger
 
 log = getLogger(__name__)
 
@@ -96,7 +87,7 @@ class Application:
             print("Uncaught exception", file=sys.stderr)
             traceback.print_exc()
             if "debug_pdb" in self.args and self.args.debug_pdb:
-                _pdb()
+                debugger()
             retval = Application.UNCAUGHT_EXCEPTION_EXIT
             raise
         finally:

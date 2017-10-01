@@ -1,6 +1,6 @@
-==========
-nicfit.py
-==========
+=================
+nicfit.py README
+=================
 
 Common Python utils (App, logging, config, etc.)
 

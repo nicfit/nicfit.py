@@ -3,6 +3,45 @@ Release History
 
 .. :changelog:
 
+v0.6.5 (2017-09-21)
+------------------------
+
+Fix
+~~~
+- Typo for nicfit.py[cookiecutter] dev.txt requirement.
+
+
+
+v0.6.4 (2017-09-18)
+-------------------
+
+New
+~~~
+- Added :func:`nicfit.command.register` decorator as class member to
+  :class:`nicfit.command.Command`; less to import for convenience.
+- Added ``nicfit[cookiecutter]`` to dev requirements.
+- Docs use Sphinx_rtd_theme.
+
+Changes
+~~~~~~~
+- Added README to dock title.
+- Removed servedocs Makefile target.
+- Use nicfit.py's ArgumentParser for subparsers and commands.
+- Use ``print`` instead of logging for uncaught exceptions.
+
+Other
+~~~~~
+- Update babel to 2.5.1 (#144) <github-bot@pyup.io>
+- Update tox from 2.8.1 to 2.8.2 (#141) <github-bot@pyup.io>
+- Update pytest-asyncio from 0.6.0 to 0.7.0 (#140) <github-bot@pyup.io>
+- Update wheel from 0.29.0 to 0.30.0 (#142) <github-bot@pyup.io>
+- Update pytest-runner from 2.12 to 2.12.1 (#138) <github-bot@pyup.io>
+- Update pytest from 3.2.1 to 3.2.2 (#139) <github-bot@pyup.io>
+- Update tox from 2.8.0 to 2.8.1 (#137) <github-bot@pyup.io>
+- Pin deprecation to latest version 1.0.1 (#136) <github-bot@pyup.io>
+- Pin pss to latest version 1.41 (#135) <github-bot@pyup.io>
+
+
 v0.6.3 (2017-09-03)
 --------------------
 

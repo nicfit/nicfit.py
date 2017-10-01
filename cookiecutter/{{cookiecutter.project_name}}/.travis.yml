@@ -1,26 +1,32 @@
 language: python
 
 python:
-{%- if cookiecutter.py26 == "yes" %}
-  - "2.6"
+{%- if cookiecutter.py36 == "yes" %}
+  - "3.6"
 {%- endif %}
 {%- if cookiecutter.py27 == "yes" %}
   - "2.7"
 {%- endif %}
-{%- if cookiecutter.py33 == "yes" %}
-  - "3.3"
+{%- if cookiecutter.py35 == "yes" %}
+  - "3.5"
 {%- endif %}
 {%- if cookiecutter.py34 == "yes" %}
   - "3.4"
 {%- endif %}
-{%- if cookiecutter.py35 == "yes" %}
-  - "3.5"
-{%- endif %}
-{%- if cookiecutter.py36 == "yes" %}
-  - "3.6"
+{%- if cookiecutter.py33 == "yes" %}
+  - "3.3"
 {%- endif %}
 {%- if cookiecutter.py37 == "yes" %}
   - "3.7-dev"
+{%- endif %}
+{%- if cookiecutter.py26 == "yes" %}
+  - "2.6"
+{%- endif %}
+{%- if cookiecutter.pypy3 == "yes" %}
+  - "pypy3"
+{%- endif %}
+{%- if cookiecutter.pypy == "yes" %}
+  - "pypy"
 {%- endif %}
 
 cache:

@@ -3,8 +3,11 @@ import sys
 import gettext
 import contextlib
 from pathlib import Path
-
 from .logger import getLogger
+try:
+    import ipdb as _debugger
+except ImportError:                                            # pragma: nocover
+    import pdb as _debugger
 
 log = getLogger(__name__)
 
@@ -87,3 +90,15 @@ def initGetText(domain, install=False, fallback=True):
         gettext.install(domain, str(locale_dir), names=["ngettext"])
 
     return translation
+
+
+def debugger():
+    """If called in the context of an exception, calls post_mortem; otherwise
+    set_trace.
+    ``ipdb`` is preferred over ``pdb`` if installed.
+    """
+    e, m, tb = sys.exc_info()
+    if tb is not None:
+        _debugger.post_mortem(tb)
+    else:
+        _debugger.set_trace()

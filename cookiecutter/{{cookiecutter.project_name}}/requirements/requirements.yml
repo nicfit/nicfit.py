@@ -13,8 +13,9 @@ test:
     {%- endif %}
 
 dev:
-    - nicfit[cookiecutter]
+    - nicfit.py[cookiecutter]
     - Sphinx
+    - sphinx_rtd_theme
     {%- if cookiecutter.gettext_domain != "None" %}
     - babel
     {%- endif %}
