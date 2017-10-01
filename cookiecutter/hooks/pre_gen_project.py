@@ -56,5 +56,5 @@ default_context:
     year: "{{ cookiecutter.year }}"
 """
 
-with open(".cookiecutter.yml", "w") as fp:
+with open(".nicfit.yml", "w") as fp:
     fp.write(user_config)

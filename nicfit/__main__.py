@@ -105,7 +105,7 @@ class CookieCutter(nicfit.Command):
     NAME = "cookiecutter"
     HELP = "Create a nicfit.py Python project skeleton."
     CC_USER_CONFIGS = [Path(".nicfit.yml"),
-                       Path("./.cookiecutter.yml"),
+                       Path("./.cookiecutter.yml"),    # Deprecated
                        Path(".cookiecutter.json")]
     ALIASES = ["cc"]
 
