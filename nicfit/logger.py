@@ -275,24 +275,25 @@ format = "%(message)s"
 
     @staticmethod
     def PKG_LOGGING_CONFIG(pkg_logger, propagate=True, pkg_level="NOTSET"):
-        return dedent(f"""
+        propagate = "1" if propagate else "0"
+        return dedent("""
         [logger_{pkg_logger}]
         level = {pkg_level}
         qualname = {pkg_logger}
-        propagate = {1 if propagate else 0}
+        propagate = {propagate}
         handlers =
-        """)
+        """.format(**locals()))
 
     @staticmethod
     def HANDLER_LOGGING_CONFIG(name, class_=True, args=tuple([]),
                                level="NOTSET", formatter="generic"):
-        return dedent(f"""
+        return dedent("""
         [handler_{name}]
         class = {class_}
         args = {args}
         level = {level}
         formatter = {formatter}
-        """)
+        """.format(**locals()))
 
     def __init__(self, level=DEFAULT_LEVEL, format=DEFAULT_FORMAT):
         super().__init__(None)
@@ -321,7 +322,7 @@ format = "%(message)s"
             self.setlist("handlers", "keys", handlers)
 
         return self
-        
+
     def __str__(self):
         out = StringIO()
         self.write(out)
