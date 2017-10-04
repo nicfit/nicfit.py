@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
+import io
 import os.path
 import argparse
 import configparser
+import logging.config
 from pathlib import Path
 from collections import namedtuple
 
@@ -66,6 +67,11 @@ class Config(configparser.ConfigParser):
             if fileobject is None:
                 fp.close()
 
+    def __str__(self):
+        out = io.StringIO()
+        self.write(out)
+        out.seek(0)
+        return out.read()
 
 class ConfigFileType(argparse.FileType):
     """ArgumentParser ``type`` for loading ``Config`` objects."""
@@ -81,17 +87,23 @@ class ConfigFileType(argparse.FileType):
         assert(issubclass(self._opts.ConfigClass, Config))
         if filename:
             filename = os.path.expanduser(os.path.expandvars(filename))
+
+        # Make config, ``filename`` is not yet read.
         config = self._opts.ConfigClass(filename,
                                         config_env_var=self._opts.env_var,
                                         **self._opts.extra_config_opts)
-
+        # Default config? Start with that...
         if self._opts.default_config:
             config.read_string(self._opts.default_config)
 
+        # User file.
         if filename:
             try:
                 fp = super().__call__(filename)
                 config.read_file(fp)
+                if self._opts.init_logging_fileConfig:
+                    fp.seek(0)
+                    logging.config.fileConfig(fp)
             except Exception as ex:
                 if not self._opts.default_config:
                     raise
@@ -107,12 +119,13 @@ class ConfigOpts(namedtuple("_ConfigOptions", ["required",
                                                "default_config_opt",
                                                "env_var",
                                                "extra_config_opts",
+                                               "init_logging_fileConfig",
                                               ])):
     """A namedtuple to describe configuration properties for an application."""
     def __new__(cls, required=False, default_file=None, default_config=None,
                 override_arg=False, ConfigClass=Config,
                 default_config_opt=None, env_var=None,
-                extra_config_opts=None):
+                extra_config_opts=None, init_logging_fileConfig=False):
         """
         :param required: A boolean stating whether the config argument is
             required. When ``True`` a positional argument ``config`` is added
@@ -132,12 +145,15 @@ class ConfigOpts(namedtuple("_ConfigOptions", ["required",
         :param env_var: When not ``None`` it is the name of an environment
             variable that will be read (if the path exists, not errors when it
             does not) in addition to any other config filenames.
-        :param extra_config_opts: A dict of extra keyward arguments to pass to
+        :param extra_config_opts: A dict of extra keyword arguments to pass to
                the ``ConfigClass`` constructor.
+        :param init_logging_fileConfig: If ``True`` the config (default or
+               otherwise, is passed to ``logging.config.fileConfig``.
         """
         return super().__new__(cls, required, default_file, default_config,
                                override_arg, ConfigClass, default_config_opt,
-                               env_var, extra_config_opts or {})
+                               env_var, extra_config_opts or {},
+                               init_logging_fileConfig)
 
 
 def addCommandLineArgs(arg_parser, opts):

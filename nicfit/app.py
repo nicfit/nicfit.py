@@ -20,8 +20,8 @@ class Application:
         self._main_func = main_func
         self._atexit_func = atexit
 
-        self.log = getLogger(name) if name else log
         logging.basicConfig()
+        self.log = getLogger(name) if name else log
 
         extra_arg_parser_opts = extra_arg_parser_opts or {}
         parser = ArgumentParser(add_log_args=logging_args,

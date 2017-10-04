@@ -321,12 +321,6 @@ format = "%(message)s"
             self.setlist("handlers", "keys", handlers)
 
         return self
-        
-    def __str__(self):
-        out = StringIO()
-        self.write(out)
-        out.seek(0)
-        return out.read()
 
 
 @deprecated(details="Use FileConfig.DEFAULT_LOGGING_CONFIG",
