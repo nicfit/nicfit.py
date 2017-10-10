@@ -52,7 +52,7 @@ class ArgumentParser(argparse.ArgumentParser):
         if add_help_subcmd:
             # 'help' subcommand; turns it into the less intuitive --help format.
             # e.g.  cmd help subcmd  ==> cmd subcmd --help
-            def _help(args, config):
+            def _help(args):
                 if args.command:
                     self.parse_args([args.command, "--help"])
                 else:
@@ -61,7 +61,7 @@ class ArgumentParser(argparse.ArgumentParser):
 
             help = subparser.add_parser("help",
                                         help="Show help for a sub command")
-            help.set_defaults(func=_help)
+            help.set_defaults(command_func=_help)
             help.add_argument("command", nargs='?', default=None)
 
         return subparser
