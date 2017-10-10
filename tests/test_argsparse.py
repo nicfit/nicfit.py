@@ -61,18 +61,18 @@ def test_ArgumentParser_add_subparsers():
     p.add_subparsers(add_help_subcmd=True)
     args = p.parse_args(["help"])
     assert args.command is None
-    assert args.func is not None
+    assert args.command_func is not None
 
     p = ArgumentParser()
     p.add_subparsers(add_help_subcmd=True)
     args = p.parse_args(["help", "cmd"])
     assert args.command is "cmd"
-    assert args.func is not None
+    assert args.command_func is not None
     # Help func may called parse_args again, or print_help. mock em.
     p.parse_args = Mock()
     p.print_help = Mock()
     with pytest.raises(SystemExit):
-        args.func(args, Mock())
+        args.command_func(args)
     p.parse_args.assert_called_with(["cmd", "--help"])
     p.print_help.assert_not_called()
 
@@ -80,7 +80,7 @@ def test_ArgumentParser_add_subparsers():
     p.print_help.reset_mock()
     with pytest.raises(SystemExit):
         args.command = None
-        args.func(args, Mock())
+        args.command_func(args)
     if sys.version_info[:2] >= (3, 6):
         p.print_help.assert_called_once()
     else:
