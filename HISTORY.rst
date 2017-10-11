@@ -3,6 +3,82 @@ Release History
 
 .. :changelog:
 
+v0.6.6 (2017-10-10)
+--------------------
+
+New
+~~~
+- ConfigOpts.init_logging_fileConfig for invoking logging.config.fileConfig.
+- :class:`nicfit.logger.FileConfig` supports instance creation and
+  better utilities for updating config.
+- The companion to ``getlist`` :meth:`Config.setlist`
+
+Changes
+~~~~~~~
+- Pdb_opt (i.e. --pdb) is addded by default.
+
+Fix
+~~~
+- <cmd> help <subcmd> works again.
+- No f-strings in py35.
+
+Other
+~~~~~
+- Update pyaml from 17.8.0 to 17.10.0 (#155) <github-bot@pyup.io>
+- Update pytest from 3.2.2 to 3.2.3 (#154) <github-bot@pyup.io>
+- Update tox from 2.8.2 to 2.9.1 (#153) <github-bot@pyup.io>
+- Update pip-tools from 1.9.0 to 1.10.1 (#151) <github-bot@pyup.io>
+- Update sphinx from 1.6.3 to 1.6.4 (#149) <github-bot@pyup.io>
+- Update pytest-asyncio from 0.7.0 to 0.8.0 (#148) <github-bot@pyup.io>
+
+
+v0.6.5 (2017-10-10)
+------------------------
+
+New
+~~~
+- ConfigOpts.init_logging_fileConfig for invoking
+  logging.config.fileConfig.
+- :class:`nicfit.logger.FileConfig` supports instance creation and
+  better utilities for updating config.
+
+  The static interface is on the way out.
+- The companion to ``getlist`` :meth:`Config.setlist`
+
+Changes
+~~~~~~~
+- Pdb_opt (i.e. --pdb)a addded by default.
+- Python versin defaults and Trav-CI job ordering.
+
+Fix
+~~~
+- <cmd> help <subcmd> works again.
+- No f-strings in py35.
+
+Other
+~~~~~
+- Merge branch 'master' of github.com:nicfit/nicfit.py.
+
+  * 'master' of github.com:nicfit/nicfit.py:
+    Update pyaml from 17.8.0 to 17.10.0 (#155)
+- Update pyaml from 17.8.0 to 17.10.0 (#155) <github-bot@pyup.io>
+- Merge branch 'master' of github.com:nicfit/nicfit.py.
+
+  * 'master' of github.com:nicfit/nicfit.py:
+    Update pytest from 3.2.2 to 3.2.3 (#154)
+    Update tox from 2.9.0 to 2.9.1 (#153)
+    fix: No f-strings in py35
+    Update tox from 2.8.2 to 2.9.0 (#152)
+    Update pip-tools from 1.9.0 to 1.10.1 (#151)
+- Update pytest from 3.2.2 to 3.2.3 (#154) <github-bot@pyup.io>
+- Update tox from 2.9.0 to 2.9.1 (#153) <github-bot@pyup.io>
+- Update tox from 2.8.2 to 2.9.0 (#152) <github-bot@pyup.io>
+- Update pip-tools from 1.9.0 to 1.10.1 (#151) <github-bot@pyup.io>
+- Update sphinx from 1.6.3 to 1.6.4 (#149) <github-bot@pyup.io>
+- Update pytest-asyncio from 0.7.0 to 0.8.0 (#148) <github-bot@pyup.io>
+
+
+
 v0.6.5 (2017-09-21)
 ------------------------
 

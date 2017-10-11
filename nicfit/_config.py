@@ -73,6 +73,7 @@ class Config(configparser.ConfigParser):
         out.seek(0)
         return out.read()
 
+
 class ConfigFileType(argparse.FileType):
     """ArgumentParser ``type`` for loading ``Config`` objects."""
     def __init__(self, config_opts=None, encoding="utf-8"):
