@@ -18,6 +18,7 @@ class Config(configparser.ConfigParser):
             with open(os.environ[config_env_var]) as confp:
                 self.read_file(confp)
 
+        self.input_filenames = []
         self.filename = Path(os.path.expandvars(str(filename))).expanduser() \
                             if filename else None
         if self.filename:
@@ -26,6 +27,9 @@ class Config(configparser.ConfigParser):
                     self.filename.parent.mkdir(parents=True)
                 if not self.filename.exists():
                     self.filename.touch()
+            elif not self.filename.exists():
+                raise FileNotFoundError(self.filename)
+
             if mode and self.filename.exists():
                 self.filename.chmod(mode)
 
@@ -44,9 +48,27 @@ class Config(configparser.ConfigParser):
     def setlist(self, section, option, value, *, delim=", "):
         self.set(section, option, delim.join(value))
 
-    def read(self, filenames=None, encoding=None, touch=False):
-        super().read(filenames or [], encoding=encoding)
+    # XXX: no override for read_string, read_string -> read_file
 
+    def read_file(self, f, source="<file>"):
+        self.input_filenames.append(source)
+        return super().read_file(f, source=source)
+
+    def readfp(self, fp, filename="<fp>"):
+        # Deprecated in Python 3.2
+        return self.read_file(fp, source=filename)
+
+    def read_dict(self, dictionary, source='<dict>'):
+        self.input_filenames.append(source)
+        return super().read_dict(dictionary, source=source)
+
+    def read(self, filenames=None, encoding=None, touch=False):
+        filenames = filenames or []
+
+        super().read(filenames, encoding=encoding)
+        self.input_filenames += filenames
+
+        # TODO: deprecate touch? see ctor
         if not self.filename.exists() and touch:
             self.filename.touch()
 
@@ -95,15 +117,16 @@ class ConfigFileType(argparse.FileType):
                                         **self._opts.extra_config_opts)
         # Default config? Start with that...
         if self._opts.default_config:
-            config.read_string(self._opts.default_config)
+            config.read_string(self._opts.default_config, source="<default>")
 
         # User file.
         if filename:
             try:
-                fp = super().__call__(filename)
-                config.read_file(fp)
+                config.read()
                 if self._opts.init_logging_fileConfig:
-                    fp.seek(0)
+                    # FIXME: THisis wrong, want to fileCOnfig over the entire
+                    # config, not just filename
+                    fp = super().__call__(filename)
                     logging.config.fileConfig(fp)
             except Exception as ex:
                 if not self._opts.default_config:
