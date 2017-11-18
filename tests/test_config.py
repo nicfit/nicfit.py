@@ -29,15 +29,12 @@ def test_ConfigOpts():
     assert opts.default_config is "foobar"
     assert opts.ConfigClass is MyConfig
 
-    config = Config("/tmp/config.ini")
-    assert(str(config.filename) == "/tmp/config.ini")
-    config = Config("$HOME/config.ini")
-    assert(str(config.filename) == join(expandvars("$HOME"), "config.ini"))
-    config = Config("~/config.ini")
-    assert(str(config.filename) == join(expanduser("~"), "config.ini"))
-    config = Config("~/${HOME}/config.ini")
+    tmp_config = Path("/tmp/nicfit-test.ini")
+    tmp_config.exists() and tmp_config.unlink()
+    with pytest.raises(FileNotFoundError):
+        _ = Config("/tmp/config.ini")
 
-    filename = filename2 = None
+    filename2 = None
     fn, filename = tempfile.mkstemp()
     os.close(fn)
     try:
@@ -76,29 +73,31 @@ def test_ConfigOpts():
             os.unlink(filename2)
 
 
-def test_ConfigConstructor():
-    c = Config("file.ini")
+def test_ConfigConstructor(tmpdir):
+    file = str(tmpdir.join("file.ini"))
+    c = Config(file, touch=True)
     assert isinstance(c, configparser.ConfigParser)
     assert isinstance(c.filename, Path)
-    assert str(c.filename) == "file.ini"
+    assert str(c.filename) == file
 
+    file = str(tmpdir.join("subdir", "dir/${var1}/${var2}/config.ini"))
     os.environ["var1"] = "foo"
     os.environ["var2"] = "bazz"
-    c = Config("~/dir/${var1}/${var2}/config.ini")
-    assert str(c.filename) == os.path.expanduser("~/dir/foo/bazz/config.ini")
+    c = Config(file, touch=True)
+    assert c.filename.exists()
+    assert str(c.filename) == "{}/subdir/dir/foo/bazz/config.ini".format(tmpdir)
 
 
 def test_ConfigRead(tmpdir):
     filename = os.path.join(str(tmpdir), "config.ini")
 
     # File not found
-    c = Config(filename)
     with pytest.raises(FileNotFoundError):
-        c.read()
+        c = Config(filename)
 
     # File not found, but use touch option
-    assert not Path(filename).exists()
-    c.read(touch=True)
+    c = Config(filename, touch=True)
+    c.read()
     assert Path(filename).exists()
     assert c.sections() == []
 
@@ -119,14 +118,14 @@ def test_ConfigReadMulti(tmpdir):
         all_files.append(filename)
 
     filename = os.path.join(str(tmpdir), "config4.ini")
-    c = Config(filename)
-    c.read(filenames=all_files, touch=True)
+    c = Config(filename, touch=True)
+    c.read(filenames=all_files)
     assert set(c.sections()) == {"MAIN", "CONFIG1", "CONFIG2", "CONFIG3"}
     assert c.get("MAIN", "mainkey") == "config3"
 
     all_files.reverse()
 
-    c = Config(filename)
+    c = Config(filename, touch=True)
     c.read(filenames=all_files, touch=True)
     assert set(c.sections()) == {"MAIN", "CONFIG1", "CONFIG2", "CONFIG3"}
     assert c.get("MAIN", "mainkey") == "config1"
@@ -134,18 +133,18 @@ def test_ConfigReadMulti(tmpdir):
 
 def test_ConfigWrite(tmpdir):
     filename = os.path.join(str(tmpdir), "config.ini")
-    c = Config(filename)
+    c = Config(filename, touch=True)
     c.read_string(SAMPLE_CONFIG1)
     c.write()
 
-    c2 = Config(filename)
+    c2 = Config(filename, touch=True)
     c2.read()
     assert [i for i in c.items()] == [i for i in c2.items()]
 
     fpfile = os.path.join(str(tmpdir), "configfp.ini")
     with open(fpfile, "w") as fp:
         c2.write(fp)
-    c3 = Config(fpfile)
+    c3 = Config(fpfile, touch=True)
     c3.read()
     assert [i for i in c3.items()] == [i for i in c2.items()]
 
@@ -158,7 +157,7 @@ def test_ConfigFileType(tmpdir):
 
     # File does not exist
     f = os.path.join(str(tmpdir), "dne")
-    with pytest.raises(argparse.ArgumentTypeError):
+    with pytest.raises(FileNotFoundError):
         cfgtype(f)
 
     # File does not exist, but provide a default config
@@ -169,7 +168,7 @@ def test_ConfigFileType(tmpdir):
     assert isinstance(config, Config)
     assert str(config.filename) == f
     config.write()
-    copy = Config(f)
+    copy = Config(f, touch=True)
     copy.read()
     assert [i for i in copy.items()] == [i for i in config.items()]
 
@@ -189,9 +188,9 @@ def test_ConfigArgumentParserDNE():
     args = p.parse_args([])
 
     # Arg value, but config does not exist
-    with pytest.raises(SystemExit):
+    with pytest.raises(FileNotFoundError):
         args = p.parse_args(["-c", "dne"])
-    with pytest.raises(SystemExit):
+    with pytest.raises(FileNotFoundError):
         args = p.parse_args(["--config", "dne"])
 
     # No arg value
@@ -209,6 +208,7 @@ def test_ConfigArgumentParser(tmpdir):
     # Arg value, config does not exist, but a default was given.
     p = ArgumentParser(config_opts=ConfigOpts(default_config=SAMPLE_CONFIG1))
     f = os.path.join(str(tmpdir), "default.ini")
+    Path(f).touch()
     args = p.parse_args(["-c", f])
     assert args.config is not None
     sample1 = configparser.ConfigParser()
@@ -220,12 +220,12 @@ def test_ConfigArgumentParser(tmpdir):
     with pytest.raises(SystemExit):
         args = p.parse_args([])
 
-    f = os.path.join(str(tmpdir), "default.ini")
+    f = os.path.join(str(tmpdir), "bluntsAndAstrays.ini")
     # Arg value, but config does not exist
-    with pytest.raises(SystemExit):
+    with pytest.raises(FileNotFoundError):
         args = p.parse_args([f])
 
-    sample3 = Config(f)
+    sample3 = Config(f, touch=True)
     sample3.read_string(SAMPLE_CONFIG3)
     sample3.write()
     args = p.parse_args([f])
@@ -233,10 +233,11 @@ def test_ConfigArgumentParser(tmpdir):
 
 
 def test_ConfigOverrides(tmpdir):
-    sample2 = Config("sample2")
+    sample2 = Config(None)
     sample2.read_string(SAMPLE_CONFIG2)
 
     f = os.path.join(str(tmpdir), "default.ini")
+    Path(f).touch()
     p = ArgumentParser(config_opts=ConfigOpts(required=True,
                                               override_arg=True,
                                               default_file=f,
@@ -293,10 +294,13 @@ def test_configoverride_argtype():
 
 def test_env_config(tmpdir):
     config_path = tmpdir.join("config.ini")
+    new_config = tmpdir.join("new.ini")
+    assert not config_path.exists()
+    assert not new_config.exists()
     config_path.write(SAMPLE_CONFIG1)
     os.environ["CONFIG_VAR"] = str(config_path)
 
-    c = Config("file.ini", config_env_var="CONFIG_VAR")
+    c = Config("file.ini", config_env_var="CONFIG_VAR", touch=True)
     assert c.sections() == ["MAIN", "CONFIG1"]
     assert c["MAIN"]["mainkey"] == "config1"
     assert c["CONFIG1"]["key"] == "value"
@@ -335,8 +339,8 @@ def test_Config_getlist():
 def test_Config_touch(tmpdir):
     filename = Path(str(tmpdir)) / "subdir" / "config.ini"
 
-    cfg = Config(filename)
-    assert str(filename) == str(cfg.filename)
+    with pytest.raises(FileNotFoundError):
+        _ = Config(filename)
     assert filename.exists() == False
 
     cfg = Config(filename, touch=True)

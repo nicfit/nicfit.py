@@ -12,13 +12,13 @@ class Config(configparser.ConfigParser):
     def __init__(self, filename, *, config_env_var=None, touch=False, mode=None,
                  **kwargs):
         super().__init__(**kwargs)
+        self.input_filenames = []
 
         if (config_env_var and config_env_var in os.environ and
                 Path(os.environ[config_env_var]).exists()):
             with open(os.environ[config_env_var]) as confp:
                 self.read_file(confp)
 
-        self.input_filenames = []
         self.filename = Path(os.path.expandvars(str(filename))).expanduser() \
                             if filename else None
         if self.filename:
@@ -113,6 +113,7 @@ class ConfigFileType(argparse.FileType):
 
         # Make config, ``filename`` is not yet read.
         config = self._opts.ConfigClass(filename,
+                                        touch=bool(self._opts.default_config),
                                         config_env_var=self._opts.env_var,
                                         **self._opts.extra_config_opts)
         # Default config? Start with that...
@@ -121,16 +122,9 @@ class ConfigFileType(argparse.FileType):
 
         # User file.
         if filename:
-            try:
-                config.read()
-                if self._opts.init_logging_fileConfig:
-                    # FIXME: THisis wrong, want to fileCOnfig over the entire
-                    # config, not just filename
-                    fp = super().__call__(filename)
-                    logging.config.fileConfig(fp)
-            except Exception as ex:
-                if not self._opts.default_config:
-                    raise
+            config.read()
+            if self._opts.init_logging_fileConfig:
+                logging.config.fileConfig(config)
 
         return config
 
