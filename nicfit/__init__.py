@@ -3,7 +3,7 @@ from . import logger
 from .app import Application
 from .logger import getLogger
 from ._argparse import ArgumentParser
-from .config import Config, ConfigOpts
+from ._config import Config, ConfigOpts
 from .command import Command, CommandError
 from .__about__ import __version__ as version
 

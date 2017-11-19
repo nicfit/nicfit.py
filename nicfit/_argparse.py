@@ -13,8 +13,8 @@ class ArgumentParser(argparse.ArgumentParser):
         self._add_log_args = add_log_args
 
         if config_opts:
-            from . import config
-            config.addCommandLineArgs(self, config_opts)
+            from . import _config
+            _config.addCommandLineArgs(self, config_opts)
         self._config_opts = config_opts
 
     def parse_known_args(self, args=None, namespace=None):
