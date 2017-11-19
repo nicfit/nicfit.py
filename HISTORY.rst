@@ -3,6 +3,29 @@ Release History
 
 .. :changelog:
 
+v0.7 (2017-11-19) : Mourning Of The Magicians
+----------------------------------------------
+
+Changes
+~~~~~~~
+- Nicfit.config (previously from _config)
+- Config files no longer created/touched by default.
+
+Fix
+~~~
+- Setup.py for non-utf systems.
+
+Other
+~~~~~
+- Update jinja2 from 2.9.6 to 2.10 (#160) <github-bot@pyup.io>
+- Update pytest from 3.2.3 to 3.2.5 (#162) <github-bot@pyup.io>
+- Update pytest-runner from 2.12.1 to 3.0 (#159) <github-bot@pyup.io>
+- Update sphinx from 1.6.4 to 1.6.5 (#157) <github-bot@pyup.io>
+- Update flake8 from 3.4.1 to 3.5.0 (#158) <github-bot@pyup.io>
+- Update cookiecutter to 1.6.0 (#156) <github-bot@pyup.io>
+
+
+
 v0.6.6 (2017-10-10)
 --------------------
 
