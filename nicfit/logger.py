@@ -8,7 +8,7 @@ from textwrap import dedent
 
 from deprecation import deprecated
 from .__about__ import __version__
-from ._config import Config
+from .config import Config
 
 __all__ = ["stdout", "stderr", "FileConfig", "DictConfig"]
 

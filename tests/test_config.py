@@ -10,7 +10,7 @@ import pytest
 from nicfit import Config
 from nicfit import ConfigOpts
 from nicfit import ArgumentParser
-from nicfit._config import ConfigFileType, _config_override
+from nicfit.config import ConfigFileType, _config_override
 
 
 def test_ConfigOpts():
@@ -256,7 +256,7 @@ def test_ConfigOverrides(tmpdir):
 
 
 def test_ConfigOverridesWrongParserType(tmpdir):
-    from nicfit._config import addCommandLineArgs
+    from nicfit.config import addCommandLineArgs
     p = argparse.ArgumentParser()
     with pytest.raises(ValueError):
         addCommandLineArgs(p, ConfigOpts(override_arg=True))
