@@ -27,9 +27,9 @@ def getPackageInfo():
 
     # __about__
     info_fpath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                           ".",
-                           "nicfit",
-                           "__about__.py"))
+                              ".",
+                              "nicfit",
+                              "__about__.py")
     with io.open(info_fpath, encoding='utf-8') as infof:
         for line in infof:
             for what in info_keys:
