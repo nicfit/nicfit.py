@@ -10,6 +10,7 @@ Changes
 ~~~~~~~
 - Nicfit.config (previously from _config)
 - Config files no longer created/touched by default.
+- Python 3.6+ support only
 
 Fix
 ~~~
