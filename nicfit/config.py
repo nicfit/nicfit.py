@@ -1,4 +1,5 @@
 import io
+import attr
 import os.path
 import argparse
 import configparser
@@ -111,11 +112,9 @@ class ConfigFileType(argparse.FileType):
         if filename:
             filename = os.path.expanduser(os.path.expandvars(filename))
 
-        # Make config, ``filename`` is not yet read.
         config = self._opts.ConfigClass(filename,
-                                        touch=bool(self._opts.default_config),
-                                        config_env_var=self._opts.env_var,
-                                        **self._opts.extra_config_opts)
+                                        **self._opts.configparser_opts)
+
         # Default config? Start with that...
         if self._opts.default_config:
             config.read_string(self._opts.default_config, source="<default>")
@@ -129,21 +128,8 @@ class ConfigFileType(argparse.FileType):
         return config
 
 
-class ConfigOpts(namedtuple("_ConfigOptions", ["required",
-                                               "default_file",
-                                               "default_config",
-                                               "override_arg",
-                                               "ConfigClass",
-                                               "default_config_opt",
-                                               "env_var",
-                                               "extra_config_opts",
-                                               "init_logging_fileConfig",
-                                              ])):
-    """A namedtuple to describe configuration properties for an application."""
-    def __new__(cls, required=False, default_file=None, default_config=None,
-                override_arg=False, ConfigClass=Config,
-                default_config_opt=None, env_var=None,
-                extra_config_opts=None, init_logging_fileConfig=False):
+@attr.s(frozen=True)
+class ConfigOpts:
         """
         :param required: A boolean stating whether the config argument is
             required. When ``True`` a positional argument ``config`` is added
@@ -160,7 +146,7 @@ class ConfigOpts(namedtuple("_ConfigOptions", ["required",
         :param default_config_opt: If not ``None`` it should be a command line
             optional in either short OR long form. When used the the default
             configuration data is printed to stdout.
-        :param env_var: When not ``None`` it is the name of an environment
+        :param config_env_var: When not ``None`` it is the name of an environment
             variable that will be read (if the path exists, not errors when it
             does not) in addition to any other config filenames.
         :param extra_config_opts: A dict of extra keyword arguments to pass to
@@ -168,10 +154,17 @@ class ConfigOpts(namedtuple("_ConfigOptions", ["required",
         :param init_logging_fileConfig: If ``True`` the config (default or
                otherwise, is passed to ``logging.config.fileConfig``.
         """
-        return super().__new__(cls, required, default_file, default_config,
-                               override_arg, ConfigClass, default_config_opt,
-                               env_var, extra_config_opts or {},
-                               init_logging_fileConfig)
+        required = attr.ib(default=False)
+        deafult_file = attr.ib(default=None)
+        deafult_config = attr.ib(default=None)
+        override_arg = attr.ib(default=False)
+        ConfigClass = attr.ib(default=Config)
+        default_config_opt = attr.ib(default=None)
+        config_env_var = attr.ib(default=None)
+        init_logging_fileConfig = attr.ib(default=False)
+        configparser_opts = attr.ib(default=None)
+        touch = attr.ib(default=False)
+        mode = attr.ib(default=0o644)
 
 
 def addCommandLineArgs(arg_parser, opts):
