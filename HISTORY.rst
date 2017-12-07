@@ -3,6 +3,26 @@ Release History
 
 .. :changelog:
 
+v0.8b1 (2017-12-07)
+------------------------
+
+New
+~~~
+- Added ConfigOpts.configClassOpts() helper for obtaining the dict of arguments
+  for :class:`nicfit.config.ConfigClass`
+- attrs (https://github.com/python-attrs/attrs) based
+  :class:`nicfit.config.ConfigOpts`.
+- Filter duplicate emails when generating AUTHORS.rst.
+- Flush stdout and stderr before sys.exit()
+
+Other
+~~~~~
+- Update pytest from 3.2.5 to 3.3.1 (#169) <github-bot@pyup.io>
+- Update arrow from 0.10.0 to 0.12.0 (#166) <github-bot@pyup.io>
+- Update pip-tools from 1.10.1 to 1.10.2 (#164) <github-bot@pyup.io>
+- Update check-manifest from 0.35 to 0.36 (#163) <github-bot@pyup.io>
+
+
 v0.7 (2017-11-19) : Mourning Of The Magicians
 ----------------------------------------------
 

@@ -37,11 +37,11 @@ def getLogger(name=None):
 
 def _initConsoleLogger(name, level, handler=None):
     handler = handler or logging.StreamHandler(sys.stdout)
-    l = getLogger(name)
-    l.propagate = False
-    l.setLevel(level)
-    l.addHandler(handler)
-    return l
+    log = getLogger(name)
+    log.propagate = False
+    log.setLevel(level)
+    log.addHandler(handler)
+    return log
 
 
 stdout = _initConsoleLogger("_stdout", logging.DEBUG,

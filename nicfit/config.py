@@ -5,7 +5,6 @@ import argparse
 import configparser
 import logging.config
 from pathlib import Path
-from collections import namedtuple
 
 
 class Config(configparser.ConfigParser):
@@ -147,7 +146,7 @@ class ConfigOpts:
         :param default_config_opt: If not ``None`` it should be a command line
             optional in either short OR long form. When used the the default
             configuration data is printed to stdout.
-        :param config_env_var: When not ``None`` it is the name of an environment
+        :param config_env_var: When not ``None`` it is the name of an env
             variable that will be read (if the path exists, not errors when it
             does not) in addition to any other config filenames.
         :param config_parsers_opts: A dict of extra
