@@ -94,6 +94,8 @@ class Application:
             try:
                 self._atexit()
             finally:
+                sys.stderr.flush()
+                sys.stdout.flush()
                 sys.exit(retval)
 
     def _run(self, args_list=None):
