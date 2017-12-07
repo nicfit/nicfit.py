@@ -162,7 +162,14 @@ def test_ConfigFileType(tmpdir):
 
     # File does not exist, but provide a default config
     f = os.path.join(str(tmpdir), "default")
-    cfgtype = ConfigFileType(ConfigOpts(default_config=SAMPLE_CONFIG3))
+    with pytest.raises(FileNotFoundError):
+        cfgtype = ConfigFileType(ConfigOpts(default_config=SAMPLE_CONFIG3,
+                                            touch=False))
+        assert cfgtype._opts.default_config == SAMPLE_CONFIG3
+        config = cfgtype(f)
+    # ... touch == True
+    cfgtype = ConfigFileType(ConfigOpts(default_config=SAMPLE_CONFIG3,
+                                        touch=True))
     assert cfgtype._opts.default_config == SAMPLE_CONFIG3
     config = cfgtype(f)
     assert isinstance(config, Config)

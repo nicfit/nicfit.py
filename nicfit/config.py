@@ -101,8 +101,8 @@ class ConfigFileType(argparse.FileType):
     """ArgumentParser ``type`` for loading ``Config`` objects."""
     def __init__(self, config_opts=None, encoding="utf-8"):
         super().__init__(mode='r')
-        self._encoding = encoding
         self._opts = config_opts or ConfigOpts()
+        self._encoding = encoding
 
     def __call__(self, filename):
         if not filename and not self._opts.default_config:
@@ -113,6 +113,7 @@ class ConfigFileType(argparse.FileType):
             filename = os.path.expanduser(os.path.expandvars(filename))
 
         config = self._opts.ConfigClass(filename,
+                                        **self._opts.configClassOpts(),
                                         **self._opts.configparser_opts)
 
         # Default config? Start with that...
@@ -149,22 +150,27 @@ class ConfigOpts:
         :param config_env_var: When not ``None`` it is the name of an environment
             variable that will be read (if the path exists, not errors when it
             does not) in addition to any other config filenames.
-        :param extra_config_opts: A dict of extra keyword arguments to pass to
-               the ``ConfigClass`` constructor.
+        :param config_parsers_opts: A dict of extra
+            ``configparser.ConfigParser`` keyword arguments to pass to the
+             ``ConfigClass`` constructor.
         :param init_logging_fileConfig: If ``True`` the config (default or
                otherwise, is passed to ``logging.config.fileConfig``.
         """
         required = attr.ib(default=False)
-        deafult_file = attr.ib(default=None)
-        deafult_config = attr.ib(default=None)
+        default_file = attr.ib(default=None)
+        default_config = attr.ib(default=None)
         override_arg = attr.ib(default=False)
         ConfigClass = attr.ib(default=Config)
         default_config_opt = attr.ib(default=None)
         config_env_var = attr.ib(default=None)
         init_logging_fileConfig = attr.ib(default=False)
-        configparser_opts = attr.ib(default=None)
+        configparser_opts = attr.ib(default=attr.Factory(dict))
         touch = attr.ib(default=False)
         mode = attr.ib(default=0o644)
+
+        def configClassOpts(self):
+            return dict(touch=self.touch,
+                        mode=self.mode)
 
 
 def addCommandLineArgs(arg_parser, opts):
