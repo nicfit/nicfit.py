@@ -307,7 +307,7 @@ def test_env_config(tmpdir):
     config_path.write(SAMPLE_CONFIG1)
     os.environ["CONFIG_VAR"] = str(config_path)
 
-    c = Config("file.ini", config_env_var="CONFIG_VAR", touch=True)
+    c = Config(tmpdir / "file.ini", config_env_var="CONFIG_VAR", touch=True)
     assert c.sections() == ["MAIN", "CONFIG1"]
     assert c["MAIN"]["mainkey"] == "config1"
     assert c["CONFIG1"]["key"] == "value"
