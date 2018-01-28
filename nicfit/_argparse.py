@@ -1,3 +1,4 @@
+import sys
 import argparse
 
 
@@ -16,12 +17,20 @@ class ArgumentParser(argparse.ArgumentParser):
             from . import config
             config.addCommandLineArgs(self, config_opts)
         self._config_opts = config_opts
+        # For python <= 3.6, where subcmds are optional
+        self._subcmd_required = None
 
     def parse_known_args(self, args=None, namespace=None):
         from . import logger
 
         parsed, remaining = super().parse_known_args(args=args,
                                                      namespace=namespace)
+
+        # Required sub command support for Python < 3.7
+        if self._subcmd_required is not None:
+            req, dest = self._subcmd_required
+            if req and dest and not getattr(parsed, dest):
+                self.error(_('the following arguments are required: %s') % dest)
 
         if "config" in parsed and "config_overrides" in parsed:
             config = parsed.config
@@ -43,11 +52,19 @@ class ArgumentParser(argparse.ArgumentParser):
 
         return parsed, remaining
 
-    def add_subparsers(self, add_help_subcmd=False, **kwargs):
+    def add_subparsers(self, add_help_subcmd=False, required=True, **kwargs):
         if "parser_class" not in kwargs:
             kwargs["parser_class"] = ArgumentParser
 
-        subparser = super().add_subparsers(**kwargs)
+        if sys.version_info[:2] >= (3, 7):
+            subparser = super().add_subparsers(required=required, **kwargs)
+        else:
+            if required and "dest" not in kwargs:
+                raise argparse.ArgumentErr("dest kwarg required.")
+            self._subcmd_required = (
+                required, kwargs["dest"],
+            )
+            subparser = super().add_subparsers(**kwargs)
 
         if add_help_subcmd:
             # 'help' subcommand; turns it into the less intuitive --help format.

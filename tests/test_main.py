@@ -2,6 +2,7 @@ import os
 import sys
 import pytest
 from unittest.mock import patch, Mock
+from nicfit.app import Application
 from nicfit.__main__ import app, Nicfit
 from nicfit.console.ansi import Fg, Style
 
@@ -75,3 +76,32 @@ def test_NicfitApp_cookiecutter_real(tmpdir, unshallowed_repo):
         app.run(["cookiecutter", str(tmpdir), "--no-input"])
     assert sysexit.value.code == 0
     # XXX: validate the results?
+
+
+def test_commands_noargs_notrequired():
+    class MyApp(Application):
+        def _main(self, args):
+            return 0
+
+    app = MyApp()
+    app.enableCommands(required=False)
+    try:
+        app.run([])
+    except SystemExit as exit:
+        assert exit.code == 0
+    else:
+        assert False, "App did not invoke sys.exit"
+ 
+def test_commands_noargs_required():
+    class MyApp(Application):
+        def _main(self, args):
+            return 0
+
+    app = MyApp()
+    app.enableCommands(required=True)
+    try:
+        app.run([])
+    except SystemExit as exit:
+        assert exit.code == 2
+    else:
+        assert False, "App did not invoke sys.exit"

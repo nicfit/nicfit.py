@@ -67,7 +67,6 @@ class Application:
 
     def main(self, args_list=None):
         self.log.debug("Application.main: {args_list}".format(**locals()))
-
         self.args = self.arg_parser.parse_args(args=args_list)
         retval = self._main(self.args)
         return retval or 0
@@ -103,12 +102,13 @@ class Application:
         return self.main(args_list=args_list)
 
     def enableCommands(self, title="Commands", description=None,
-                       add_help_subcmd=True, dest="command"):
+                       add_help_subcmd=True, dest="command", required=True):
         from .command import Command
+
         subs = self.arg_parser.add_subparsers(title=title,
                                               description=description,
                                               add_help_subcmd=add_help_subcmd,
-                                              dest=dest)
+                                              dest=dest, required=required)
         Command.initAll(subs)
         return subs
 
