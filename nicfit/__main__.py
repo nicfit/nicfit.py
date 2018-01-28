@@ -303,6 +303,7 @@ class Nicfit(nicfit.Application):
                          pdb_opt=True)
         subs = self.arg_parser.add_subparsers(title="Commands",
                                               add_help_subcmd=True,
+                                              required=False,
                                               dest="command")
         nicfit.Command.initAll(subs)
 

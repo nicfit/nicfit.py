@@ -60,7 +60,7 @@ class ArgumentParser(argparse.ArgumentParser):
             subparser = super().add_subparsers(required=required, **kwargs)
         else:
             if required and "dest" not in kwargs:
-                raise argparse.ArgumentErr("dest kwarg required.")
+                raise argparse.ArgumentTypeError("dest kwarg required.")
             self._subcmd_required = (
                 required, kwargs["dest"],
             )

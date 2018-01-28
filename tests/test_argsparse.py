@@ -58,13 +58,13 @@ def test_ArgumentParser_add_subparsers():
         ArgumentParser().parse_args(["help"])
 
     p = ArgumentParser()
-    p.add_subparsers(add_help_subcmd=True)
+    p.add_subparsers(dest="cmd", add_help_subcmd=True)
     args = p.parse_args(["help"])
     assert args.command is None
     assert args.command_func is not None
 
     p = ArgumentParser()
-    p.add_subparsers(add_help_subcmd=True)
+    p.add_subparsers(dest="cmd", add_help_subcmd=True)
     args = p.parse_args(["help", "cmd"])
     assert args.command is "cmd"
     assert args.command_func is not None
