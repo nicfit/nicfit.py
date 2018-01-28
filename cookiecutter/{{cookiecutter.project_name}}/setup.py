@@ -48,6 +48,9 @@ classifiers = [
 {%- if cookiecutter.py36 == "yes" %}
     "Programming Language :: Python :: 3.6",
 {%- endif %}
+{%- if cookiecutter.py37 == "yes" %}
+    "Programming Language :: Python :: 3.7",
+{%- endif %}
 {%- if cookiecutter.pyapp_type == "asyncio" %}
     "Framework :: AsyncIO",
 {%- endif %}
