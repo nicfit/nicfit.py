@@ -89,6 +89,15 @@ class Command(object):
         return iter(Class._all_commands.values())
 
 
+class AsyncCommand(Command):
+    async def run(self, args):
+        self.args = args
+        return await self._run()
+
+    async def _run(self):
+        raise NotImplementedError("Must implement a _run function")
+
+
 class SubCommandCommand(Command):
     """Like a normal command, but structured as a command with sub-commands,
     each with its own argument interface (and argument parser).
@@ -121,4 +130,18 @@ class SubCommandCommand(Command):
         parser.set_defaults(command_func=def_cmd.run if def_cmd else None)
 
 
-__all__ = ["register", "CommandError", "Command", "SubCommandCommand"]
+class AsyncSubCommandCommand(SubCommandCommand):
+    async def run(self, args):
+        self.args = args
+        return await self._run()
+
+    async def _run(self):
+        try:
+            self.args.arg0 = self.args.argv[1]
+        except IndexError:
+            self.args.arg0 = ""
+        return await self.args.command_func(self.args)
+
+
+__all__ = ["register", "CommandError", "Command", "SubCommandCommand",
+           "AsyncCommand", "AsyncSubCommandCommand"]
