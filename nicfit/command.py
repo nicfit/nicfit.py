@@ -6,6 +6,7 @@ from ._argparse import ArgumentParser
 def register(CommandSubClass):
     """A class decorator for Command classes to register in the default set."""
     name = CommandSubClass.name()
+    # FIXME: check for alias collisions
     if name in Command._all_commands:
         raise ValueError("Command already exists: " + name)
     Command._all_commands[name] = CommandSubClass
@@ -40,7 +41,16 @@ class Command(object):
     def aliases(Class):
         return Class.ALIASES if hasattr(Class, "ALIASES") else []
 
-    def __init__(self, subparsers=None):
+    def __init__(self, subparsers=None, **kwargs):
+        """Construct a command.
+        Any `kwargs` are added to the class object using ``setattr``.
+        All commands have an ArgumentParser, either constructed here or when
+        ``subparsers`` is given a new parser is created using its ``add_parser``
+        method.
+        """
+        for name, value in kwargs.items():
+            setattr(self, name, value)
+
         self.subparsers = subparsers
         if subparsers:
             self.parser = self.subparsers.add_parser(self.name(),
@@ -64,7 +74,6 @@ class Command(object):
     def _run(self):
         raise NotImplementedError("Must implement a _run function")
 
-    # TODO: deprecate me
     @staticmethod
     def initAll(subparsers=None):
         if not Command._all_commands:
@@ -80,4 +89,36 @@ class Command(object):
         return iter(Class._all_commands.values())
 
 
-__all__ = ["register", "CommandError", "Command"]
+class SubCommandCommand(Command):
+    """Like a normal command, but structured as a command with sub-commands,
+    each with its own argument interface (and argument parser).
+    """
+    SUB_CMDS = []
+    DEFAULT_CMD = None
+
+    def __init__(self, *args, **kwargs):
+        self._sub_cmds = []
+        self._ctor_kwargs = kwargs
+        super().__init__(*args, **kwargs)
+
+    def _run(self):
+        try:
+            self.args.arg0 = self.args.argv[1]
+        except IndexError:
+            self.args.arg0 = ""
+        return self.args.command_func(self.args)
+
+    def _initArgParser(self, parser):
+        def_cmd = None
+        subparsers = parser.add_subparsers(title="Sub-commands",
+                                           dest="command", prog=self.name())
+        subparsers.required = self.DEFAULT_CMD is None
+        for CmdClass in self.SUB_CMDS:
+            cmd = CmdClass(subparsers=subparsers, **self._ctor_kwargs)
+            if CmdClass is self.DEFAULT_CMD:
+                def_cmd = cmd
+            self._sub_cmds.append(cmd)
+        parser.set_defaults(command_func=def_cmd.run if def_cmd else None)
+
+
+__all__ = ["register", "CommandError", "Command", "SubCommandCommand"]
