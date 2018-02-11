@@ -124,19 +124,11 @@ class Command(object):
 
         all = {}
         for Cmd in set(Class._registered_commands[Class].values()):
+            cmd = Cmd(subparsers=subparsers, **kwargs) \
+                        if instantiate else Cmd
             for name in [Cmd.name()] + Cmd.aliases():
-                all[name] = Cmd(subparsers=subparsers, **kwargs) \
-                                if instantiate else Cmd
+                all[name] = cmd
         return all
-
-
-class AsyncCommand(Command):
-    async def run(self, args):
-        self.args = args
-        return await self._run()
-
-    async def _run(self):
-        raise NotImplementedError("Must implement a _run function")
 
 
 class SubCommandCommand(Command):
@@ -157,10 +149,6 @@ class SubCommandCommand(Command):
         super().__init__(*args, **kwargs)
 
     def _run(self):
-        try:
-            self.args.arg0 = self.args.argv[1]
-        except IndexError:
-            self.args.arg0 = ""
         return self.args.command_func(self.args)
 
     def _initArgParser(self, parser):
@@ -176,18 +164,4 @@ class SubCommandCommand(Command):
         parser.set_defaults(command_func=def_cmd.run if def_cmd else None)
 
 
-class AsyncSubCommandCommand(SubCommandCommand):
-    async def run(self, args):
-        self.args = args
-        return await self._run()
-
-    async def _run(self):
-        try:
-            self.args.arg0 = self.args.argv[1]
-        except IndexError:
-            self.args.arg0 = ""
-        return await self.args.command_func(self.args)
-
-
-__all__ = ["register", "CommandError", "Command", "SubCommandCommand",
-           "AsyncCommand", "AsyncSubCommandCommand"]
+__all__ = ["register", "CommandError", "Command", "SubCommandCommand"]

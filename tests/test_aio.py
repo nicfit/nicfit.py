@@ -1,5 +1,6 @@
 import asyncio
 import pytest
+from unittest.mock import MagicMock as Mock
 from nicfit import aio
 
 
@@ -80,3 +81,44 @@ def test_command(event_loop):
     assert cmd.args == dummy_args
     assert cmd.was_run
     assert res == 5
+
+
+def test_subcommands(event_loop):
+    run_body_mock2 = Mock()
+    run_body_mock3 = Mock()
+
+    class sub1(aio.Command):
+        ...
+    class sub2(aio.Command):
+        async def _run(self):
+            run_body_mock2()
+    class sub3(aio.Command):
+        async def _run(self):
+            run_body_mock3()
+
+    @aio.Command.register
+    class TopLevelCommand(aio.SubCommandCommand):
+        SUB_CMDS = [sub1, sub2, sub3]
+        NAME = "top1"
+        ALIASES = ["T", "t1"]
+
+    @aio.Command.register
+    class TopLevelCommand2(aio.SubCommandCommand):
+        NAME = "top2"
+        SUB_CMDS = [sub1, sub3]
+        DEFAULT_CMD = sub3
+
+    assert len(aio.Command._registered_commands[aio.Command]) == 4
+    loaded = aio.Command.loadCommandMap()
+    assert len(loaded) == 4
+
+    assert id(loaded["top1"]) == id(loaded["T"]) == id(loaded["t1"])
+
+    command = loaded["top1"]
+    event_loop.run_until_complete(
+        command.run(command.parser.parse_args(["sub2"])))
+    run_body_mock2.assert_called_once()
+
+    command = loaded["top2"]
+    event_loop.run_until_complete(command.run(command.parser.parse_args([])))
+    run_body_mock3.assert_called_once()

@@ -2,20 +2,20 @@ import sys
 import pytest
 from deprecation import fail_if_not_removed
 from unittest.mock import MagicMock as Mock
-from nicfit.command import Command, CommandError, register
+from nicfit.command import Command, CommandError, SubCommandCommand
 
 
 @pytest.fixture
-def emptycommands2():
+def emptycommands():
     Command._registered_commands.clear()
 
 
-def test_loadCommandMap_Empty(emptycommands2):
+def test_loadCommandMap_Empty(emptycommands):
     with pytest.raises(ValueError):
         Command.loadCommandMap(Mock())
 
 
-def test_register(emptycommands2):
+def test_register(emptycommands):
     @Command.register
     class c1(Command):
         def __init__(self, foo=None, **kwargs):
@@ -61,7 +61,7 @@ def test_register(emptycommands2):
     assert map["c2"].foo == "24-7 Spyz - Stuntman"
 
 
-def test_dup_register(emptycommands2):
+def test_dup_register(emptycommands):
     @Command.register
     class c1(Command): pass # noqa
 
@@ -76,7 +76,7 @@ def test_dup_register(emptycommands2):
     assert len(Command._registered_commands[Command]) == 2
 
 
-def test_run_notimplemented(emptycommands2):
+def test_run_notimplemented(emptycommands):
     @Command.register
     class TestCommand(Command):
         pass
@@ -85,7 +85,7 @@ def test_run_notimplemented(emptycommands2):
         TestCommand().run(None)
 
 
-def test_run(emptycommands2):
+def test_run(emptycommands):
     @Command.register
     class TestCommand(Command):
         NAME = "test"
@@ -99,22 +99,23 @@ def test_run(emptycommands2):
     mock_subparser.add_parser = Mock(return_value=mock_parser)
 
     assert len(Command._registered_commands[Command]) == 1
-    cmd = Command.loadCommandMap(subparsers=mock_subparser)["test"]
+    cmd = Command.loadCommandMap(subparsers=mock_subparser,
+                                 aesop="Rock", Brian="Jonestown")["test"]
 
     assert cmd.subparsers is mock_subparser
     assert cmd.parser is mock_parser
     cmd._initArgParser.assert_called_once_with(mock_parser)
 
+    assert cmd.aesop == "Rock"
+    assert cmd.Brian == "Jonestown"
+
     cmd.run(mock_args)
-    if sys.version_info[:2] >= (3, 6):
-        cmd._run.assert_called_once()
-    else:
-        assert cmd._run.call_count == 1
+    cmd._run.assert_called_once()
     assert cmd.args is mock_args
     mock_parser.set_defaults.assert_called_once_with(command_func=cmd.run)
 
 
-def test_run_exit_status(emptycommands2):
+def test_run_exit_status(emptycommands):
     mock_subparser = Mock(spec=["add_parser"])
 
     @Command.register
@@ -156,7 +157,51 @@ def test_run_exit_status(emptycommands2):
     with pytest.raises(ValueError):
         CExc(mock_subparser).run(None)
 
+
+def test_subcommands(emptycommands):
+    run_body_mock2 = Mock()
+    run_body_mock3 = Mock()
+
+    class sub1(Command):
+        ...
+    class sub2(Command):
+        def _run(self):
+            run_body_mock2()
+    class sub3(Command):
+        def _run(self):
+            run_body_mock3()
+
+    @Command.register
+    class TopLevelCommand(SubCommandCommand):
+        SUB_CMDS = [sub1, sub2, sub3]
+        NAME = "top1"
+        ALIASES = ["T", "t1"]
+
+    @Command.register
+    class TopLevelCommand2(SubCommandCommand):
+        NAME = "top2"
+        SUB_CMDS = [sub1, sub3]
+        DEFAULT_CMD = sub3
+
+    assert len(Command._registered_commands[Command]) == 4
+    loaded = Command.loadCommandMap()
+    assert len(loaded) == 4
+
+    assert id(loaded["top1"]) == id(loaded["T"]) == id(loaded["t1"])
+
+    command = loaded["top1"]
+    command.run(command.parser.parse_args(["sub2"]))
+    run_body_mock2.assert_called_once()
+
+    command = loaded["top2"]
+    command.run(command.parser.parse_args([]))
+    run_body_mock3.assert_called_once()
+
+
 ## BEGIN DEPRECATED ##
+from nicfit.command import register
+
+
 @fail_if_not_removed
 def test_initAllEmpty_DEPRECATED():
     Command._all_commands.clear()
@@ -176,6 +221,24 @@ def test_register_DEPRECATED():
 
     assert len(Command._all_commands) == 2
     Command.initAll(Mock(spec=["add_parser"]))
+
+
+@fail_if_not_removed
+def test_register_interCommands_DEPRECATED():
+    Command._all_commands.clear()
+
+    @register
+    class c1(Command): pass # noqa
+
+    @register
+    class c2(Command): pass # noqa
+
+    @register
+    class c3(Command): pass # noqa
+
+    assert len(Command._all_commands) == 3
+    all = Command.iterCommands()
+    assert len(list(all)) == 3
 
 
 @fail_if_not_removed

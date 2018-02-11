@@ -54,6 +54,7 @@ clean-local:
 	-rm tags
 	${MAKE} -C ./cookiecutter clean
 	-rm *.log
+	rm -rf .cache
 
 clean-build:
 	rm -fr build/
@@ -72,6 +73,7 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
+	rm -rf .pytest_cache
 
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
