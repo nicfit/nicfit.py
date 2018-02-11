@@ -1,8 +1,16 @@
-import sys
 import pytest
 from deprecation import fail_if_not_removed
 from unittest.mock import MagicMock as Mock
 from nicfit.command import Command, CommandError, SubCommandCommand
+
+
+def _assert_called_once(mocked):
+    """Needed for pypy support even though nicfit.py support is 3.6 and above"""
+    import sys
+    if sys.version_info[:2] >= (3, 6):
+        mocked.assert_called_once()
+    else:
+        assert mocked.call_count == 1
 
 
 @pytest.fixture
@@ -110,7 +118,7 @@ def test_run(emptycommands):
     assert cmd.Brian == "Jonestown"
 
     cmd.run(mock_args)
-    cmd._run.assert_called_once()
+    _assert_called_once(cmd._run)
     assert cmd.args is mock_args
     mock_parser.set_defaults.assert_called_once_with(command_func=cmd.run)
 
@@ -191,11 +199,11 @@ def test_subcommands(emptycommands):
 
     command = loaded["top1"]
     command.run(command.parser.parse_args(["sub2"]))
-    run_body_mock2.assert_called_once()
+    _assert_called_once(run_body_mock2)
 
     command = loaded["top2"]
     command.run(command.parser.parse_args([]))
-    run_body_mock3.assert_called_once()
+    _assert_called_once(run_body_mock3)
 
 
 ## BEGIN DEPRECATED ##
@@ -297,10 +305,7 @@ def test_run_DEPRECATED():
     cmd._initArgParser.assert_called_once_with(mock_parser)
 
     cmd.run(mock_args)
-    if sys.version_info[:2] >= (3, 6):
-        cmd._run.assert_called_once()
-    else:
-        assert cmd._run.call_count == 1
+    _assert_called_once(cmd._run)
     assert cmd.args is mock_args
     mock_parser.set_defaults.assert_called_once_with(command_func=cmd.run)
 

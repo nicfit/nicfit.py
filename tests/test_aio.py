@@ -3,6 +3,14 @@ import pytest
 from unittest.mock import MagicMock as Mock
 from nicfit import aio
 
+def _assert_called_once(mocked):
+    """Needed for pypy support even though nicfit.py support is 3.6 and above"""
+    import sys
+    if sys.version_info[:2] >= (3, 6):
+        mocked.assert_called_once()
+    else:
+        assert mocked.call_count == 1
+
 
 async def _main(args):
     args.app.retval = 2
@@ -117,8 +125,8 @@ def test_subcommands(event_loop):
     command = loaded["top1"]
     event_loop.run_until_complete(
         command.run(command.parser.parse_args(["sub2"])))
-    run_body_mock2.assert_called_once()
+    _assert_called_once(run_body_mock2)
 
     command = loaded["top2"]
     event_loop.run_until_complete(command.run(command.parser.parse_args([])))
-    run_body_mock3.assert_called_once()
+    _assert_called_once(run_body_mock3)
