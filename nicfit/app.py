@@ -102,14 +102,15 @@ class Application:
         return self.main(args_list=args_list)
 
     def enableCommands(self, title="Commands", description=None,
-                       add_help_subcmd=True, dest="command", required=True):
+                       add_help_subcmd=True, dest="command", required=True,
+                       **command_kwargs):
         from .command import Command
 
         subs = self.arg_parser.add_subparsers(title=title,
                                               description=description,
                                               add_help_subcmd=add_help_subcmd,
                                               dest=dest, required=required)
-        Command.initAll(subs)
+        Command.loadCommandMap(subparsers=subs, **command_kwargs)
         return subs
 
 

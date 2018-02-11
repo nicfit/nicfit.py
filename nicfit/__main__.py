@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import shutil
 import subprocess
@@ -29,7 +28,7 @@ MERGE_TOOLS["gvimdiff"] = "-geometry 169x60 -f"
 MERGE_TOOLS["vimdiff"] = None
 
 
-@nicfit.command.register
+@nicfit.Command.register
 class Requirements(nicfit.Command):
     """
     TODO
@@ -101,7 +100,7 @@ class Requirements(nicfit.Command):
         self._makeReqsFile(Path("requirements.txt"), pkg_reqs)
 
 
-@nicfit.command.register
+@nicfit.Command.register
 class CookieCutter(nicfit.Command):
     NAME = "cookiecutter"
     HELP = "Create a nicfit.py Python project skeleton."
@@ -301,11 +300,8 @@ class Nicfit(nicfit.Application):
     def __init__(self):
         super().__init__(version=version, gettext_domain="nicfit.py",
                          pdb_opt=True)
-        subs = self.arg_parser.add_subparsers(title="Commands",
-                                              add_help_subcmd=True,
-                                              required=False,
-                                              dest="command")
-        nicfit.Command.initAll(subs)
+        subparsers = self.enableCommands(required=False)
+        nicfit.Command.loadCommandMap(subparsers=subparsers)
 
     def _main(self, args):
         ansi.init()

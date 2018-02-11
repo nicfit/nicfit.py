@@ -111,7 +111,7 @@ class Command(object):
         return iter(set(Class._all_commands.values()))
 
     @classmethod
-    def loadCommandMap(Class, subparsers=None, instantiate=True, **kwargs):
+    def loadCommandMap(Class, subparsers=None, instantiate=True, **cmd_kwargs):
         """Instantiate each registered command to a dict mapping name/alias to
         instance.
 
@@ -124,7 +124,7 @@ class Command(object):
 
         all = {}
         for Cmd in set(Class._registered_commands[Class].values()):
-            cmd = Cmd(subparsers=subparsers, **kwargs) \
+            cmd = Cmd(subparsers=subparsers, **cmd_kwargs) \
                         if instantiate else Cmd
             for name in [Cmd.name()] + Cmd.aliases():
                 all[name] = cmd
