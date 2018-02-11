@@ -18,9 +18,11 @@ idna==2.6                 # via requests
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.10              # via cookiecutter, jinja2-time
 markupsafe==1.0           # via jinja2
+packaging==16.8           # via deprecation
 poyo==0.4.1               # via cookiecutter
+pyparsing==2.2.0          # via packaging
 python-dateutil==2.6.1    # via arrow
 requests==2.18.4          # via cookiecutter
-six==1.11.0               # via python-dateutil
+six==1.11.0               # via packaging, python-dateutil
 urllib3==1.22             # via requests
 whichcraft==0.4.1         # via cookiecutter

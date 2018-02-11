@@ -3,6 +3,36 @@ Release History
 
 .. :changelog:
 
+v0.8b2 (2018-02-11)
+------------------------
+
+New
+~~~
+- :class:`nicfit.command.Command` API refactor (and deprecation of older API)
+- Per Command class registration lists makes for more granular command grouping.
+- :class:`nicfit.command.SubCommandCommand` (and a :mod:`nicfit.aio` verison)
+  for building commands around subparsers.
+
+Fix
+~~~
+- Required subparser support using Python3.7 argparse and faking support
+  for lesser version.
+
+Other
+~~~~~
+- Update pytest-runner from 3.0 to 4.0 (#183) <github-bot@pyup.io>
+- Update sphinx from 1.6.5 to 1.6.7 (#182) <github-bot@pyup.io>
+- Update deprecation to 1.1 (#181) <github-bot@pyup.io>
+- Update pytest from 3.3.1 to 3.4.0 (#180) <github-bot@pyup.io>
+- Update arrow from 0.12.0 to 0.12.1 (#179) <github-bot@pyup.io>
+- Update certifi from 2017.11.5 to 2018.1.18 (#178) <github-bot@pyup.io>
+- Update babel to 2.5.3 (#177) <github-bot@pyup.io>
+- Update attrs to 17.4.0 (#173) <github-bot@pyup.io>
+- Update pyaml from 17.10.0 to 17.12.1 (#172) <github-bot@pyup.io>
+- Update pip-tools from 1.10.2 to 1.11.0 (#168) <github-bot@pyup.io>
+
+
+
 v0.8b1 (2017-12-10)
 ------------------------
 
