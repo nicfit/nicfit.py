@@ -2,6 +2,7 @@ import asyncio
 
 from .app import AsyncApplication
 from .command import Command as BaseCommand
+from .command import SubCommandCommand as BaseSubCommandCommand
 
 
 class Application(AsyncApplication):
@@ -37,3 +38,12 @@ class Command(BaseCommand):
 
     async def _run(self):
         raise NotImplementedError("Must implement a _run function")
+
+
+class SubCommandCommand(BaseSubCommandCommand):
+    async def run(self, args):
+        self.args = args
+        return await self._run()
+
+    async def _run(self):
+        return await self.args.command_func(self.args)

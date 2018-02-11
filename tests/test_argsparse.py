@@ -1,5 +1,6 @@
 import sys
 import pytest
+from argparse import ArgumentTypeError
 from unittest.mock import MagicMock as Mock
 from nicfit import ArgumentParser
 from nicfit import ConfigOpts
@@ -86,3 +87,9 @@ def test_ArgumentParser_add_subparsers():
     else:
         assert p.print_help.call_count == 1
     p.parse_args.assert_not_called()
+
+    # Lacking dest argument and required in Python < 3.7
+    if sys.version_info[:2] <(3, 7):
+        with pytest.raises(ArgumentTypeError):
+            p = ArgumentParser()
+            p.add_subparsers()

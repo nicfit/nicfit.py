@@ -20,6 +20,10 @@ class ArgumentParser(argparse.ArgumentParser):
         # For python <= 3.6, where subcmds are optional
         self._subcmd_required = None
 
+    def parse_args(self, args=None, namespace=None):
+        parsed_args = super().parse_args(args=args, namespace=namespace)
+        return parsed_args
+
     def parse_known_args(self, args=None, namespace=None):
         from . import logger
 
