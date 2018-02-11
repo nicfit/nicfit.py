@@ -157,17 +157,17 @@ def test_run_exit_status(emptycommands2):
         CExc(mock_subparser).run(None)
 
 ## BEGIN DEPRECATED ##
-@pytest.fixture
-def emptycommands():
+@fail_if_not_removed
+def test_initAllEmpty_DEPRECATED():
     Command._all_commands.clear()
-
-
-def test_initAllEmpty_DEPRECATED(emptycommands):
     with pytest.raises(ValueError):
         Command.initAll(Mock())
 
 
-def test_register_DEPRECATED(emptycommands):
+@fail_if_not_removed
+def test_register_DEPRECATED():
+    Command._all_commands.clear()
+
     @register
     class c1(Command): pass # noqa
 
@@ -178,7 +178,10 @@ def test_register_DEPRECATED(emptycommands):
     Command.initAll(Mock(spec=["add_parser"]))
 
 
-def test_dup_register_DEPRECATED(emptycommands):
+@fail_if_not_removed
+def test_dup_register_DEPRECATED():
+    Command._all_commands.clear()
+
     @register
     class c1(Command): pass # noqa
 
@@ -194,7 +197,10 @@ def test_dup_register_DEPRECATED(emptycommands):
     Command.initAll(Mock(spec=["add_parser"]))
 
 
-def test_run_notimplemented_DEPRECATED(emptycommands):
+@fail_if_not_removed
+def test_run_notimplemented_DEPRECATED():
+    Command._all_commands.clear()
+
     @register
     class TestCommand(Command):
         pass
@@ -204,7 +210,10 @@ def test_run_notimplemented_DEPRECATED(emptycommands):
         TestCommand(Mock()).run(None)
 
 
-def test_run_DEPRECATED(emptycommands):
+@fail_if_not_removed
+def test_run_DEPRECATED():
+    Command._all_commands.clear()
+
     @register
     class TestCommand(Command):
         NAME = "test"
@@ -233,7 +242,10 @@ def test_run_DEPRECATED(emptycommands):
     mock_parser.set_defaults.assert_called_once_with(command_func=cmd.run)
 
 
-def test_run_exit_status_DEPRECATED(emptycommands):
+@fail_if_not_removed
+def test_run_exit_status_DEPRECATED():
+    Command._all_commands.clear()
+
     mock_subparser = Mock(spec=["add_parser"])
 
     @register
