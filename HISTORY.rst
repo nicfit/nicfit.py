@@ -3,6 +3,14 @@ Release History
 
 .. :changelog:
 
+v0.8b3 (2018-02-11)
+------------------------
+
+Fix
+~~~
+- Removed internal usage of deprecated command APIs.
+
+
 v0.8b2 (2018-02-11)
 ------------------------
 
