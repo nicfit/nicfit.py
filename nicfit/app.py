@@ -101,20 +101,11 @@ class Application:
         self.log.debug("Application._run: {args_list}".format(**locals()))
         return self.main(args_list=args_list)
 
-    def enableCommands(self, title="Commands", description=None,
-                       add_help_subcmd=True, dest="command", required=True,
-                       **command_kwargs):
-        from .command import Command
-
-        subs = self.arg_parser.add_subparsers(title=title,
-                                              description=description,
-                                              add_help_subcmd=add_help_subcmd,
-                                              dest=dest, required=required)
-        Command.loadCommandMap(subparsers=subs, **command_kwargs)
-        return subs
-
 
 class AsyncApplication(Application):
+    """A base for asynchronous apps.
+    See :mod:`nicfit.aio.Application` and :mod:`nicfit.curio.Application`.
+    """
     async def _main(self, args):
         self.log.debug("AsyncApplication._main: {args}".format(**locals()))
         if self._main_func:
