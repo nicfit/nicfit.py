@@ -84,7 +84,7 @@ def test_commands_noargs_notrequired():
             return 0
 
     app = MyApp()
-    app.enableCommands(required=False)
+    app.arg_parser.add_subparsers(required=False, dest="cmd")
     try:
         app.run([])
     except SystemExit as exit:
@@ -98,7 +98,7 @@ def test_commands_noargs_required():
             return 0
 
     app = MyApp()
-    app.enableCommands(required=True)
+    app.arg_parser.add_subparsers(required=True, dest="cmd")
     try:
         app.run([])
     except SystemExit as exit:

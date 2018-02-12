@@ -300,7 +300,8 @@ class Nicfit(nicfit.Application):
     def __init__(self):
         super().__init__(version=version, gettext_domain="nicfit.py",
                          pdb_opt=True)
-        subparsers = self.enableCommands(required=False)
+        subparsers = self.arg_parser.add_subparsers(dest="command",
+                                                    required=False)
         nicfit.Command.loadCommandMap(subparsers=subparsers)
 
     def _main(self, args):
