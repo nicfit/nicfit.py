@@ -3,6 +3,35 @@ Release History
 
 .. :changelog:
 
+v0.8 (2018-02-18)
+------------------------
+
+New
+~~~
+- Added ConfigOpts.configClassOpts() helper for obtaining the dict of arguments
+  for :class:`nicfit.config.ConfigClass`
+- attrs (https://github.com/python-attrs/attrs) based
+  :class:`nicfit.config.ConfigOpts`.
+- Filter duplicate emails when generating AUTHORS.rst.
+- Flush stdout and stderr before sys.exit()
+- :class:`nicfit.command.Command` API refactor (and deprecation of older API)
+- Per Command class registration lists makes for more granular command grouping.
+- :class:`nicfit.command.SubCommandCommand` (and a :mod:`nicfit.aio` verison)
+  for building commands around subparsers.
+
+
+Fix
+~~~
+- Required subparser support using Python3.7 argparse and faking support
+  for lesser version.
+
+Other
+~~~~~
+- Some docs, and example commands.
+- Added deprecated details.
+- Fixed tests from enableCommands removal.
+
+
 v0.8b3 (2018-02-11)
 ------------------------
 
@@ -52,6 +81,7 @@ New
   :class:`nicfit.config.ConfigOpts`.
 - Filter duplicate emails when generating AUTHORS.rst.
 - Flush stdout and stderr before sys.exit()
+
 
 Other
 ~~~~~
