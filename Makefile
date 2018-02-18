@@ -90,6 +90,10 @@ test: gettext
 	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
 
 test-all:
+	for example in `ls ./examples/*.py`; do \
+		echo "Runninig $$example..."; \
+		./$$example > /dev/null ; \
+	done
 	tox
 
 coverage: gettext

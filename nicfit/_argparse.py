@@ -1,5 +1,7 @@
 import sys
 import argparse
+import gettext
+_ = gettext.gettext
 
 
 class ArgumentParser(argparse.ArgumentParser):
