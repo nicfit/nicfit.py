@@ -105,7 +105,7 @@ class Command(object):
 
     @classmethod
     @deprecated(deprecated_in="0.8", removed_in="0.9",
-                details="TODO",
+                details="Use :meth:`Command.loadCommandMap.values()` instead.",
                 current_version=__version__)
     def iterCommands(Class):
         return iter(set(Class._all_commands.values()))
