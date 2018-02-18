@@ -1,9 +1,9 @@
-Sphinx==1.6.7
+Sphinx==1.7.0
 babel==2.5.3
 check-manifest==0.36
 flake8==3.5.0
 git+https://github.com/nicfit/gitchangelog.git
-ipdb==0.10.3
+ipdb==0.11
 pip-tools==1.11.0
 pss==1.41
 pyaml==17.12.1
