@@ -1,2 +1,2 @@
 attrs==17.4.0
-deprecation==1.2
+deprecation==2.0
