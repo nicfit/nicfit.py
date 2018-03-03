@@ -10,7 +10,7 @@ from tempfile import NamedTemporaryFile
 import nicfit
 from . import version
 from .util import copytree
-from .console import ansi, perr, pout
+from .console import ansi, perr
 from .console.ansi import Fg, Style
 
 try:
@@ -74,14 +74,14 @@ class Requirements(nicfit.Command):
             for pkg in sorted(new.keys()):
                 ver = new[pkg] or ""
                 fp.write("{pkg}{ver}\n".format(**locals()))
-            pout("Wrote {}".format(filepath))
+            print("Wrote {}".format(filepath))
 
     def _run(self):
         import yaml
 
         reqs_file = Path("./requirements/requirements.yml")
         if not reqs_file.exists():
-            pout("Nothing to do...")
+            print("Nothing to do...")
             return
         reqs_dir = reqs_file.parent
 
@@ -120,22 +120,25 @@ class CookieCutter(nicfit.Command):
                             help="Use no user config (overrides --config_file)")
         parser.add_argument("--no-clone", action="store_true",
                             help="Do not clone a local repo if one is found.")
-        parser.add_argument("--merge", action="store_true",
-                            help="Merge CookieCutter output against local "
-                            "repository (if found). Ignored when used "
-                            "with --no-clone")
-        parser.add_argument("--ignore-md5s", action="store_true",
-                            help="Causes all files to be merged even if the "
+
+        merge_args = parser.add_argument_group("Merge options")
+        merge_args.add_argument("--merge", action="store_true",
+                                help="Merge CookieCutter output against local "
+                                     "repository (if found). Ignored when used "
+                                     "with --no-clone")
+        merge_args.add_argument("--ignore-md5s", action="store_true",
+                                help="Causes all files to be merged even if the "
                             "saved md5sum matches from a previous merge.")
-        parser.add_argument("--extra-merge", action="append", nargs=2,
-                            metavar="FILE", default=[],
-                            help="Merge two files there are outside the context"
+        merge_args.add_argument("--extra-merge", action="append", nargs=2,
+                                metavar="FILE", default=[],
+                                help="Merge two files there are outside the context"
                             " of the git repo (e.g. untracked files, "
                             ".git/hooks, etc.). This option may be specified "
                             "multiple times.")
-        parser.add_argument("--merge-cmd", metavar="CMD",
-                            help="Merge command. Called with with 2 args: "
+        merge_args.add_argument("--merge-cmd", metavar="CMD",
+                                help="Merge command. Called with with 2 args: "
                                  "<src> <dest>")
+
 
     def _findTemplateDir(self):
         template_d = None
@@ -154,7 +157,8 @@ class CookieCutter(nicfit.Command):
                                   config_file=self.args.config_file,
                                   no_input=self.args.no_input,
                                   overwrite_if_exists=True,
-                                  output_dir=self.args.outdir)
+                                  output_dir=self.args.outdir,
+                                  extra_context={})
             return cc_dir
         except click.exceptions.Abort as ex:
             raise KeyboardInterrupt()  # pragma: nocover
@@ -170,7 +174,7 @@ class CookieCutter(nicfit.Command):
         cwd = Path(os.getcwd())
         clone_d = None
         if (cwd / ".git").is_dir() and not self.args.no_clone:
-            pout("Cloning local repo for CookieCutter merging "
+            print("Cloning local repo for CookieCutter merging "
                  "(use --no-clone to disable)")
             clone_d = self._gitCloneRepo(cwd)
 
@@ -185,8 +189,8 @@ class CookieCutter(nicfit.Command):
             elif old_local_config.is_file():
                 self.args.config_file = str(old_local_config)
         if self.args.config_file:
-            pout("Using user config ./{}, use --no-config to ignore."
-                 .format(self.CC_USER_CONFIG))
+            print("Using user config ./{}, use --no-config to ignore."
+                  .format(self.CC_USER_CONFIG))
 
         cc_dir = self._cookiecutter(self._findTemplateDir())
         if clone_d:
@@ -247,9 +251,9 @@ class CookieCutter(nicfit.Command):
             merge_file = (self.args.ignore_md5s or
                           file not in md5_hashes or
                           md5sum != md5_hashes[file])
-            pout("Comparing {} hash({}): {}"
-                 .format(file, md5sum, Fg.blue("new")
-                                        if merge_file else Fg.green("merged")))
+            print("Comparing {} hash({}): {}"
+                  .format(file, md5sum,
+                          Fg.blue("new") if merge_file else Fg.green("merged")))
             md5_hashes[file] = md5sum
 
             if merge_file:
@@ -265,7 +269,7 @@ class CookieCutter(nicfit.Command):
                 diffs = subprocess.run("diff '{src}' '{dst_file}' >/dev/null"
                                        .format(**locals()), shell=True)\
                                   .returncode != 0
-                pout("Differences: {}".format(diffs))
+                print("Differences: {}".format(diffs))
                 if diffs:
                     merge_cmd = self.args.merge_cmd
                     if merge_cmd is None:
@@ -307,8 +311,8 @@ class Nicfit(nicfit.Application):
     def _main(self, args):
         ansi.init()
         if not args.command:
-            pout(Fg.red("\m/ {} \m/"
-                       .format(Style.inverse(_("Welcome")))))
+            print(Fg.red("=== {} ===".format(Style.inverse(_("Welcome")))))
+            self.arg_parser.print_usage()
             return 0
 
         try:
