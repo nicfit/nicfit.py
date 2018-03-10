@@ -11,7 +11,7 @@ certifi==2018.1.18        # via requests
 chardet==3.0.4            # via binaryornot, requests
 click==6.7                # via cookiecutter
 cookiecutter==1.6.0
-curio==0.8
+curio==0.9
 deprecation==2.0
 future==0.16.0            # via cookiecutter
 idna==2.6                 # via requests
