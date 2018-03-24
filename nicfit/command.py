@@ -1,3 +1,4 @@
+import functools
 from collections import OrderedDict, defaultdict
 from deprecation import deprecated
 from .__about__ import __version__
@@ -27,7 +28,10 @@ class Command(object):
     """Base class for commands."""
     # XXX: deprectated, with with global register
     _all_commands = OrderedDict()
-    _registered_commands = defaultdict(OrderedDict)
+
+    # Using partial so subclasses can use as a builder.
+    CommandDict = functools.partial(defaultdict, OrderedDict)
+    _registered_commands = CommandDict()
 
     @classmethod
     def register(Class, CommandSubClass):
