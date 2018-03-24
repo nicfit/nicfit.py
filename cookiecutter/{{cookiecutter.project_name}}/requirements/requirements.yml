@@ -1,4 +1,5 @@
 main:
+    - nicfit.py
 
 #extra_example:
 #    - pkg
