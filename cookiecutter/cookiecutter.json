@@ -13,8 +13,6 @@
         "Mozilla Public License 2.0"
     ],
 
-    "default_locale": "en_US",
-
     "_comment": "##### Project info #####",
     "project_name": "Project Name",
     "project_slug":
@@ -28,6 +26,7 @@
     "version": "0.1.0",
     "web": "https://example.com",
     "src_dir": [".", "./src"],
+    "requirements_yaml": ["no", "yes"],
 
     "year": [
         "2017",
@@ -41,6 +40,9 @@
         "2002-2017"
     ],
     "release_date": "today",
+
+    "add_docs": ["no", "yes"],
+    "use_rtd": ["no", "yes"],
 
     "_comment": "##### Remote repo options  #####",
     "use_bitbucket": ["no", "yes"],
@@ -62,7 +64,6 @@
     "use_make": ["yes", "no"],
     "use_paver": ["no", "yes"],
     "use_pytest": ["yes", "no"],
-    "use_rtd": ["no", "yes"],
 
     "pyapp_type": ["normal", "asyncio"],
     "py26": ["no", "yes"],

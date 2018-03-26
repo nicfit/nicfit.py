@@ -8,7 +8,11 @@ PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
 
 def remove_file(filepath):
-    os.remove(str(Path(PROJECT_DIRECTORY) / filepath))
+    f = Path(PROJECT_DIRECTORY) / filepath
+    if f.is_dir():
+        shutil.rmtree(f)
+    else:
+        f.unlink()
 
 
 def replace_contents(filename, what, replacement):
@@ -96,3 +100,9 @@ if __name__ == "__main__":
         gk = Path("locale/.gitkeep")
         if gk.exists():
             gk.unlink()
+
+    if '{{ cookiecutter.add_docs }}' == 'no':
+        remove_file('docs')
+
+    if '{{ cookiecutter.requirements_yaml }}' == 'no':
+        remove_file('requirements')

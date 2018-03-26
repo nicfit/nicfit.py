@@ -6,8 +6,10 @@ include README.rst
 include Makefile
 include tox.ini
 
+{% if cookiecutter.add_docs == "yes" -%}
 graft docs
 prune docs/_build
+{%- endif %}
 
 recursive-include {{ cookiecutter.src_dir }}/tests *.py
 
@@ -18,7 +20,9 @@ global-exclude .editorconfig
 global-exclude *.py[co]
 
 include requirements.txt
+{% if cookiecutter.requirements_yaml == "yes" -%}
 recursive-include requirements *.txt *.yml
+{%- endif %}
 {% if cookiecutter.gettext_domain != "None" -%}
 graft locale
 {%- endif %}
