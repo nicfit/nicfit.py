@@ -2,7 +2,8 @@ language: python
 
 python:
   - "3.6"
-  - "3.7-dev"
+# XXX: pyaml build failing.
+# - "3.7-dev"
   - "pypy3"
 
 cache:
