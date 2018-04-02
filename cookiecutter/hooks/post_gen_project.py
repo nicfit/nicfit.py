@@ -10,7 +10,7 @@ PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 def remove_file(filepath):
     f = Path(PROJECT_DIRECTORY) / filepath
     if f.is_dir():
-        shutil.rmtree(f)
+        shutil.rmtree(str(f))
     else:
         f.unlink()
 
