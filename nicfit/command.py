@@ -142,11 +142,10 @@ class SubCommandCommand(Command):
     SUB_CMDS = []
     DEFAULT_CMD = None
 
-    def __init__(self, title="Sub-commands", *args, subparsers=None, **kwargs):
+    def __init__(self, title="Sub-commands", subparsers=None, **kwargs):
         self.title = title
         self._sub_cmds = []
         self._ctor_kwargs = dict(kwargs)
-
         super().__init__(subparsers=subparsers)
 
     def _run(self):
