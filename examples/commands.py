@@ -27,29 +27,3 @@ parser = nicfit.ArgumentParser()
 nicfit.Command.loadCommandMap(parser.add_subparsers(dest="cmd", required=True))
 args = parser.parse_args()
 args.command_func(args)
-
-"""
-$ ./cmds2.py 
-usage: cmds2.py [-h] {bye,hi} ...
-cmds2.py: error: the following arguments are required: cmd
-$ ./cmds2.py --help
-usage: cmds2.py [-h] {hi,bye} ...
-
-positional arguments:
-  {hi,bye}
-    hi        A simple hello command.
-    bye       A simple hello command.
-
-optional arguments:
-  -h, --help  show this help message and exit
-$ ./cmds2.py hi --help
-usage: cmds2.py hi [-h] [--spanish]
-
-This command can speak Spanish a command line option.
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --spanish   Respond in Spanish
-$ ./cmds2.py hi --spanish
-Hola
-"""
