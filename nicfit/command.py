@@ -24,7 +24,7 @@ class CommandError(Exception):
         self.exit_status = exit_status
 
 
-class Command(object):
+class Command:
     """Base class for commands."""
     # XXX: deprectated, with with global register
     _all_commands = OrderedDict()
@@ -142,15 +142,12 @@ class SubCommandCommand(Command):
     SUB_CMDS = []
     DEFAULT_CMD = None
 
-    def __init__(self, title="Sub-commands", *args, **kwargs):
+    def __init__(self, title="Sub-commands", *args, subparsers=None, **kwargs):
         self.title = title
         self._sub_cmds = []
+        self._ctor_kwargs = dict(kwargs)
 
-        if "subparsers" in kwargs:
-            kwargs.pop("subparsers")
-        self._ctor_kwargs = kwargs
-
-        super().__init__(*args, **kwargs)
+        super().__init__(subparsers=subparsers)
 
     def _run(self):
         return self.args.command_func(self.args)
