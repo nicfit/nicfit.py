@@ -9,6 +9,9 @@ extra_cookiecutter:
 extra_curio:
     - curio
 
+extra_prompt:
+    - prompt_toolkit
+
 test:
     - pytest
     - pytest-cov
