@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
+import io
+import attr
 import os.path
 import argparse
 import configparser
+import logging.config
 from pathlib import Path
-from collections import namedtuple
 
 
 class Config(configparser.ConfigParser):
@@ -11,6 +12,7 @@ class Config(configparser.ConfigParser):
     def __init__(self, filename, *, config_env_var=None, touch=False, mode=None,
                  **kwargs):
         super().__init__(**kwargs)
+        self.input_filenames = []
 
         if (config_env_var and config_env_var in os.environ and
                 Path(os.environ[config_env_var]).exists()):
@@ -25,6 +27,9 @@ class Config(configparser.ConfigParser):
                     self.filename.parent.mkdir(parents=True)
                 if not self.filename.exists():
                     self.filename.touch()
+            elif not self.filename.exists():
+                raise FileNotFoundError(self.filename)
+
             if mode and self.filename.exists():
                 self.filename.chmod(mode)
 
@@ -43,9 +48,27 @@ class Config(configparser.ConfigParser):
     def setlist(self, section, option, value, *, delim=", "):
         self.set(section, option, delim.join(value))
 
-    def read(self, filenames=None, encoding=None, touch=False):
-        super().read(filenames or [], encoding=encoding)
+    # XXX: no override for read_string, read_string -> read_file
 
+    def read_file(self, f, source="<file>"):
+        self.input_filenames.append(source)
+        return super().read_file(f, source=source)
+
+    def readfp(self, fp, filename="<fp>"):
+        # Deprecated in Python 3.2
+        return self.read_file(fp, source=filename)
+
+    def read_dict(self, dictionary, source='<dict>'):
+        self.input_filenames.append(source)
+        return super().read_dict(dictionary, source=source)
+
+    def read(self, filenames=None, encoding=None, touch=False):
+        filenames = filenames or []
+
+        super().read(filenames, encoding=encoding)
+        self.input_filenames += filenames
+
+        # TODO: deprecate touch? see ctor
         if not self.filename.exists() and touch:
             self.filename.touch()
 
@@ -66,13 +89,19 @@ class Config(configparser.ConfigParser):
             if fileobject is None:
                 fp.close()
 
+    def __str__(self):
+        out = io.StringIO()
+        self.write(out)
+        out.seek(0)
+        return out.read()
+
 
 class ConfigFileType(argparse.FileType):
     """ArgumentParser ``type`` for loading ``Config`` objects."""
     def __init__(self, config_opts=None, encoding="utf-8"):
         super().__init__(mode='r')
-        self._encoding = encoding
         self._opts = config_opts or ConfigOpts()
+        self._encoding = encoding
 
     def __call__(self, filename):
         if not filename and not self._opts.default_config:
@@ -81,38 +110,26 @@ class ConfigFileType(argparse.FileType):
         assert(issubclass(self._opts.ConfigClass, Config))
         if filename:
             filename = os.path.expanduser(os.path.expandvars(filename))
+
         config = self._opts.ConfigClass(filename,
-                                        config_env_var=self._opts.env_var,
-                                        **self._opts.extra_config_opts)
+                                        **self._opts.configClassOpts(),
+                                        **self._opts.configparser_opts)
 
+        # Default config? Start with that...
         if self._opts.default_config:
-            config.read_string(self._opts.default_config)
+            config.read_string(self._opts.default_config, source="<default>")
 
+        # User file.
         if filename:
-            try:
-                fp = super().__call__(filename)
-                config.read_file(fp)
-            except Exception as ex:
-                if not self._opts.default_config:
-                    raise
+            config.read()
+            if self._opts.init_logging_fileConfig:
+                logging.config.fileConfig(config)
 
         return config
 
 
-class ConfigOpts(namedtuple("_ConfigOptions", ["required",
-                                               "default_file",
-                                               "default_config",
-                                               "override_arg",
-                                               "ConfigClass",
-                                               "default_config_opt",
-                                               "env_var",
-                                               "extra_config_opts",
-                                              ])):
-    """A namedtuple to describe configuration properties for an application."""
-    def __new__(cls, required=False, default_file=None, default_config=None,
-                override_arg=False, ConfigClass=Config,
-                default_config_opt=None, env_var=None,
-                extra_config_opts=None):
+@attr.s(frozen=True)
+class ConfigOpts:
         """
         :param required: A boolean stating whether the config argument is
             required. When ``True`` a positional argument ``config`` is added
@@ -129,15 +146,30 @@ class ConfigOpts(namedtuple("_ConfigOptions", ["required",
         :param default_config_opt: If not ``None`` it should be a command line
             optional in either short OR long form. When used the the default
             configuration data is printed to stdout.
-        :param env_var: When not ``None`` it is the name of an environment
+        :param config_env_var: When not ``None`` it is the name of an env
             variable that will be read (if the path exists, not errors when it
             does not) in addition to any other config filenames.
-        :param extra_config_opts: A dict of extra keyward arguments to pass to
-               the ``ConfigClass`` constructor.
+        :param config_parsers_opts: A dict of extra
+            ``configparser.ConfigParser`` keyword arguments to pass to the
+             ``ConfigClass`` constructor.
+        :param init_logging_fileConfig: If ``True`` the config (default or
+               otherwise, is passed to ``logging.config.fileConfig``.
         """
-        return super().__new__(cls, required, default_file, default_config,
-                               override_arg, ConfigClass, default_config_opt,
-                               env_var, extra_config_opts or {})
+        required = attr.ib(default=False)
+        default_file = attr.ib(default=None)
+        default_config = attr.ib(default=None)
+        override_arg = attr.ib(default=False)
+        ConfigClass = attr.ib(default=Config)
+        default_config_opt = attr.ib(default=None)
+        config_env_var = attr.ib(default=None)
+        init_logging_fileConfig = attr.ib(default=False)
+        configparser_opts = attr.ib(default=attr.Factory(dict))
+        touch = attr.ib(default=False)
+        mode = attr.ib(default=0o644)
+
+        def configClassOpts(self):
+            return dict(touch=self.touch,
+                        mode=self.mode)
 
 
 def addCommandLineArgs(arg_parser, opts):

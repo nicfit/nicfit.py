@@ -14,9 +14,9 @@ def __parse_version(v):                                       # pragma: nocover
     return ver, rel, ver_info
 
 
-__version__ = "0.7b0"
+__version__ = "0.8a0"
 __release_name__ = ""
-__years__ = "2016-2017"
+__years__ = "2016-2018"
 
 _, __release__, __version_info__ = __parse_version(__version__)
 __project_name__ = "nicfit.py"

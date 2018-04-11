@@ -54,6 +54,7 @@ clean-local:
 	-rm tags
 	${MAKE} -C ./cookiecutter clean
 	-rm *.log
+	rm -rf .cache
 
 clean-build:
 	rm -fr build/
@@ -72,6 +73,7 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
+	rm -fr .pytest_cache/
 
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
@@ -88,6 +90,10 @@ test: gettext
 	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
 
 test-all:
+	for example in `ls ./examples/*.py`; do \
+		echo "Runninig $$example..."; \
+		./$$example > /dev/null ; \
+	done
 	tox
 
 coverage: gettext
@@ -121,12 +127,12 @@ pre-release: lint test changelog requirements
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	check-manifest
-	@if git tag -l | grep ${RELEASE_TAG} > /dev/null; then \
+	@if git tag -l | grep -E '^$(RELEASE_TAG)$$' > /dev/null; then \
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
 	IFS=$$'\n';\
-	for auth in `git authors --list`; do \
+    for auth in `git authors --list | sed 's/.* <\(.*\)>/\1/'`; do \
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done

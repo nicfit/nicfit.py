@@ -1,11 +1,11 @@
-import nicfit
+#!/usr/bin/env python
+import time
 from nicfit.curio import Application
 
 async def _main(args):
-    import time
     print(args)
-    time.sleep(5)
-    return 5
+    time.sleep(2)
+    return 0
 
 def atexit():
     print("atexit")

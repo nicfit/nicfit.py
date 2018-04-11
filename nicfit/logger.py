@@ -6,9 +6,7 @@ import logging.config
 from io import StringIO
 from textwrap import dedent
 
-from deprecation import deprecated
-from .__about__ import __version__
-from ._config import Config
+from .config import Config
 
 __all__ = ["stdout", "stderr", "FileConfig", "DictConfig"]
 
@@ -39,11 +37,11 @@ def getLogger(name=None):
 
 def _initConsoleLogger(name, level, handler=None):
     handler = handler or logging.StreamHandler(sys.stdout)
-    l = getLogger(name)
-    l.propagate = False
-    l.setLevel(level)
-    l.addHandler(handler)
-    return l
+    log = getLogger(name)
+    log.propagate = False
+    log.setLevel(level)
+    log.addHandler(handler)
+    return log
 
 
 stdout = _initConsoleLogger("_stdout", logging.DEBUG,
@@ -275,24 +273,25 @@ format = "%(message)s"
 
     @staticmethod
     def PKG_LOGGING_CONFIG(pkg_logger, propagate=True, pkg_level="NOTSET"):
-        return dedent(f"""
+        propagate = "1" if propagate else "0"
+        return dedent("""
         [logger_{pkg_logger}]
         level = {pkg_level}
         qualname = {pkg_logger}
-        propagate = {1 if propagate else 0}
+        propagate = {propagate}
         handlers =
-        """)
+        """.format(**locals()))
 
     @staticmethod
     def HANDLER_LOGGING_CONFIG(name, class_=True, args=tuple([]),
                                level="NOTSET", formatter="generic"):
-        return dedent(f"""
+        return dedent("""
         [handler_{name}]
         class = {class_}
         args = {args}
         level = {level}
         formatter = {formatter}
-        """)
+        """.format(**locals()))
 
     def __init__(self, level=DEFAULT_LEVEL, format=DEFAULT_FORMAT):
         super().__init__(None)
@@ -321,58 +320,12 @@ format = "%(message)s"
             self.setlist("handlers", "keys", handlers)
 
         return self
-        
+
     def __str__(self):
         out = StringIO()
         self.write(out)
         out.seek(0)
         return out.read()
-
-
-@deprecated(details="Use FileConfig.DEFAULT_LOGGING_CONFIG",
-            deprecated_in="0.6.3", removed_in="0.7",
-            current_version=__version__)
-def LOGGING_CONFIG(pkg_logger, root_level="WARN", log_format=LOG_FORMAT,
-                   pkg_level="NOTSET", init_logging=False):
-    cfg = """
-###
-#logging configuration
-#https://docs.python.org/3/library/logging.config.html#configuration-file-format
-###
-
-[loggers]
-keys = root, {pkg_logger}
-
-[handlers]
-keys = console
-
-[formatters]
-keys = generic
-
-[logger_root]
-level = {root_level}
-handlers = console
-
-[logger_{pkg_logger}]
-level = {pkg_level}
-qualname = {pkg_logger}
-; When adding more specific handlers than what exists on the root you'll
-; likely want to set propagate to false.
-handlers =
-propagate = 1
-
-[handler_console]
-class = StreamHandler
-args = (sys.stderr,)
-level = NOTSET
-formatter = generic
-
-[formatter_generic]
-format = {log_format}
-""".format(**locals())
-    if init_logging:
-        logging.config.fileConfig(StringIO(cfg))
-    return cfg
 
 
 if __name__ == "__main__":                                     # pragma: nocover

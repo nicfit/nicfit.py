@@ -3,6 +3,194 @@ Release History
 
 .. :changelog:
 
+v0.8 (2018-02-18)
+------------------------
+
+New
+~~~
+- Added ConfigOpts.configClassOpts() helper for obtaining the dict of arguments
+  for :class:`nicfit.config.ConfigClass`
+- attrs (https://github.com/python-attrs/attrs) based
+  :class:`nicfit.config.ConfigOpts`.
+- Filter duplicate emails when generating AUTHORS.rst.
+- Flush stdout and stderr before sys.exit()
+- :class:`nicfit.command.Command` API refactor (and deprecation of older API)
+- Per Command class registration lists makes for more granular command grouping.
+- :class:`nicfit.command.SubCommandCommand` (and a :mod:`nicfit.aio` verison)
+  for building commands around subparsers.
+
+
+Fix
+~~~
+- Required subparser support using Python3.7 argparse and faking support
+  for lesser version.
+
+Other
+~~~~~
+- Some docs, and example commands.
+- Added deprecated details.
+- Fixed tests from enableCommands removal.
+
+
+v0.8b3 (2018-02-11)
+------------------------
+
+Fix
+~~~
+- Removed internal usage of deprecated command APIs.
+
+
+v0.8b2 (2018-02-11)
+------------------------
+
+New
+~~~
+- :class:`nicfit.command.Command` API refactor (and deprecation of older API)
+- Per Command class registration lists makes for more granular command grouping.
+- :class:`nicfit.command.SubCommandCommand` (and a :mod:`nicfit.aio` verison)
+  for building commands around subparsers.
+
+Fix
+~~~
+- Required subparser support using Python3.7 argparse and faking support
+  for lesser version.
+
+Other
+~~~~~
+- Update pytest-runner from 3.0 to 4.0 (#183) <github-bot@pyup.io>
+- Update sphinx from 1.6.5 to 1.6.7 (#182) <github-bot@pyup.io>
+- Update deprecation to 1.1 (#181) <github-bot@pyup.io>
+- Update pytest from 3.3.1 to 3.4.0 (#180) <github-bot@pyup.io>
+- Update arrow from 0.12.0 to 0.12.1 (#179) <github-bot@pyup.io>
+- Update certifi from 2017.11.5 to 2018.1.18 (#178) <github-bot@pyup.io>
+- Update babel to 2.5.3 (#177) <github-bot@pyup.io>
+- Update attrs to 17.4.0 (#173) <github-bot@pyup.io>
+- Update pyaml from 17.10.0 to 17.12.1 (#172) <github-bot@pyup.io>
+- Update pip-tools from 1.10.2 to 1.11.0 (#168) <github-bot@pyup.io>
+
+
+
+v0.8b1 (2017-12-10)
+------------------------
+
+New
+~~~
+- Added ConfigOpts.configClassOpts() helper for obtaining the dict of arguments
+  for :class:`nicfit.config.ConfigClass`
+- attrs (https://github.com/python-attrs/attrs) based
+  :class:`nicfit.config.ConfigOpts`.
+- Filter duplicate emails when generating AUTHORS.rst.
+- Flush stdout and stderr before sys.exit()
+
+
+Other
+~~~~~
+- Update pytest from 3.2.5 to 3.3.1 (#169) <github-bot@pyup.io>
+- Update arrow from 0.10.0 to 0.12.0 (#166) <github-bot@pyup.io>
+- Update pip-tools from 1.10.1 to 1.10.2 (#164) <github-bot@pyup.io>
+- Update check-manifest from 0.35 to 0.36 (#163) <github-bot@pyup.io>
+
+
+v0.7 (2017-11-19) : Mourning Of The Magicians
+----------------------------------------------
+
+Changes
+~~~~~~~
+- Nicfit.config (previously from _config)
+- Config files no longer created/touched by default.
+- Python 3.6+ support only
+
+Fix
+~~~
+- Setup.py for non-utf systems.
+
+Other
+~~~~~
+- Update jinja2 from 2.9.6 to 2.10 (#160) <github-bot@pyup.io>
+- Update pytest from 3.2.3 to 3.2.5 (#162) <github-bot@pyup.io>
+- Update pytest-runner from 2.12.1 to 3.0 (#159) <github-bot@pyup.io>
+- Update sphinx from 1.6.4 to 1.6.5 (#157) <github-bot@pyup.io>
+- Update flake8 from 3.4.1 to 3.5.0 (#158) <github-bot@pyup.io>
+- Update cookiecutter to 1.6.0 (#156) <github-bot@pyup.io>
+
+
+
+v0.6.6 (2017-10-10)
+--------------------
+
+New
+~~~
+- ConfigOpts.init_logging_fileConfig for invoking logging.config.fileConfig.
+- :class:`nicfit.logger.FileConfig` supports instance creation and
+  better utilities for updating config.
+- The companion to ``getlist`` :meth:`Config.setlist`
+
+Changes
+~~~~~~~
+- Pdb_opt (i.e. --pdb) is addded by default.
+
+Fix
+~~~
+- <cmd> help <subcmd> works again.
+- No f-strings in py35.
+
+Other
+~~~~~
+- Update pyaml from 17.8.0 to 17.10.0 (#155) <github-bot@pyup.io>
+- Update pytest from 3.2.2 to 3.2.3 (#154) <github-bot@pyup.io>
+- Update tox from 2.8.2 to 2.9.1 (#153) <github-bot@pyup.io>
+- Update pip-tools from 1.9.0 to 1.10.1 (#151) <github-bot@pyup.io>
+- Update sphinx from 1.6.3 to 1.6.4 (#149) <github-bot@pyup.io>
+- Update pytest-asyncio from 0.7.0 to 0.8.0 (#148) <github-bot@pyup.io>
+
+
+v0.6.5 (2017-10-10)
+------------------------
+
+New
+~~~
+- ConfigOpts.init_logging_fileConfig for invoking
+  logging.config.fileConfig.
+- :class:`nicfit.logger.FileConfig` supports instance creation and
+  better utilities for updating config.
+
+  The static interface is on the way out.
+- The companion to ``getlist`` :meth:`Config.setlist`
+
+Changes
+~~~~~~~
+- Pdb_opt (i.e. --pdb)a addded by default.
+- Python versin defaults and Trav-CI job ordering.
+
+Fix
+~~~
+- <cmd> help <subcmd> works again.
+- No f-strings in py35.
+
+Other
+~~~~~
+- Merge branch 'master' of github.com:nicfit/nicfit.py.
+
+  * 'master' of github.com:nicfit/nicfit.py:
+    Update pyaml from 17.8.0 to 17.10.0 (#155)
+- Update pyaml from 17.8.0 to 17.10.0 (#155) <github-bot@pyup.io>
+- Merge branch 'master' of github.com:nicfit/nicfit.py.
+
+  * 'master' of github.com:nicfit/nicfit.py:
+    Update pytest from 3.2.2 to 3.2.3 (#154)
+    Update tox from 2.9.0 to 2.9.1 (#153)
+    fix: No f-strings in py35
+    Update tox from 2.8.2 to 2.9.0 (#152)
+    Update pip-tools from 1.9.0 to 1.10.1 (#151)
+- Update pytest from 3.2.2 to 3.2.3 (#154) <github-bot@pyup.io>
+- Update tox from 2.9.0 to 2.9.1 (#153) <github-bot@pyup.io>
+- Update tox from 2.8.2 to 2.9.0 (#152) <github-bot@pyup.io>
+- Update pip-tools from 1.9.0 to 1.10.1 (#151) <github-bot@pyup.io>
+- Update sphinx from 1.6.3 to 1.6.4 (#149) <github-bot@pyup.io>
+- Update pytest-asyncio from 0.7.0 to 0.8.0 (#148) <github-bot@pyup.io>
+
+
+
 v0.6.5 (2017-09-21)
 ------------------------
 

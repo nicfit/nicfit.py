@@ -20,8 +20,8 @@ class Application:
         self._main_func = main_func
         self._atexit_func = atexit
 
-        self.log = getLogger(name) if name else log
         logging.basicConfig()
+        self.log = getLogger(name) if name else log
 
         extra_arg_parser_opts = extra_arg_parser_opts or {}
         parser = ArgumentParser(add_log_args=logging_args,
@@ -67,7 +67,6 @@ class Application:
 
     def main(self, args_list=None):
         self.log.debug("Application.main: {args_list}".format(**locals()))
-
         self.args = self.arg_parser.parse_args(args=args_list)
         retval = self._main(self.args)
         return retval or 0
@@ -94,24 +93,19 @@ class Application:
             try:
                 self._atexit()
             finally:
+                sys.stderr.flush()
+                sys.stdout.flush()
                 sys.exit(retval)
 
     def _run(self, args_list=None):
         self.log.debug("Application._run: {args_list}".format(**locals()))
         return self.main(args_list=args_list)
 
-    def enableCommands(self, title="Commands", description=None,
-                       add_help_subcmd=True, dest="command"):
-        from .command import Command
-        subs = self.arg_parser.add_subparsers(title=title,
-                                              description=description,
-                                              add_help_subcmd=add_help_subcmd,
-                                              dest=dest)
-        Command.initAll(subs)
-        return subs
-
 
 class AsyncApplication(Application):
+    """A base for asynchronous apps.
+    See :mod:`nicfit.aio.Application` and :mod:`nicfit.curio.Application`.
+    """
     async def _main(self, args):
         self.log.debug("AsyncApplication._main: {args}".format(**locals()))
         if self._main_func:

@@ -72,6 +72,7 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
+	rm -fr .pytest_cache/
 
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
@@ -103,34 +104,50 @@ coverage-view: coverage
 	${BROWSER} build/tests/coverage/index.html;\
 
 docs:
+{%- if cookiecutter.add_docs == "yes" %}
 	rm -f docs/{{ cookiecutter.project_slug }}.rst
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ ${SRC_DIRS}
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
+{%- else %}
+	# Using cookiecutter set add_docs="yes" to enable
+{%- endif %}
+
+docs-dist: docs
+{%- if cookiecutter.add_docs == "yes" %}
+	cd docs/_build && \
+	    tar czvf ../../dist/${PROJECT_NAME}-${VERSION}_docs.tar.gz html
+{%- endif %}
 
 docs-view: docs
+{%- if cookiecutter.add_docs == "yes" %}
 	$(BROWSER) docs/_build/html/index.html
+{%- endif %}
 
 clean-docs:
+{%- if cookiecutter.add_docs == "yes" %}
 	$(MAKE) -C docs clean
 	-rm README.html
+{%- endif %}
 
 pre-release: lint test changelog requirements
+{%- if cookiecutter.add_docs == "yes" %}
 	@# Keep docs off pre-release target list, else it is pruned during 'release' but
 	@# after a clean.
 	@$(MAKE) docs
+{%- endif %}
 	@echo "VERSION: $(VERSION)"
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	check-manifest
-	@if git tag -l | grep ${RELEASE_TAG} > /dev/null; then \
+	@if git tag -l | grep -E '^$(RELEASE_TAG)$$' > /dev/null; then \
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
 	IFS=$$'\n';\
-	for auth in `git authors --list`; do \
+    for auth in `git authors --list | sed 's/.* <\(.*\)>/\1/'`; do \
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
@@ -140,8 +157,12 @@ pre-release: lint test changelog requirements
 	@git status -s -b
 
 requirements:
+{%- if cookiecutter.requirements_yaml == "yes" %}
 	nicfit requirements
 	pip-compile -U requirements.txt -o ./requirements.txt
+{%- else %}
+	# Using cookiecutter set requirements_yaml="yes" to enable
+{%- endif %}
 
 changelog:
 	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
@@ -214,12 +235,10 @@ sdist: build
 	python setup.py bdist_wheel
 
 {% if cookiecutter.gettext_domain != "None" -%}
-dist: clean gettext sdist docs
+dist: clean gettext sdist docs-dist
 {%- else -%}
-dist: clean sdist docs
+dist: clean sdist docs-dist
 {%- endif %}
-	cd docs/_build && \
-	    tar czvf ../../dist/${PROJECT_NAME}-${VERSION}_docs.tar.gz html
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
 	cd dist && \
 	for f in $$(ls); do \
