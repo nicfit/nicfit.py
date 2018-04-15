@@ -1,4 +1,5 @@
 import uuid
+import shlex
 from pprint import pformat
 from prompt_toolkit.completion import Completion
 from prompt_toolkit.contrib.regular_languages.compiler import compile
@@ -55,9 +56,22 @@ def makeCompleter(commands: list, word_completers: dict = None):
 
 class WordCompleter(BaseWordCompleter):
     def __init__(self, words, ignore_case=False, meta_dict=None, WORD=False,
-                 sentence=True, match_middle=True):
+                 sentence=True, match_middle=True, quote_if=None):
+
+        self._words_callable = words if callable(words) else None
+        if self._words_callable:
+            words = self._words_callable()
+
+        self.quote_if = quote_if
+
         super().__init__(words, ignore_case, meta_dict, WORD, sentence,
                          match_middle)
+
+    def quote(self, s):
+        for q in (self.quote_if or []):
+            if q in s:
+                s = shlex.quote(s)
+        return s
 
     def get_completions(self, document, complete_event):
         log.debug("------------------------------------------------------")
@@ -83,8 +97,12 @@ class WordCompleter(BaseWordCompleter):
         log.debug(f"** WORD {self.WORD}")
         log.debug(f"** words {self.words}")
         log.debug(f"** word_before_cursor {word_before_cursor}")
-        for a in self.words:
+        words = self._words_callable() if self._words_callable else self.words
+
+        for a in words:
             if word_matches(a):
                 display_meta = self.meta_dict.get(a, '')
-                log.debug(f"MATCH: {a}, {-len(word_before_cursor)}, meta: {display_meta}")
-                yield Completion(a, -len(word_before_cursor), display_meta=display_meta)
+                log.debug(f"MATCH: {a}, {-len(word_before_cursor)},"
+                          f" meta: {display_meta}")
+                yield Completion(self.quote(a), -len(word_before_cursor),
+                                 display_meta=display_meta)
