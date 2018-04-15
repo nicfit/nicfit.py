@@ -9,7 +9,7 @@ extra_cookiecutter:
 extra_curio:
     - curio
 
-extra_prompt:
+extra_shell:
     - prompt-toolkit
 
 test:
