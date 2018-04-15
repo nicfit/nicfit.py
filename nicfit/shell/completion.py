@@ -52,7 +52,7 @@ def makeCompleter(commands: list, word_completers: dict = None):
 
     return GrammarCompleter(compile(grammars), cmd_completers)
 
-# XXX: This WordCompleter is copied from PTK, and here only for education
+
 class WordCompleter(BaseWordCompleter):
     def __init__(self, words, ignore_case=False, meta_dict=None, WORD=False,
                  sentence=True, match_middle=True):

@@ -10,7 +10,7 @@ extra_curio:
     - curio
 
 extra_prompt:
-    - prompt_toolkit
+    - prompt-toolkit
 
 test:
     - pytest
