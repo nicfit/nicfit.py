@@ -1,1 +1,2 @@
-from .command import Command, SubCommandCommand
+from .completion import makeCompleter
+from .command import Command, SubCommandCommand, aio

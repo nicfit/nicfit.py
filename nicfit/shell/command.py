@@ -1,11 +1,17 @@
 import re
-import uuid
+import textwrap
+import operator
+
+from prompt_toolkit.token import Token
+from prompt_toolkit.styles import style_from_dict
+from prompt_toolkit.shortcuts import print_tokens
 
 from ..command import Command as _BaseCommand
 from ..command import SubCommandCommand as _SubCommandCommand
 from ..aio import Command as _BaseAsyncCommand
 from ..aio import SubCommandCommand as _BaseAsyncSubCommandCommand
 from .completion import _updateCompleterDict, WordCompleter
+from . import output
 
 
 class _CommandCompleterMixin:
@@ -80,8 +86,66 @@ class SubCommandCommand(_SubCommandCommand, _SubCommandCompleterMixin):
     pass
 
 
+class _HelpCommanMixin:
+    NAME = "help"
+    HELP_STYLE = {**output.Styles.DEFN_LIST_DICT,
+                  **{Token.Name: "bold italic"}}
+    _help_style = style_from_dict(HELP_STYLE)
+    ALIASES = ["?", "??"]
+    DESC = "Display a list of commands. Invoke command with -h/--help for " \
+           "more info."
+    COMMAND_CLASS = None
+
+    def _initArgParser(self, parser):
+        parser.add_argument("-l", "--long", action="store_true",
+                            help="Display command descriptions in listing. "
+                                 "Use the alias ?? to achieve the same.")
+
+    def _run(self):
+        def isLongForm():
+            return (self.args.long or self.args.arg0 == "??")
+
+        listing = []
+        seen_cmds = set()
+        for c in set(self.COMMAND_CLASS.loadCommandMap(instantiate=False)
+                         .values()):
+            if c not in seen_cmds:
+                listing.append((c.name(), c.aliases(),
+                                c.desc() if isLongForm() else ""))
+                seen_cmds.add(c)
+
+        tokens = []
+        indent = " " * 2
+        for cmd, aliases, desc in sorted(listing,
+                                         key=operator.itemgetter(0)):
+            alias_toks = []
+            if aliases:
+                alias_toks = [
+                    (Token.Delim, "\t["),
+                    (Token, f"alias{'es' if len(aliases) > 1 else ''}: "),
+                    (Token.Name, ",".join(aliases)),
+                    (Token.Delim, "]"),
+                ]
+            tokens += [(Token.Name, cmd)] + alias_toks + \
+                      [(Token.Delim, "\n" if desc else ""),
+                       (Token, indent if desc else ""),
+                       (Token.Definition,
+                        textwrap.fill(desc or "", width=70,
+                                      initial_indent=indent,
+                                      subsequent_indent=indent)),
+                       (Token, "\n"),
+                       ]
+
+        if isLongForm():
+            output.printTitle("\nAll Commands")
+        print_tokens(tokens, style=self._help_style)
+
+
+class HelpCommand(_HelpCommanMixin, Command):
+    pass
+
 # Async command interfaces
-class async:
+class aio:
     class Command(_BaseAsyncCommand, _CommandCompleterMixin):
         pass
 
@@ -89,21 +153,8 @@ class async:
                             _SubCommandCompleterMixin):
         pass
 
+    class HelpCommand(_HelpCommanMixin, _BaseAsyncSubCommandCommand):
+        async def _run(self):
+            return super()._run()
 
-class _Namer:
-    def __init__(self):
-        self._names = set()
-        self._counter = 0
 
-    def get(self, name):
-        if name not in self._names:
-            self._names.add(name)
-            return name
-
-        n = f"{name}_{self._counter + 1}"
-        if n not in self._names:
-            self._counter += 1
-            self._names.add(n)
-            return n
-
-        return f"{name}_{uuid.uuid4()}"
