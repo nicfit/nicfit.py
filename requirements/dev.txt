@@ -4,7 +4,7 @@ check-manifest==0.37
 flake8==3.5.0
 git+https://github.com/nicfit/gitchangelog.git
 ipdb==0.11
-pip-tools==1.11.0
+pip-tools==2.0.1
 pss==1.41
 pyaml==17.12.1
 sphinx_rtd_theme==0.3.0
