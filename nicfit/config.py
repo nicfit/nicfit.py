@@ -46,7 +46,7 @@ class Config(configparser.ConfigParser):
         return values
 
     def setlist(self, section, option, value, *, delim=", "):
-        self.set(section, option, delim.join(value))
+        self.set(section, option, delim.join([str(v) for v in value]))
 
     # XXX: no override for read_string, read_string -> read_file
 
@@ -54,23 +54,15 @@ class Config(configparser.ConfigParser):
         self.input_filenames.append(source)
         return super().read_file(f, source=source)
 
-    def readfp(self, fp, filename="<fp>"):
-        # Deprecated in Python 3.2
-        return self.read_file(fp, source=filename)
-
     def read_dict(self, dictionary, source='<dict>'):
         self.input_filenames.append(source)
         return super().read_dict(dictionary, source=source)
 
-    def read(self, filenames=None, encoding=None, touch=False):
+    def read(self, filenames=None, encoding=None):
         filenames = filenames or []
 
         super().read(filenames, encoding=encoding)
         self.input_filenames += filenames
-
-        # TODO: deprecate touch? see ctor
-        if not self.filename.exists() and touch:
-            self.filename.touch()
 
         with open(str(self.filename), encoding=encoding) as fp:
             self.read_file(fp, source=str(self.filename))
