@@ -74,7 +74,6 @@ class WordCompleter(BaseWordCompleter):
         return s
 
     def get_completions(self, document, complete_event):
-        log.debug("------------------------------------------------------")
         # Get word/text before cursor.
         if self.sentence:
             word_before_cursor = document.text_before_cursor
@@ -94,9 +93,10 @@ class WordCompleter(BaseWordCompleter):
             else:
                 return word.startswith(word_before_cursor)
 
-        log.debug(f"** WORD {self.WORD}")
-        log.debug(f"** words {self.words}")
-        log.debug(f"** word_before_cursor {word_before_cursor}")
+        #log.debug("------------------------------------------------------")
+        #log.debug(f"** WORD {self.WORD}")
+        #log.debug(f"** words {self.words}")
+        #log.debug(f"** word_before_cursor {word_before_cursor}")
         words = self._words_callable() if self._words_callable else self.words
 
         for a in words:
