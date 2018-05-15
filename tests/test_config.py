@@ -393,8 +393,8 @@ def test_ConfigFileType_loggingConfig(tmpdir):
     with patch.object(logging.config, "fileConfig"):
         cfg_ftype = ConfigFileType(ConfigOpts(init_logging_fileConfig=True,
                                               touch=True))
-        cfg_ftype(str(inifile))
-        logging.config.fileConfig.assert_called_once()
+        config = cfg_ftype(str(inifile))
+        logging.config.fileConfig.assert_called_once_with(config)
 
 
 def test_Config_read_dict(tmpdir):
