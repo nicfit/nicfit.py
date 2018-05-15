@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # nicfit.py documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul  9 22:26:36 2013.
@@ -23,8 +22,7 @@ import sys
 #sys.path.insert(0, os.path.abspath('.'))
 
 # Get the project root dir, which is the parent dir of this
-cwd = os.getcwd()
-project_root = os.path.join(".", os.path.dirname(cwd))
+project_root = os.path.abspath("..")
 
 # Insert the project root dir as the first element in the PYTHONPATH.
 # This lets us ensure that the source package is imported, and that its

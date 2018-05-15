@@ -21,7 +21,7 @@ def _updateCompleterDict(completers, cdict, regex=None):
                 raise ValueError(f"Duplicate completion key: {key}")
 
             if key in completers:
-                uniq = "_".join([key, str(uuid.uuid4()).replace("-","")])
+                uniq = "_".join([key, str(uuid.uuid4()).replace("-", "")])
                 regex = regex.replace(f"P<{key}>", f"P<{uniq}>")
                 completers[uniq] = cdict[key]
             else:
@@ -93,10 +93,12 @@ class WordCompleter(BaseWordCompleter):
             else:
                 return word.startswith(word_before_cursor)
 
-        #log.debug("------------------------------------------------------")
-        #log.debug(f"** WORD {self.WORD}")
-        #log.debug(f"** words {self.words}")
-        #log.debug(f"** word_before_cursor {word_before_cursor}")
+        '''
+        log.debug("------------------------------------------------------")
+        log.debug(f"** WORD {self.WORD}")
+        log.debug(f"** words {self.words}")
+        log.debug(f"** word_before_cursor {word_before_cursor}")
+        '''
         words = self._words_callable() if self._words_callable else self.words
 
         for a in words:

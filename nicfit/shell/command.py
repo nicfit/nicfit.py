@@ -144,6 +144,7 @@ class _HelpCommanMixin:
 class HelpCommand(_HelpCommanMixin, Command):
     pass
 
+
 # Async command interfaces
 class aio:
     class Command(_BaseAsyncCommand, _CommandCompleterMixin):
@@ -156,5 +157,3 @@ class aio:
     class HelpCommand(_HelpCommanMixin, _BaseAsyncSubCommandCommand):
         async def _run(self):
             return super()._run()
-
-
