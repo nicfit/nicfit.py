@@ -107,7 +107,7 @@ docs:
 {%- if cookiecutter.add_docs == "yes" %}
 	rm -f docs/{{ cookiecutter.project_slug }}.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ ${SRC_DIRS}
+	sphinx-apidoc -H $(PROJECT_NAME) -V $(VERSION) -o docs/ ${SRC_DIRS}
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 {%- else %}
@@ -116,6 +116,7 @@ docs:
 
 docs-dist: docs
 {%- if cookiecutter.add_docs == "yes" %}
+	test -d dist || mkdir dist
 	cd docs/_build && \
 	    tar czvf ../../dist/${PROJECT_NAME}-${VERSION}_docs.tar.gz html
 {%- endif %}
@@ -142,7 +143,7 @@ pre-release: lint test changelog requirements
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	check-manifest
-	@if git tag -l | grep -E '^$(RELEASE_TAG)$$' > /dev/null; then \
+	@if git tag -l | grep -E '^$(shell echo $${RELEASE_TAG} | sed 's|\.|.|g')$$' > /dev/null; then \
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
