@@ -72,7 +72,7 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
-	rm -fr .pytest_cache/
+	find . -name '.pytest_cache' -type d -exec rm -rf {} +
 
 clean-patch:
 	find . -name '*.rej' -exec rm -f '{}' \;
@@ -148,7 +148,7 @@ pre-release: lint test changelog requirements
         false; \
     fi
 	IFS=$$'\n';\
-    for auth in `git authors --list | sed 's/.* <\(.*\)>/\1/'`; do \
+	for auth in `git authors --list | sed 's/.* <\(.*\)>/\1/'`; do \
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
@@ -211,7 +211,7 @@ github-release:
                    --repo ${GITHUB_REPO} --tag ${RELEASE_TAG} \
                    --name "$${name}" $${prerelease}
 	for file in $$(find dist -type f -exec basename {} \;) ; do \
-        echo "FILE: $$file"; \
+        echo "Uploading: $$file"; \
         github-release upload --user "${GITHUB_USER}" --repo ${GITHUB_REPO} \
                    --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
     done
