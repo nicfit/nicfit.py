@@ -14,7 +14,7 @@ cookiecutter==1.6.0
 curio==0.9
 deprecation==2.0.2
 future==0.16.0            # via cookiecutter
-idna==2.6                 # via requests
+idna==2.7                 # via requests
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.10              # via cookiecutter, jinja2-time
 markupsafe==1.0           # via jinja2
