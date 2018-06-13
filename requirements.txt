@@ -20,7 +20,7 @@ jinja2==2.10              # via cookiecutter, jinja2-time
 markupsafe==1.0           # via jinja2
 packaging==17.1           # via deprecation
 poyo==0.4.1               # via cookiecutter
-prompt-toolkit==1.0.15
+prompt-toolkit==2.0.3
 pyaml==17.12.1
 pyparsing==2.2.0          # via packaging
 python-dateutil==2.7.3    # via arrow
