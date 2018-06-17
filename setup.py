@@ -5,8 +5,9 @@ import os
 import re
 import sys
 import warnings
+from pathlib import Path
 
-from parcyl import Setup
+from parcyl import Setup, setupAttrFromInfoFile
 
 classifiers = [
     "Intended Audience :: Developers",
@@ -21,32 +22,6 @@ classifiers = [
 
 def getPackageInfo():
     info_dict = {}
-    info_keys = ["version", "name", "author", "author_email", "url", "license",
-                 "description", "release_name", "github_url"]
-    key_remap = {"name": "pypi_name"}
-
-    # __about__
-    info_fpath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                              ".",
-                              "nicfit",
-                              "__about__.py")
-    with io.open(info_fpath, encoding='utf-8') as infof:
-        for line in infof:
-            for what in info_keys:
-                rex = re.compile(r"__{what}__\s*=\s*['\"](.*?)['\"]"
-                                  .format(what=what if what not in key_remap
-                                                    else key_remap[what]))
-
-                m = rex.match(line.strip())
-                if not m:
-                    continue
-                info_dict[what] = m.groups()[0]
-
-    if sys.version_info[:2] >= (3, 4):
-        vparts = info_dict["version"].split("-", maxsplit=1)
-    else:
-        vparts = info_dict["version"].split("-", 1)
-    info_dict["release"] = vparts[1] if len(vparts) > 1 else "final"
 
     # Info
     readme = ""
@@ -61,7 +36,10 @@ def getPackageInfo():
     return info_dict
 
 
-PKG_INFO = getPackageInfo()
+about_file = Path(__file__).parent / "nicfit/__about__.py"
+PKG_INFO = setupAttrFromInfoFile(about_file)
+PKG_INFO.update(getPackageInfo())
+
 if PKG_INFO["release"].startswith("a"):
     #classifiers.append("Development Status :: 1 - Planning")
     #classifiers.append("Development Status :: 2 - Pre-Alpha")

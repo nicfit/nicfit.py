@@ -82,14 +82,12 @@ clean-patch:
 lint:
 	flake8 --builtins=_ $(SRC_DIRS)
 
-_PYTEST_OPTS=
-ifdef TEST_PDB
-    _PDB_OPTS=--pdb -s
-endif
 test: gettext
-	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
+	python setup.py test
 
 test-all:
+	python setup.py develop
+
 	for example in `ls ./examples/*.py`; do \
 		echo "Runninig $$example..."; \
 		./$$example > /dev/null ; \

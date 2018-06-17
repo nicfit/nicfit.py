@@ -1,4 +1,4 @@
-main:
+install:
     - deprecation
     - attrs
     - pyaml
@@ -10,12 +10,11 @@ extra_curio:
     - curio
 
 extra_shell:
-    - prompt-toolkit
+    - prompt-toolkit<2.0
 
 test:
     - pytest
     - pytest-cov
-    - pytest-runner
     - pytest-asyncio
     - pytest-curio
     - babel
