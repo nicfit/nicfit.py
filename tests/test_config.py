@@ -2,8 +2,9 @@ import os
 import tempfile
 import argparse
 import configparser
+import logging.config
 from pathlib import Path
-from os.path import expandvars, expanduser, join
+from unittest.mock import patch
 
 import pytest
 
@@ -126,7 +127,7 @@ def test_ConfigReadMulti(tmpdir):
     all_files.reverse()
 
     c = Config(filename, touch=True)
-    c.read(filenames=all_files, touch=True)
+    c.read(filenames=all_files)
     assert set(c.sections()) == {"MAIN", "CONFIG1", "CONFIG2", "CONFIG3"}
     assert c.get("MAIN", "mainkey") == "config1"
 
@@ -178,7 +179,6 @@ def test_ConfigFileType(tmpdir):
     copy = Config(f, touch=True)
     copy.read()
     assert [i for i in copy.items()] == [i for i in config.items()]
-
 
     # File exists
     f = os.path.join(str(tmpdir), "exists")
@@ -372,3 +372,48 @@ def test_Config_mode(tmpdir):
     assert str(filename2) == str(cfg.filename)
     assert filename2.exists() == True
     assert (filename2.stat().st_mode & 0o000777) == 0o600
+
+
+def test_Config_setlist(tmpdir):
+    c = Config(str(tmpdir / "test.ini"), touch=True)
+    items = [1, 2, 3, 13, 11, 6]
+    c.add_section("sect")
+    c.setlist("sect", "opt", items)
+    assert c.get("sect", "opt") == "1, 2, 3, 13, 11, 6"
+    assert c.getlist("sect", "opt") == ["1", "2", "3", "13", "11", "6"]
+
+    # Config __str__ test.
+    assert str(c) == "[sect]\nopt = 1, 2, 3, 13, 11, 6\n\n"
+
+
+def test_ConfigFileType_loggingConfig(tmpdir):
+    inifile = tmpdir / "bornagainst.ini"
+
+    # init_logging_fileConfig
+    with patch.object(logging.config, "fileConfig"):
+        cfg_ftype = ConfigFileType(ConfigOpts(init_logging_fileConfig=True,
+                                              touch=True))
+        config = cfg_ftype(str(inifile))
+        logging.config.fileConfig.assert_called_once_with(config)
+
+
+def test_Config_read_dict(tmpdir):
+    inifile = tmpdir / "Pestilence.ini"
+    cfg = Config(inifile, touch=True)
+    cfg.read_dict({"Born Against" : {"from": "USA",
+                                     "hardcore": "yes"
+                                    },
+                   "Altar": {"from": "Netherlands",
+                             "hardcore": "no"
+                            },
+                   "Pestilence": {"from": "Netherlands",
+                                  "hardcore": "no"
+                                 }
+                  })
+    assert set(cfg.sections()) == {"Altar", "Born Against", "Pestilence"}
+    assert not cfg.getboolean("Pestilence", "hardcore")
+    assert not cfg.getboolean("Altar", "hardcore")
+    assert cfg.getboolean("Born Against", "hardcore")
+    assert cfg.get("Born Against", "from") == "USA"
+    assert cfg.get("Altar", "from") == "Netherlands"
+    assert cfg.get("Pestilence", "from") == "Netherlands"

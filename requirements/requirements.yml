@@ -9,6 +9,9 @@ extra_cookiecutter:
 extra_curio:
     - curio
 
+extra_shell:
+    - prompt-toolkit
+
 test:
     - pytest
     - pytest-cov
@@ -23,7 +26,6 @@ dev:
     - babel
     - check-manifest
     - flake8
-    - git+https://github.com/nicfit/gitchangelog.git
     - ipdb
     - pip-tools
     - tox
@@ -31,3 +33,4 @@ dev:
     - wheel
     - pyaml
     - pss
+    - git+https://github.com/nicfit/gitchangelog.git

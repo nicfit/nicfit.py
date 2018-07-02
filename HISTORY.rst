@@ -3,6 +3,51 @@ Release History
 
 .. :changelog:
 
+v0.8.1 (2018-05-14)
+--------------------
+
+New
+~~~
+- Nicfit.shell (#211)
+- Nicfit.Command.CommandDict, a builder of new instances for subclasses.
+
+Changes
+~~~~~~~
+- Add_subparsers 'dest' argument is optional, defalts to 'subcmd'
+- Better badge links in readme, and no longer include HISTORY.rst in
+  project long_description.
+- Devel: Added pyaml main requirement.
+- Nicfit.py is added as a requirement in cookiecutter builds.
+- `make clean-test` removes .pytest_cache/
+- Added CC opts add_docs and requirements_yaml.
+
+Fix
+~~~
+- SubCommandCommand can nest subparsers.
+- Path to str conversion (for pypy3)
+
+Other
+~~~~~
+- Update certifi from 2018.1.18 to 2018.4.16 (#212) <github-bot@pyup.io>
+- Update check-manifest from 0.36 to 0.37 (#210) <github-bot@pyup.io>
+- Update deprecation to 2.0.2 (#209) <github-bot@pyup.io>
+- Update sphinx_rtd_theme from 0.2.4 to 0.3.0 (#208) <github-
+  bot@pyup.io>
+- Update deprecation to 2.0.1 (#207) <github-bot@pyup.io>
+- Update tox from 2.9.1 to 3.0.0 (#206) <github-bot@pyup.io>
+- Update python-dateutil from 2.7.1 to 2.7.2 (#203) <github-bot@pyup.io>
+- Pin pyaml to latest version 17.12.1 (#204) <github-bot@pyup.io>
+- Update wheel from 0.30.0 to 0.31.0 (#205) <github-bot@pyup.io>
+- Update python-dateutil from 2.7.0 to 2.7.1 (#202) <github-bot@pyup.io>
+- Update pytest from 3.4.2 to 3.5.0 (#201) <github-bot@pyup.io>
+- Update sphinx from 1.7.1 to 1.7.2 (#200) <github-bot@pyup.io>
+- Update twine from 1.10.0 to 1.11.0 (#199) <github-bot@pyup.io>
+- Update pytest-runner from 4.0 to 4.2 (#198) <github-bot@pyup.io>
+- Update python-dateutil from 2.6.1 to 2.7.0 (#196) <github-bot@pyup.io>
+- Update curio to 0.9 (#195) <github-bot@pyup.io>
+- Update packaging from 17.0 to 17.1 (#192) <github-bot@pyup.io>
+
+
 v0.8 (2018-02-18)
 ------------------------
 

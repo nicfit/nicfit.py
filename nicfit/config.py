@@ -1,6 +1,6 @@
 import io
+import os
 import attr
-import os.path
 import argparse
 import configparser
 import logging.config
@@ -30,7 +30,8 @@ class Config(configparser.ConfigParser):
             elif not self.filename.exists():
                 raise FileNotFoundError(self.filename)
 
-            if mode and self.filename.exists():
+            if (self.filename.exists() and mode and
+                    self.filename.stat().st_mode & 0o777 != mode):
                 self.filename.chmod(mode)
 
     def getlist(self, section, option, *, raw=False, vars=None,
@@ -46,7 +47,7 @@ class Config(configparser.ConfigParser):
         return values
 
     def setlist(self, section, option, value, *, delim=", "):
-        self.set(section, option, delim.join(value))
+        self.set(section, option, delim.join([str(v) for v in value]))
 
     # XXX: no override for read_string, read_string -> read_file
 
@@ -54,23 +55,15 @@ class Config(configparser.ConfigParser):
         self.input_filenames.append(source)
         return super().read_file(f, source=source)
 
-    def readfp(self, fp, filename="<fp>"):
-        # Deprecated in Python 3.2
-        return self.read_file(fp, source=filename)
-
     def read_dict(self, dictionary, source='<dict>'):
         self.input_filenames.append(source)
         return super().read_dict(dictionary, source=source)
 
-    def read(self, filenames=None, encoding=None, touch=False):
+    def read(self, filenames=None, encoding=None):
         filenames = filenames or []
 
         super().read(filenames, encoding=encoding)
         self.input_filenames += filenames
-
-        # TODO: deprecate touch? see ctor
-        if not self.filename.exists() and touch:
-            self.filename.touch()
 
         with open(str(self.filename), encoding=encoding) as fp:
             self.read_file(fp, source=str(self.filename))
@@ -130,46 +123,46 @@ class ConfigFileType(argparse.FileType):
 
 @attr.s(frozen=True)
 class ConfigOpts:
-        """
-        :param required: A boolean stating whether the config argument is
-            required. When ``True`` a positional argument ``config`` is added
-            to the command line parser. This argument is required unless
-            the ``default_file`` option is set. When ``False`` the arguments
-            ``-c/--config`` are added to the argument parser.
-        :param default_file: Default config file path.
-        :param default_config: A default config string.
-        :param override_arg: If True a ``--config-override`` option is added
-            to the argument parser to allow command-line over rides of config
-            values. See :class:`nicfit._argparse.ArgumentParser`.
-        :param ConfigClass: The class type for the configuration object. This
-            MUST be either :class:`nicfit._config.Config` or a subclass thereof.
-        :param default_config_opt: If not ``None`` it should be a command line
-            optional in either short OR long form. When used the the default
-            configuration data is printed to stdout.
-        :param config_env_var: When not ``None`` it is the name of an env
-            variable that will be read (if the path exists, not errors when it
-            does not) in addition to any other config filenames.
-        :param config_parsers_opts: A dict of extra
-            ``configparser.ConfigParser`` keyword arguments to pass to the
-             ``ConfigClass`` constructor.
-        :param init_logging_fileConfig: If ``True`` the config (default or
-               otherwise, is passed to ``logging.config.fileConfig``.
-        """
-        required = attr.ib(default=False)
-        default_file = attr.ib(default=None)
-        default_config = attr.ib(default=None)
-        override_arg = attr.ib(default=False)
-        ConfigClass = attr.ib(default=Config)
-        default_config_opt = attr.ib(default=None)
-        config_env_var = attr.ib(default=None)
-        init_logging_fileConfig = attr.ib(default=False)
-        configparser_opts = attr.ib(default=attr.Factory(dict))
-        touch = attr.ib(default=False)
-        mode = attr.ib(default=0o644)
+    """
+    :param required: A boolean stating whether the config argument is
+        required. When ``True`` a positional argument ``config`` is added
+        to the command line parser. This argument is required unless
+        the ``default_file`` option is set. When ``False`` the arguments
+        ``-c/--config`` are added to the argument parser.
+    :param default_file: Default config file path.
+    :param default_config: A default config string.
+    :param override_arg: If True a ``--config-override`` option is added
+        to the argument parser to allow command-line over rides of config
+        values. See :class:`nicfit._argparse.ArgumentParser`.
+    :param ConfigClass: The class type for the configuration object. This
+        MUST be either :class:`nicfit._config.Config` or a subclass thereof.
+    :param default_config_opt: If not ``None`` it should be a command line
+        optional in either short OR long form. When used the the default
+        configuration data is printed to stdout.
+    :param config_env_var: When not ``None`` it is the name of an env
+        variable that will be read (if the path exists, not errors when it
+        does not) in addition to any other config filenames.
+    :param config_parsers_opts: A dict of extra
+        ``configparser.ConfigParser`` keyword arguments to pass to the
+         ``ConfigClass`` constructor.
+    :param init_logging_fileConfig: If ``True`` the config (default or
+           otherwise, is passed to ``logging.config.fileConfig``.
+    """
+    required = attr.ib(default=False)
+    default_file = attr.ib(default=None)
+    default_config = attr.ib(default=None)
+    override_arg = attr.ib(default=False)
+    ConfigClass = attr.ib(default=Config)
+    default_config_opt = attr.ib(default=None)
+    config_env_var = attr.ib(default=None)
+    init_logging_fileConfig = attr.ib(default=False)
+    configparser_opts = attr.ib(default=attr.Factory(dict))
+    touch = attr.ib(default=False)
+    mode = attr.ib(default=None)
 
-        def configClassOpts(self):
-            return dict(touch=self.touch,
-                        mode=self.mode)
+    def configClassOpts(self):
+        return dict(touch=self.touch,
+                    mode=self.mode)
 
 
 def addCommandLineArgs(arg_parser, opts):

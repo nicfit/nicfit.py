@@ -1,11 +1,16 @@
-nicfit.console package
-======================
+nicfit\.console package
+=======================
+
+.. automodule:: nicfit.console
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Submodules
 ----------
 
-nicfit.console.ansi module
---------------------------
+nicfit\.console\.ansi module
+----------------------------
 
 .. automodule:: nicfit.console.ansi
     :members:
@@ -13,10 +18,3 @@ nicfit.console.ansi module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: nicfit.console
-    :members:
-    :undoc-members:
-    :show-inheritance:

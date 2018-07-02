@@ -42,3 +42,5 @@ default_context:
     version: "0.5.1-beta"
     web: "https://github.com/nicfit/nicfit.py"
     year: "2016-2017"
+    add_docs: "yes"
+    requirements_yaml: "yes"
