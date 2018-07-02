@@ -86,17 +86,21 @@ clean-patch:
 lint:
 	flake8 --builtins=_ $(SRC_DIRS)
 
-test: gettext
-	python setup.py test
 
-test-all:
+test: gettext
+	tox -e default -- $(PYTEST_ARGS)
+
+
+test-all: gettext
 	python setup.py develop
 
 	for example in `ls ./examples/*.py`; do \
 		echo "Runninig $$example..."; \
 		./$$example > /dev/null ; \
 	done
+
 	tox
+
 
 coverage: gettext
 	pytest --cov=./nicfit \
@@ -149,8 +153,7 @@ pre-release: lint test changelog requirements
 	@git status -s -b
 
 requirements:
-	./parcyl.py --requirements
-	pip-compile -U requirements.txt -o ./requirements.txt
+	./parcyl.py --requirements --freeze
 
 changelog:
 	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\

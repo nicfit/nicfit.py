@@ -1,4 +1,4 @@
-Sphinx sphinx_rtd_theme
+Sphinx
 babel==2.5.3
 check-manifest==0.37
 flake8==3.5.0
@@ -7,6 +7,7 @@ ipdb==0.11
 pip-tools==2.0.2
 pss==1.41
 pyaml==17.12.1
+sphinx_rtd_theme
 tox==3.0.0
 twine==1.11.0
 wheel==0.31.1
