@@ -48,13 +48,16 @@ build:
 	python setup.py build
 	${MAKE} -C ./cookiecutter all
 
-clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs
+clean: clean-local clean-build clean-pyc clean-test clean-patch clean-docs \
+       clean-gettext
+	python setup.py clean
 
 clean-local:
 	-rm tags
 	${MAKE} -C ./cookiecutter clean
 	-rm *.log
 	rm -rf .cache
+	find . -name '*~' -exec rm -f {} +
 
 clean-build:
 	rm -fr build/
@@ -62,12 +65,13 @@ clean-build:
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
+
+clean-gettext:
 	find ./locale -name \*.mo -exec rm {} \;
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 
 clean-test:

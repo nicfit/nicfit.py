@@ -83,7 +83,8 @@ else:
                      classifiers=classifiers,
                      zip_safe=False,
                      platforms=["Any"],
-                     keywords=["python", "application", "cookiecutter", "utils"],
+                     keywords=["application", "commands", "cookiecutter",
+                               "utils"],
                      test_suite="./tests",
                      include_package_data=True,
                      package_data={
