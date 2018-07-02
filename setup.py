@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import io
 import os
 import re
@@ -7,7 +6,7 @@ import sys
 import warnings
 from pathlib import Path
 
-from parcyl import Setup, setupAttrFromInfoFile
+import parcyl
 
 classifiers = [
     "Intended Audience :: Developers",
@@ -37,7 +36,7 @@ def getPackageInfo():
 
 
 about_file = Path(__file__).parent / "nicfit/__about__.py"
-PKG_INFO = setupAttrFromInfoFile(about_file)
+PKG_INFO = parcyl.setupAttrFromInfoFile(about_file)
 PKG_INFO.update(getPackageInfo())
 
 if PKG_INFO["release"].startswith("a"):
@@ -79,23 +78,21 @@ else:
         warnings.filterwarnings("ignore", message="Unknown distribution option")
         warnings.filterwarnings("ignore", message="Normalizing")
 
-        setup = Setup(packages=["."],
-                      package_dir={"": "."},
-                      exclude_packages=["tests", "tests.*"],
-                      classifiers=classifiers,
-                      zip_safe=False,
-                      platforms=["Any"],
-                      keywords=["python", "application", "cookiecutter", "utils"],
-                      test_suite="./tests",
-                      include_package_data=True,
-                      package_data={
+        pkgs = parcyl.find_packages(".", exclude=["tests", "tests.*"])
+        parcyl.setup(packages=pkgs, package_dir={"": "."},
+                     classifiers=classifiers,
+                     zip_safe=False,
+                     platforms=["Any"],
+                     keywords=["python", "application", "cookiecutter", "utils"],
+                     test_suite="./tests",
+                     include_package_data=True,
+                     package_data={
                           "nicfit": package_files("cookiecutter/"),
                       },
-                      entry_points={
+                     entry_points={
                           "console_scripts": [
                               "nicfit = nicfit.__main__:app.run",
                           ]
                       },
-                      **PKG_INFO
-                     )
-        setup()
+                     **PKG_INFO
+                    )

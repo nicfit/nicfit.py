@@ -14,7 +14,7 @@ cookiecutter==1.6.0
 curio==0.9
 deprecation==2.0.2
 future==0.16.0            # via cookiecutter
-idna==2.6                 # via requests
+idna==2.7                 # via requests
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.10              # via cookiecutter, jinja2-time
 markupsafe==1.0           # via jinja2
@@ -25,8 +25,8 @@ pyaml==17.12.1
 pyparsing==2.2.0          # via packaging
 python-dateutil==2.7.3    # via arrow
 pyyaml==3.12              # via pyaml
-requests==2.18.4          # via cookiecutter
+requests==2.19.1          # via cookiecutter
 six==1.11.0               # via packaging, prompt-toolkit, python-dateutil
-urllib3==1.22             # via requests
+urllib3==1.23             # via requests
 wcwidth==0.1.7            # via prompt-toolkit
 whichcraft==0.4.1         # via cookiecutter

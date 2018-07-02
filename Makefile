@@ -145,7 +145,7 @@ pre-release: lint test changelog requirements
 	@git status -s -b
 
 requirements:
-	python -m nicfit requirements
+	./parcyl.py --requirements
 	pip-compile -U requirements.txt -o ./requirements.txt
 
 changelog:
