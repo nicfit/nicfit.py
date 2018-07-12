@@ -21,12 +21,11 @@ markupsafe==1.0           # via jinja2
 packaging==17.1           # via deprecation
 poyo==0.4.1               # via cookiecutter
 prompt-toolkit==1.0.15
-pyaml==17.12.1
 pyparsing==2.2.0          # via packaging
 python-dateutil==2.7.3    # via arrow
-pyyaml==4.1              # via pyaml
+pyyaml==3.13
 requests==2.19.1          # via cookiecutter
 six==1.11.0               # via packaging, prompt-toolkit, python-dateutil
-urllib3==1.22             # via requests
+urllib3==1.23             # via requests
 wcwidth==0.1.7            # via prompt-toolkit
 whichcraft==0.4.1         # via cookiecutter
