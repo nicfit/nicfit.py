@@ -1,7 +1,7 @@
 main:
     - deprecation
     - attrs
-    - pyaml
+    - PyYaml
 
 extra_cookiecutter:
     - cookiecutter
