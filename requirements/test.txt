@@ -1,5 +1,5 @@
 babel==2.6.0
-pytest==3.7.1
+pytest==3.8.0
 pytest-asyncio==0.8.0
 pytest-cov==2.6.0
 pytest-curio==0.1.0
