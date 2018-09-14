@@ -306,7 +306,7 @@ class Nicfit(nicfit.Application):
 
     def _main(self, args):
         ansi.init()
-        if not args.command:
+        if "command_func" not in args or not args.command_func:
             pout(Fg.red("\m/ {} \m/"
                        .format(Style.inverse(_("Welcome")))))
             return 0

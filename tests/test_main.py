@@ -91,7 +91,8 @@ def test_commands_noargs_notrequired():
         assert exit.code == 0
     else:
         assert False, "App did not invoke sys.exit"
- 
+
+
 def test_commands_noargs_required():
     class MyApp(Application):
         def _main(self, args):
