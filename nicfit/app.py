@@ -119,4 +119,4 @@ class AsyncApplication(Application):
         return retval or 0
 
     def _run(self, args_list=None):
-        raise NotImplementedError("Implemement for a specific async API")
+        raise NotImplementedError("Implement for a specific async API")

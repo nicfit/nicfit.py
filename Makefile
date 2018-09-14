@@ -91,7 +91,7 @@ test: gettext
 
 test-all:
 	for example in `ls ./examples/*.py`; do \
-		echo "Runninig $$example..."; \
+		echo "Running $$example..."; \
 		./$$example > /dev/null ; \
 	done
 	tox
