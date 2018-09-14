@@ -3,6 +3,21 @@ Release History
 
 .. :changelog:
 
+v0.8.2 (2018-09-13)
+------------------------
+
+Fix
+~~~
+- Release tag checks for `make pre-release`
+- Fixed command API bugs exposed with python3.7.
+
+Other
+~~~~~
+- Use correct yaml parser and version bump.
+- More python version tested.
+- Better pytest_cache clean, and formatting updates.
+
+
 v0.8.1 (2018-05-14)
 --------------------
 

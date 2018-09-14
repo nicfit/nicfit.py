@@ -143,7 +143,7 @@ pre-release: lint test changelog requirements
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	check-manifest
-	@if git tag -l | grep -E '^$(shell echo ${RELEASE_TAG} | sed 's|\.|.|g')$$' > /dev/null; then \
+	@if git tag -l | grep -E '^$(shell echo ${RELEASE_TAG} | sed 's|\.|\\.|g')$$' > /dev/null; then \
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
@@ -166,7 +166,7 @@ requirements:
 {%- endif %}
 
 changelog:
-	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
+	last=`git tag -l --sort=taggerdate | grep '^v[0-9]' | tail -n1`;\
 	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
 		rm -f ${CHANGELOG}.new; \
 		if test -n "$$last"; then \
