@@ -21,7 +21,7 @@ markupsafe==1.0           # via jinja2
 packaging==17.1           # via deprecation
 poyo==0.4.1               # via cookiecutter
 prompt-toolkit==1.0.15
-pyparsing==2.2.0          # via packaging
+pyparsing==2.2.1          # via packaging
 python-dateutil==2.7.3    # via arrow
 pyyaml==3.13
 requests==2.19.1          # via cookiecutter
