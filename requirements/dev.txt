@@ -8,6 +8,6 @@ pip-tools==3.0.0
 pss==1.42
 pyaml==17.12.1
 sphinx_rtd_theme==0.4.1
-tox==3.4.0
+tox==3.5.2
 twine==1.12.1
 wheel==0.32.0
