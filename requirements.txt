@@ -28,4 +28,4 @@ requests==2.19.1          # via cookiecutter
 six==1.11.0               # via packaging, prompt-toolkit, python-dateutil
 urllib3==1.23             # via requests
 wcwidth==0.1.7            # via prompt-toolkit
-whichcraft==0.4.1         # via cookiecutter
+whichcraft==0.5.0         # via cookiecutter
