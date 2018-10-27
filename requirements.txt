@@ -22,7 +22,7 @@ packaging==18.0           # via deprecation
 poyo==0.4.1               # via cookiecutter
 prompt-toolkit==1.0.15
 pyparsing==2.2.1          # via packaging
-python-dateutil==2.7.3    # via arrow
+python-dateutil==2.7.5    # via arrow
 pyyaml==3.13
 requests==2.19.1          # via cookiecutter
 six==1.11.0               # via packaging, prompt-toolkit, python-dateutil
