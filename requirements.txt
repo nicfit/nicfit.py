@@ -6,8 +6,6 @@
 #
 attrs==18.1.0
 deprecation==2.0.2
-packaging==17.1           # via deprecation
-pyaml==17.12.1
-pyparsing==2.2.0          # via packaging
-pyyaml==3.12              # via pyaml
+packaging==18.0           # via deprecation
+pyparsing==2.2.2          # via packaging
 six==1.11.0               # via packaging

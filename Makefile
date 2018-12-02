@@ -84,28 +84,25 @@ clean-patch:
 	find . -name '*.orig' -exec rm -f '{}' \;
 
 lint:
-	flake8 --builtins=_ $(SRC_DIRS)
+	tox -e lint
 
 
-test: gettext
+test:
 	tox -e default -- $(PYTEST_ARGS)
 
 
-test-all: gettext
+test-all:
 	python setup.py develop
-
 	for example in `ls ./examples/*.py`; do \
 		echo "Runninig $$example..."; \
 		./$$example > /dev/null ; \
 	done
 
-	tox
+	detox
 
 
-coverage: gettext
-	pytest --cov=./nicfit \
-           --cov-report=html --cov-report term \
-           --cov-config=setup.cfg ${TEST_DIR}
+coverage:
+	tox -e coverage
 
 coverage-view: coverage
 	${BROWSER} build/tests/coverage/index.html;\
@@ -113,7 +110,7 @@ coverage-view: coverage
 docs:
 	rm -f docs/nicfit.py.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -H $(PROJECT_NAME) -V $(VERSION) -o docs/ ${SRC_DIRS}
+	VERSION=$(VERSION) tox -e docs
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 
@@ -137,7 +134,7 @@ pre-release: lint test changelog requirements
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
-	check-manifest
+	tox -e check-manifest
 	@if git tag -l | grep -E '^$(shell echo $${RELEASE_TAG} | sed 's|\.|.|g')$$' > /dev/null; then \
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
