@@ -9,7 +9,7 @@ attrs==18.2.0
 binaryornot==0.4.4        # via cookiecutter
 certifi==2018.11.29        # via requests
 chardet==3.0.4            # via binaryornot, requests
-click==6.7                # via cookiecutter
+click==7.0                # via cookiecutter
 cookiecutter==1.6.0
 curio==0.9
 deprecation==2.0.6
