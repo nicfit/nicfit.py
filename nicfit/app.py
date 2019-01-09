@@ -82,7 +82,7 @@ class Application:
         except SystemExit as exit:
             self.log.verbose("Exited")
             retval = exit.code
-        except Exception as unexpected:
+        except Exception:
             print("Uncaught exception", file=sys.stderr)
             traceback.print_exc()
             if "debug_pdb" in self.args and self.args.debug_pdb:

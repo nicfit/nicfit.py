@@ -3,6 +3,15 @@ Release History
 
 .. :changelog:
 
+v0.8.3 (2019-01-08)
+--------------------
+
+Fix
+~~~
+- Cookiecutter `year` vairable is now a string, and no longer a choice type
+- Cookiecutter `py35` variable is again settable from .cookiecutter.yml
+
+
 v0.8.2 (2018-09-13)
 ------------------------
 

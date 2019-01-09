@@ -156,7 +156,7 @@ class CookieCutter(nicfit.Command):
                                   overwrite_if_exists=True,
                                   output_dir=self.args.outdir)
             return cc_dir
-        except click.exceptions.Abort as ex:
+        except click.exceptions.Abort:
             raise KeyboardInterrupt()  # pragma: nocover
         except CookiecutterException as ex:
             raise nicfit.CommandError("CookieCutter error: {}"
@@ -307,7 +307,7 @@ class Nicfit(nicfit.Application):
     def _main(self, args):
         ansi.init()
         if "command_func" not in args or not args.command_func:
-            pout(Fg.red("\m/ {} \m/"
+            pout(Fg.red(r"\m/ {} \m/"
                        .format(Style.inverse(_("Welcome")))))
             return 0
 
