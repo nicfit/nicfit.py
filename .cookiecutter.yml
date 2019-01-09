@@ -1,5 +1,6 @@
 
 default_context:
+    add_docs: "yes"
     bitbucket_repo: "nicfit.py"
     bitbucket_url: "https://bitbucket.org/bitbucket-user/nicfit.py"
     bitbucket_username: "bitbucket-user"
@@ -30,6 +31,7 @@ default_context:
     pypy: "no"
     pypy3: "yes"
     release_date: "today"
+    requirements_yaml: "yes"
     src_dir: "."
     use_bitbucket: "no"
     use_github: "yes"
@@ -42,5 +44,3 @@ default_context:
     version: "0.8"
     web: "https://github.com/nicfit/nicfit.py"
     year: "2016-2019"
-    add_docs: "yes"
-    requirements_yaml: "yes"
