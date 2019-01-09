@@ -7,44 +7,44 @@
 alabaster==0.7.12         # via sphinx
 babel==2.6.0              # via sphinx
 backcall==0.1.0           # via ipython
-certifi==2018.10.15       # via requests
+bleach==3.0.2             # via readme-renderer
+certifi==2018.11.29       # via requests
 chardet==3.0.4            # via requests
-check-manifest==0.37
 click==7.0                # via pip-tools
 decorator==4.3.0          # via ipython, traitlets
-docutils==0.14            # via sphinx
-first==2.0.1              # via pip-tools
-idna==2.7                 # via requests
+docutils==0.14            # via readme-renderer, sphinx
+idna==2.8                 # via requests
 imagesize==1.1.0          # via sphinx
 ipdb==0.11
 ipython-genutils==0.2.0   # via traitlets
-ipython==7.0.1            # via ipdb
-jedi==0.13.1              # via ipython
+ipython==7.2.0            # via ipdb
+jedi==0.13.2              # via ipython
 jinja2==2.10              # via sphinx
-markupsafe==1.0           # via jinja2
+markupsafe==1.1.0         # via jinja2
 packaging==18.0           # via sphinx
 parso==0.3.1              # via jedi
 pexpect==4.6.0            # via ipython
 pickleshare==0.7.5        # via ipython
-pip-tools==2.0.2
-pkginfo==1.4.2            # via twine
-prompt-toolkit==2.0.6     # via ipython
-pss==1.41
+pip-tools==3.2.0
+pkginfo==1.5.0.1          # via twine
+prompt-toolkit==2.0.7     # via ipython
+pss==1.42
 ptyprocess==0.6.0         # via pexpect
-pygments==2.2.0           # via ipython, sphinx
-pyparsing==2.2.2          # via packaging
-pytz==2018.5              # via babel
+pygments==2.3.1           # via ipython, readme-renderer, sphinx
+pyparsing==2.3.0          # via packaging
+pytz==2018.9              # via babel
+readme-renderer==24.0     # via twine
 requests-toolbelt==0.8.0  # via twine
-requests==2.20.0          # via requests-toolbelt, sphinx, twine
-simplegeneric==0.8.1      # via ipython
-six==1.11.0               # via packaging, pip-tools, prompt-toolkit, sphinx, traitlets
+requests==2.21.0          # via requests-toolbelt, sphinx, twine
+six==1.12.0               # via bleach, packaging, pip-tools, prompt-toolkit, readme-renderer, sphinx, traitlets
 snowballstemmer==1.2.1    # via sphinx
-sphinx-rtd-theme==0.4.2
-sphinx==1.8.1
+sphinx==1.8.3
+sphinx_rtd_theme==0.4.2
 sphinxcontrib-websupport==1.1.0  # via sphinx
-tqdm==4.28.0              # via twine
+tqdm==4.29.0              # via twine
 traitlets==4.3.2          # via ipython
-twine==1.11.0
-urllib3==1.24             # via requests
+twine==1.12.1
+urllib3==1.24.1           # via requests
 wcwidth==0.1.7            # via prompt-toolkit
-wheel==0.31.1
+webencodings==0.5.1       # via bleach
+wheel==0.32.3

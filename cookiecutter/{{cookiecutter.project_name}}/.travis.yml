@@ -43,7 +43,6 @@ script: make coverage
 
 after_success:
   - coveralls
-
 {% if cookiecutter.use_pypi_deployment_with_travis == "yes" -%}
 # FIXME: untested and never used
 # After you create the Github repo and add it to Travis, run the
@@ -58,4 +57,4 @@ deploy:
     tags: true
     repo: {{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}
     condition: $TOXENV == py27
-{%- endif %}
+{%- endif -%}

@@ -63,6 +63,8 @@ if __name__ == "__main__":
                    ("py35", "{{ cookiecutter.py35 }}"),
                    ("py36", "{{ cookiecutter.py36 }}"),
                    ("py37", "{{ cookiecutter.py37 }}"),
+                   ("pypy", "{{ cookiecutter.pypy }}"),
+                   ("pypy3", "{{ cookiecutter.pypy3 }}"),
                   ]:
         if on == "yes":
             tox_envlist.append(py)

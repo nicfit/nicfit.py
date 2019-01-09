@@ -113,7 +113,7 @@ Fg = AnsiCodes(FgPalette)
 Bg = AnsiCodes(BgPalette)
 Style = AnsiCodes(StylePalette)
 
-"""
+r"""
 
 Examples:
 ---------

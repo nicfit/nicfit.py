@@ -94,7 +94,7 @@ test:
 test-all:
 	python setup.py develop
 	for example in `ls ./examples/*.py`; do \
-		echo "Runninig $$example..."; \
+		echo "Running $$example..."; \
 		./$$example > /dev/null ; \
 	done
 
@@ -140,7 +140,7 @@ pre-release: lint test changelog requirements
         false; \
     fi
 	IFS=$$'\n';\
-    for auth in `git authors --list | sed 's/.* <\(.*\)>/\1/'`; do \
+	for auth in `git authors --list | sed 's/.* <\(.*\)>/\1/'`; do \
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
@@ -149,15 +149,16 @@ pre-release: lint test changelog requirements
 	@github-release --version    # Just a exe existence check
 	@git status -s -b
 
-requirements:
+rt requirements:
 	./parcyl.py --requirements --freeze
 
 changelog:
-	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
+	last=`git tag -l --sort=taggerdate | grep '^v[0-9]' | tail -n1`;\
 	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
 		rm -f ${CHANGELOG}.new; \
+		echo last: $$last;\
 		if test -n "$$last"; then \
-			gitchangelog --author-format=email \
+			gitchangelog --author-format=email --debug \
 			             --omit-author="travis@pobox.com" $${last}..HEAD |\
 			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
 			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
@@ -198,7 +199,7 @@ github-release:
                    --repo ${GITHUB_REPO} --tag ${RELEASE_TAG} \
                    --name "$${name}" $${prerelease}
 	for file in $$(find dist -type f -exec basename {} \;) ; do \
-        echo "FILE: $$file"; \
+        echo "Uploading: $$file"; \
         github-release upload --user "${GITHUB_USER}" --repo ${GITHUB_REPO} \
                    --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
     done

@@ -82,7 +82,7 @@ class Application:
         except SystemExit as exit:
             self.log.verbose("Exited")
             retval = exit.code
-        except Exception as unexpected:
+        except Exception:
             print("Uncaught exception", file=sys.stderr)
             traceback.print_exc()
             if "debug_pdb" in self.args and self.args.debug_pdb:
@@ -119,4 +119,4 @@ class AsyncApplication(Application):
         return retval or 0
 
     def _run(self, args_list=None):
-        raise NotImplementedError("Implemement for a specific async API")
+        raise NotImplementedError("Implement for a specific async API")
