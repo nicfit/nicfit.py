@@ -108,11 +108,7 @@ coverage-view: coverage
 	${BROWSER} build/tests/coverage/index.html;\
 
 docs:
-	rm -f docs/nicfit.py.rst
-	rm -f docs/modules.rst
 	VERSION=$(VERSION) tox -e docs
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
 
 docs-dist: docs
 	test -d dist || mkdir dist
