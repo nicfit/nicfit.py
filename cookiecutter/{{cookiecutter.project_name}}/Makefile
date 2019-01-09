@@ -79,37 +79,25 @@ clean-patch:
 	find . -name '*.orig' -exec rm -f '{}' \;
 
 lint:
-{%- if cookiecutter.gettext_domain != "None" %}
-	flake8 --builtins=_ $(SRC_DIRS)
-{%- else %}
-	flake8 $(SRC_DIRS)
-{%- endif %}
+	tox -e lint
 
-_PYTEST_OPTS=
-ifdef TEST_PDB
-    _PDB_OPTS=--pdb -s
-endif
+
 test:
-	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
+	tox -e default -- $(PYTEST_ARGS)
+
 
 test-all:
-	tox
+	detox
 
 coverage:
-	pytest --cov={{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }} \
-           --cov-report=html --cov-report term \
-           --cov-config=setup.cfg ${TEST_DIR}
+	tox -e coverage
 
 coverage-view: coverage
 	${BROWSER} build/tests/coverage/index.html;\
 
 docs:
 {%- if cookiecutter.add_docs == "yes" %}
-	rm -f docs/{{ cookiecutter.project_slug }}.rst
-	rm -f docs/modules.rst
-	sphinx-apidoc -H $(PROJECT_NAME) -V $(VERSION) -o docs/ ${SRC_DIRS}
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
+	VERSION=$(VERSION) tox -e docs
 {%- else %}
 	# Using cookiecutter set add_docs="yes" to enable
 {%- endif %}
@@ -142,8 +130,8 @@ pre-release: lint test changelog requirements
 	$(eval RELEASE_TAG = v${VERSION})
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
-	check-manifest
-	@if git tag -l | grep -E '^$(shell echo ${RELEASE_TAG} | sed 's|\.|\\.|g')$$' > /dev/null; then \
+	tox -e check-manifest
+	@if git tag -l | grep -E '^$(shell echo $${RELEASE_TAG} | sed 's|\.|.|g')$$' > /dev/null; then \
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
@@ -159,8 +147,7 @@ pre-release: lint test changelog requirements
 
 requirements:
 {%- if cookiecutter.requirements_yaml == "yes" %}
-	nicfit requirements
-	pip-compile -U requirements.txt -o ./requirements.txt
+	./parcyl.py --requirements --freeze
 {%- else %}
 	# Using cookiecutter set requirements_yaml="yes" to enable
 {%- endif %}
