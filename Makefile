@@ -145,8 +145,8 @@ pre-release: lint test changelog requirements
 	@github-release --version    # Just a exe existence check
 	@git status -s -b
 
-rt requirements:
-	./parcyl.py --requirements --freeze
+requirements:
+	parcyl.py requirements --upgrade --deep
 
 changelog:
 	last=`git tag -l --sort=taggerdate | grep '^v[0-9]' | tail -n1`;\

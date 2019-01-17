@@ -1,8 +1,4 @@
-.PHONY: help build test clean dist install coverage pre-release release \
-        docs clean-docs lint tags coverage-view changelog \
-        clean-pyc clean-build clean-patch clean-local clean-test-data \
-        test-all test-data build-release freeze-release tag-release \
-        pypi-release web-release github-release cookiecutter requirements
+.PHONY: build test dist install docs requirements
 SRC_DIRS = {{ cookiecutter.src_dir }}/{{ cookiecutter.py_module }}
 TEST_DIR = {{ cookiecutter.src_dir }}/tests
 NAME ?= {{ cookiecutter.full_name }}
@@ -147,7 +143,7 @@ pre-release: lint test changelog requirements
 
 requirements:
 {%- if cookiecutter.requirements_yaml == "yes" %}
-	./parcyl.py --requirements --freeze
+	parcyl.py requirements --updgrade --deep
 {%- else %}
 	# Using cookiecutter set requirements_yaml="yes" to enable
 {%- endif %}
@@ -236,9 +232,6 @@ dist: clean sdist docs-dist
 
 install: clean
 	python setup.py install
-
-tags:
-	ctags -R ${SRC_DIRS}
 
 README.html: README.rst
 	rst2html5.py README.rst >| README.html
