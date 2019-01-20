@@ -18,7 +18,7 @@ idna==2.8                 # via requests
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.10              # via cookiecutter, jinja2-time
 markupsafe==1.1.0         # via jinja2
-packaging==18.0           # via deprecation
+packaging==19.0           # via deprecation
 poyo==0.4.2               # via cookiecutter
 prompt-toolkit==1.0.15
 pyparsing==2.3.1          # via packaging
