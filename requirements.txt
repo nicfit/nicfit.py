@@ -23,7 +23,7 @@ poyo==0.4.2               # via cookiecutter
 prompt-toolkit==1.0.15
 pyparsing==2.3.1          # via packaging
 python-dateutil==2.8.0    # via arrow
-pyyaml==4.2b4
+pyyaml==5.1.1
 requests==2.21.0          # via cookiecutter
 six==1.12.0               # via packaging, prompt-toolkit, python-dateutil
 urllib3==1.24.1           # via requests
