@@ -3,7 +3,7 @@ babel==2.6.0
 check-manifest==0.37
 flake8==3.6.0
 git+https://github.com/nicfit/gitchangelog.git
-ipdb==0.11
+ipdb==0.12.2
 pip-tools==3.2.0
 pss==1.42
 pyaml==18.11.0
