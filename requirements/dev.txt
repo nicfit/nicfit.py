@@ -7,7 +7,7 @@ ipdb==0.12.2
 pip-tools==4.0.0
 pss==1.42
 pyaml==18.11.0
-sphinx_rtd_theme==0.4.2
+sphinx_rtd_theme==0.4.3
 tox==3.13.2
 twine==1.12.1
 wheel==0.33.4
