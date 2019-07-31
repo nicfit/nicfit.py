@@ -12,6 +12,7 @@ if not re.match(MODULE_REGEX, module_name):
 
 user_config = """
 default_context:
+    add_docs: "{{ cookiecutter.add_docs }}"
     bitbucket_repo: "{{ cookiecutter.bitbucket_repo }}"
     bitbucket_url: "{{ cookiecutter.bitbucket_url }}"
     bitbucket_username: "{{ cookiecutter.bitbucket_username }}"
@@ -42,6 +43,7 @@ default_context:
     pypy: "{{ cookiecutter.pypy }}"
     pypy3: "{{ cookiecutter.pypy3 }}"
     release_date: "{{ cookiecutter.release_date }}"
+    requirements_yaml: "{{ cookiecutter.requirements_yaml }}"
     src_dir: "{{ cookiecutter.src_dir }}"
     use_bitbucket: "{{ cookiecutter.use_bitbucket }}"
     use_github: "{{ cookiecutter.use_github }}"

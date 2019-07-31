@@ -1,7 +1,7 @@
 main:
     - deprecation
     - attrs
-    - pyaml
+    - PyYaml >= 4.2b1
 
 extra_cookiecutter:
     - cookiecutter
@@ -10,7 +10,7 @@ extra_curio:
     - curio
 
 extra_shell:
-    - prompt-toolkit
+    - prompt-toolkit ~= 1.0
 
 test:
     - pytest

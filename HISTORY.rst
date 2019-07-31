@@ -3,6 +3,35 @@ Release History
 
 .. :changelog:
 
+v0.8.4 (2019-07-30)
+--------------------
+- Security update for urllib3 from 1.24.1 to 1.25.3 (#404) <github-bot@pyup.io>
+
+
+v0.8.3 (2019-01-08)
+--------------------
+
+Fix
+~~~
+- Cookiecutter `year` vairable is now a string, and no longer a choice type
+- Cookiecutter `py35` variable is again settable from .cookiecutter.yml
+
+
+v0.8.2 (2018-09-13)
+------------------------
+
+Fix
+~~~
+- Release tag checks for `make pre-release`
+- Fixed command API bugs exposed with python3.7.
+
+Other
+~~~~~
+- Use correct yaml parser and version bump.
+- More python version tested.
+- Better pytest_cache clean, and formatting updates.
+
+
 v0.8.1 (2018-05-14)
 --------------------
 

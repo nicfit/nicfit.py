@@ -91,7 +91,7 @@ test: gettext
 
 test-all:
 	for example in `ls ./examples/*.py`; do \
-		echo "Runninig $$example..."; \
+		echo "Running $$example..."; \
 		./$$example > /dev/null ; \
 	done
 	tox
@@ -132,12 +132,12 @@ pre-release: lint test changelog requirements
 	@echo "RELEASE_TAG: $(RELEASE_TAG)"
 	@echo "RELEASE_NAME: $(RELEASE_NAME)"
 	check-manifest
-	@if git tag -l | grep -E '^$(shell echo $${RELEASE_TAG} | sed 's|\.|.|g')$$' > /dev/null; then \
+	@if git tag -l | grep -E '^$(shell echo ${RELEASE_TAG} | sed 's|\.|\\.|g')$$' > /dev/null; then \
         echo "Version tag '${RELEASE_TAG}' already exists!"; \
         false; \
     fi
 	IFS=$$'\n';\
-    for auth in `git authors --list | sed 's/.* <\(.*\)>/\1/'`; do \
+	for auth in `git authors --list | sed 's/.* <\(.*\)>/\1/'`; do \
 		echo "Checking $$auth...";\
 		grep "$$auth" AUTHORS.rst || echo "* $$auth" >> AUTHORS.rst;\
 	done
@@ -151,11 +151,12 @@ requirements:
 	pip-compile -U requirements.txt -o ./requirements.txt
 
 changelog:
-	last=`git tag -l --sort=version:refname | grep '^v[0-9]' | tail -n1`;\
+	last=`git tag -l --sort=taggerdate | grep '^v[0-9]' | tail -n1`;\
 	if ! grep "${CHANGELOG_HEADER}" ${CHANGELOG} > /dev/null; then \
 		rm -f ${CHANGELOG}.new; \
+		echo last: $$last;\
 		if test -n "$$last"; then \
-			gitchangelog --author-format=email \
+			gitchangelog --author-format=email --debug \
 			             --omit-author="travis@pobox.com" $${last}..HEAD |\
 			  sed "s|^%%version%% .*|${CHANGELOG_HEADER}|" |\
 			  sed '/^.. :changelog:/ r/dev/stdin' ${CHANGELOG} \
@@ -179,7 +180,7 @@ tag-release:
 	git tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	git push --tags origin
 
-release: pre-release freeze-release build-release tag-release upload-release
+release: pre-release freeze-release build-release twine-check tag-release upload-release
 
 github-release:
 	name="${RELEASE_TAG}"; \
@@ -196,7 +197,7 @@ github-release:
                    --repo ${GITHUB_REPO} --tag ${RELEASE_TAG} \
                    --name "$${name}" $${prerelease}
 	for file in $$(find dist -type f -exec basename {} \;) ; do \
-        echo "FILE: $$file"; \
+        echo "Uploading: $$file"; \
         github-release upload --user "${GITHUB_USER}" --repo ${GITHUB_REPO} \
                    --tag ${RELEASE_TAG} --name $${file} --file dist/$${file}; \
     done
@@ -207,11 +208,19 @@ web-release:
 
 upload-release: github-release pypi-release web-release
 
+twine-check:
+	@for f in `find dist -type f -name ${PROJECT_NAME}-${VERSION}.tar.gz \
+              -o -name \*.egg -o -name \*.whl`; do \
+        if test -f $$f ; then \
+            twine check $$f ; \
+        fi \
+	done
+
 pypi-release:
 	for f in `find dist -type f -name ${PROJECT_NAME}-${VERSION}.tar.gz \
               -o -name \*.egg -o -name \*.whl`; do \
         if test -f $$f ; then \
-            twine upload -r ${PYPI_REPO} --skip-existing $$f ; \
+            twine upload --verbose -r ${PYPI_REPO} --skip-existing $$f ; \
         fi \
 	done
 

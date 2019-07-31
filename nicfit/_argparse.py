@@ -61,7 +61,8 @@ class ArgumentParser(argparse.ArgumentParser):
             kwargs["parser_class"] = ArgumentParser
 
         if sys.version_info[:2] >= (3, 7):
-            subparser = super().add_subparsers(required=required, **kwargs)
+            subparser = super().add_subparsers(required=required, dest=dest,
+                                               **kwargs)
         else:
             self._subcmd_required = (
                 required, dest,

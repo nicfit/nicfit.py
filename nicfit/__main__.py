@@ -85,7 +85,7 @@ class Requirements(nicfit.Command):
             return
         reqs_dir = reqs_file.parent
 
-        reqs_yaml = yaml.load(reqs_file.open())
+        reqs_yaml = yaml.safe_load(reqs_file.open())
 
         # Make split .txt files
         for name in reqs_yaml.keys():
@@ -158,7 +158,7 @@ class CookieCutter(nicfit.Command):
                                   overwrite_if_exists=True,
                                   output_dir=self.args.outdir)
             return cc_dir
-        except click.exceptions.Abort as ex:
+        except click.exceptions.Abort:
             raise KeyboardInterrupt()  # pragma: nocover
         except CookiecutterException as ex:
             raise nicfit.CommandError("CookieCutter error: {}"
@@ -308,8 +308,8 @@ class Nicfit(nicfit.Application):
 
     def _main(self, args):
         ansi.init()
-        if not args.command:
-            pout(Fg.red("\m/ {} \m/"
+        if "command_func" not in args or not args.command_func:
+            pout(Fg.red(r"\m/ {} \m/"
                        .format(Style.inverse(_("Welcome")))))
             return 0
 

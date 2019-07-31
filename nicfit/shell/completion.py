@@ -11,23 +11,23 @@ log = getLogger(__name__)
 
 
 def _updateCompleterDict(completers, cdict, regex=None):
-        """Merges ``cdict`` into ``completers``. In the event that a key
+    """Merges ``cdict`` into ``completers``. In the event that a key
         in cdict already exists in the completers dict a ValueError is raised
         iff ``regex`` false'y. If a regex str is provided it and the duplicate
         key are updated to be unique, and the updated regex is returned.
         """
-        for key in cdict:
-            if key in completers and not regex:
-                raise ValueError(f"Duplicate completion key: {key}")
+    for key in cdict:
+        if key in completers and not regex:
+            raise ValueError(f"Duplicate completion key: {key}")
 
-            if key in completers:
-                uniq = "_".join([key, str(uuid.uuid4()).replace("-", "")])
-                regex = regex.replace(f"P<{key}>", f"P<{uniq}>")
-                completers[uniq] = cdict[key]
-            else:
-                completers[key] = cdict[key]
+        if key in completers:
+            uniq = "_".join([key, str(uuid.uuid4()).replace("-", "")])
+            regex = regex.replace(f"P<{key}>", f"P<{uniq}>")
+            completers[uniq] = cdict[key]
+        else:
+            completers[key] = cdict[key]
 
-        return regex
+    return regex
 
 
 def makeCompleter(commands: list, word_completers: dict = None):

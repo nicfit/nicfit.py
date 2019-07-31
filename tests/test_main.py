@@ -11,7 +11,7 @@ def test_NicfitApp_default(capfd):
     with pytest.raises(SystemExit):
         app.run([])
     out, err = capfd.readouterr()
-    assert out == Fg.red("\m/ {} \m/".format(Style.inverse("Welcome"))) + "\n"
+    assert out == Fg.red("\\m/ {} \\m/".format(Style.inverse("Welcome"))) + "\n"
 
 
 @pytest.mark.skipif("TRAVIS" in os.environ,
@@ -24,7 +24,7 @@ def test_NicfitApp_español(capfd):
         Nicfit().run([])
 
     out, err = capfd.readouterr()
-    assert out == Fg.red("\m/ {} \m/"
+    assert out == Fg.red("\\m/ {} \\m/"
                          .format(Style.inverse("Bienvenido"))) + "\n"
 
     os.environ["LANG"] = lang
@@ -91,7 +91,8 @@ def test_commands_noargs_notrequired():
         assert exit.code == 0
     else:
         assert False, "App did not invoke sys.exit"
- 
+
+
 def test_commands_noargs_required():
     class MyApp(Application):
         def _main(self, args):

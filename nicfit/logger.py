@@ -240,7 +240,7 @@ class FileConfig(Config):
                                format=DEFAULT_FORMAT):
         """Returns a default logging config in file (ini) format.
 
-         Compatible with logging.config.fileConfig(), this default set the root
+         Compatible with logging.config.fileConfig(), this sets the root
          logger to `level` with `sys.stdout` console handler using a formatter
          initialized with `format`. A simple 'brief' formatter is defined that
          shows only the message portion any log entries."""
