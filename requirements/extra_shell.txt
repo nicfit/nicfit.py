@@ -1,1 +1,1 @@
-prompt-toolkit ~= 1.0
+prompt-toolkit
