@@ -59,10 +59,10 @@ def printTitle(t, hr="=", style=None):
 
 
 def printRoomList(rooms_list):
-        rooms = sorted(rooms_list, key=operator.itemgetter("population"))
-        for room in rooms:
-            name, slug = room["name"], room["slug"]
-            print(f"* [{slug}]  :  {name}")
-            if room["dj"]:
-                print(f"\tListeners: {room['population']}  |  "
-                      f"DJ: {room['dj']}  |  Media: {room['media']}")
+    rooms = sorted(rooms_list, key=operator.itemgetter("population"))
+    for room in rooms:
+        name, slug = room["name"], room["slug"]
+        print(f"* [{slug}]  :  {name}")
+        if room["dj"]:
+            print(f"\tListeners: {room['population']}  |  "
+                  f"DJ: {room['dj']}  |  Media: {room['media']}")
