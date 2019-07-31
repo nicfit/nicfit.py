@@ -3,6 +3,11 @@ Release History
 
 .. :changelog:
 
+v0.8.4 (2019-07-30)
+--------------------
+- Security update for urllib3 from 1.24.1 to 1.25.3 (#404) <github-bot@pyup.io>
+
+
 v0.8.3 (2019-01-08)
 --------------------
 
