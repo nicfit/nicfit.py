@@ -17,7 +17,7 @@ future==0.17.1            # via cookiecutter
 idna==2.8                 # via requests
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.10              # via cookiecutter, jinja2-time
-markupsafe==1.1.0         # via jinja2
+markupsafe==1.1.1         # via jinja2
 packaging==19.0           # via deprecation
 poyo==0.4.2               # via cookiecutter
 prompt-toolkit==1.0.15
