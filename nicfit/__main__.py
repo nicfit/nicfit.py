@@ -85,7 +85,7 @@ class Requirements(nicfit.Command):
             return
         reqs_dir = reqs_file.parent
 
-        reqs_yaml = yaml.load(reqs_file.open())
+        reqs_yaml = yaml.safe_load(reqs_file.open())
 
         # Make split .txt files
         for name in reqs_yaml.keys():
