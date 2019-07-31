@@ -6,7 +6,7 @@ git+https://github.com/nicfit/gitchangelog.git
 ipdb==0.12.2
 pip-tools==4.0.0
 pss==1.42
-pyaml==18.11.0
+pyaml==19.4.1
 sphinx_rtd_theme==0.4.2
 tox==3.13.2
 twine==1.12.1
