@@ -1,3 +1,3 @@
 PyYaml
 attrs
-deprecation
+deprecation==2.0.6
