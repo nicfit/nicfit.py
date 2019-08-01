@@ -7,7 +7,7 @@ ipdb
 pip-tools
 pss
 pyaml
-sphinx_rtd_theme
+sphinx_rtd_theme==0.4.3
 tox
 twine
 wheel
