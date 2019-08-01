@@ -1,4 +1,4 @@
-babel
+babel==2.7.0
 pytest
 pytest-asyncio
 pytest-cov
