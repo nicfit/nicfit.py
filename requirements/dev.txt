@@ -6,7 +6,7 @@ git+https://github.com/nicfit/gitchangelog.git
 ipdb
 pip-tools
 pss
-pyaml
+pyaml==19.4.1
 sphinx_rtd_theme
 tox
 twine
