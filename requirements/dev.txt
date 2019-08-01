@@ -5,7 +5,7 @@ flake8
 git+https://github.com/nicfit/gitchangelog.git
 ipdb
 pip-tools
-pss
+pss==1.42
 pyaml
 sphinx_rtd_theme
 tox
