@@ -1,6 +1,6 @@
 Sphinx
 babel
-check-manifest
+check-manifest==0.39
 flake8
 git+https://github.com/nicfit/gitchangelog.git
 ipdb
