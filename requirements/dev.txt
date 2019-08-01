@@ -4,7 +4,7 @@ check-manifest
 flake8
 git+https://github.com/nicfit/gitchangelog.git
 ipdb
-pip-tools
+pip-tools==4.0.0
 pss
 pyaml
 sphinx_rtd_theme
