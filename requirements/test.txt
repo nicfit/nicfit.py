@@ -3,4 +3,4 @@ pytest
 pytest-asyncio
 pytest-cov
 pytest-curio
-pytest-runner
+pytest-runner==5.1
