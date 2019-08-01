@@ -87,7 +87,8 @@ ifdef TEST_PDB
     _PDB_OPTS=--pdb -s
 endif
 test: gettext
-	pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
+	#pytest $(_PYTEST_OPTS) $(_PDB_OPTS) ${TEST_DIR}
+	tox -e py37
 
 test-all:
 	for example in `ls ./examples/*.py`; do \

@@ -1,24 +1,27 @@
 import operator
 import textwrap
-from prompt_toolkit.token import Token
-from prompt_toolkit.styles import style_from_dict
-from prompt_toolkit.shortcuts import print_tokens
+
+from pygments.token import Token
+
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import PygmentsTokens
+from prompt_toolkit.styles.pygments import style_from_pygments_dict
 
 
 class Styles:
     NAME_VALUE_DICT = {Token.Name: 'bold',
                        Token.Delim: '#0000ee',
                        Token.Value: ''}
-    NAME_VALUE = style_from_dict(NAME_VALUE_DICT)
+    NAME_VALUE = style_from_pygments_dict(NAME_VALUE_DICT)
 
     DEFN_LIST_DICT = {Token.Name: 'italic',
                       Token.Delim: '#0000ee',
                       Token.Definition: ''}
-    DEFN_LIST = style_from_dict(DEFN_LIST_DICT)
+    DEFN_LIST = style_from_pygments_dict(DEFN_LIST_DICT)
 
     TITLE_DICT = {Token.Title: 'bold',
                   Token.Ruler: '#0000ee'}
-    TITLE = style_from_dict(TITLE_DICT)
+    TITLE = style_from_pygments_dict(TITLE_DICT)
 
 
 def printNameValues(pairs, delim=" : ", pad_names=True, style=None):
@@ -33,7 +36,7 @@ def printNameValues(pairs, delim=" : ", pad_names=True, style=None):
                        (Token, "\n"),
                        ]
 
-    print_tokens(tokens, style=style or Styles.NAME_VALUE)
+    print_formatted_text(PygmentsTokens(tokens), style=style or Styles.NAME_VALUE)
 
 
 def printDefList(pairs, delim="\n", indent=4, width=None, style=None):
@@ -47,15 +50,14 @@ def printDefList(pairs, delim="\n", indent=4, width=None, style=None):
                    (Token, "\n"),
                   ]
 
-    print_tokens(tokens, style=style or Styles.DEFN_LIST)
+    print_formatted_text(PygmentsTokens(tokens), style=style or Styles.DEFN_LIST)
 
 
 def printTitle(t, hr="=", style=None):
-    print_tokens([(Token.Title, t),
-                  (Token, "\n"),
-                  (Token.Ruler, hr * len(t)),
-                  (Token, "\n"),
-                 ], style=style or Styles.TITLE)
+    print_formatted_text(PygmentsTokens([
+        (Token.Title, t), (Token, "\n"),
+        (Token.Ruler, hr * len(t)), (Token, "\n"),
+       ]), style=style or Styles.TITLE)
 
 
 def printRoomList(rooms_list):

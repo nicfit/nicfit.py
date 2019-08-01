@@ -1,7 +1,7 @@
 main:
     - deprecation
     - attrs
-    - PyYaml >= 4.2b1
+    - PyYaml
 
 extra_cookiecutter:
     - cookiecutter
@@ -10,7 +10,7 @@ extra_curio:
     - curio
 
 extra_shell:
-    - prompt-toolkit ~= 1.0
+    - prompt-toolkit
 
 test:
     - pytest
@@ -31,6 +31,5 @@ dev:
     - tox
     - twine
     - wheel
-    - pyaml
     - pss
     - git+https://github.com/nicfit/gitchangelog.git

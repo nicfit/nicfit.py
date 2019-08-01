@@ -1,1 +1,1 @@
-curio==0.9
+curio

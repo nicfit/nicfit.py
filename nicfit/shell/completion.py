@@ -3,7 +3,7 @@ import shlex
 from pprint import pformat
 from prompt_toolkit.completion import Completion
 from prompt_toolkit.contrib.regular_languages.compiler import compile
-from prompt_toolkit.contrib.completers import WordCompleter as BaseWordCompleter
+from prompt_toolkit.completion import WordCompleter as BaseWordCompleter
 from prompt_toolkit.contrib.regular_languages.completion import GrammarCompleter
 from ..logger import getLogger
 
