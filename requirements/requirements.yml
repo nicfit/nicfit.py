@@ -31,6 +31,5 @@ dev:
     - tox
     - twine
     - wheel
-    - pyaml
     - pss
     - git+https://github.com/nicfit/gitchangelog.git

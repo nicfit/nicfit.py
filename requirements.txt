@@ -20,10 +20,10 @@ jinja2==2.10.1            # via cookiecutter, jinja2-time
 markupsafe==1.1.1         # via jinja2
 packaging==19.1           # via deprecation
 poyo==0.5.0               # via cookiecutter
-prompt-toolkit==1.0.16
+prompt-toolkit==2.0.9
 pyparsing==2.4.2          # via packaging
 python-dateutil==2.8.0    # via arrow
-pyyaml==5.1.1
+pyyaml==5.1.2
 requests==2.22.0          # via cookiecutter
 six==1.12.0               # via packaging, prompt-toolkit, python-dateutil
 urllib3==1.25.3           # via requests
