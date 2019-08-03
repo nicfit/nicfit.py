@@ -93,9 +93,9 @@ class _HelpCommanMixin:
                   **{Token.Name: "bold italic"}}
     _help_style = style_from_pygments_dict(HELP_STYLE)
     ALIASES = ["?", "??"]
-    DESC = "Display a list of commands. Invoke command with -h/--help for " \
-           "more info."
+    DESC = "Display a list of commands. Invoke command with -h/--help for more info."
     COMMAND_CLASS = None
+    COMMANDS_CLASSES = None
 
     def _initArgParser(self, parser):
         parser.add_argument("-l", "--long", action="store_true",
@@ -108,8 +108,16 @@ class _HelpCommanMixin:
 
         listing = []
         seen_cmds = set()
-        for c in set(self.COMMAND_CLASS.loadCommandMap(instantiate=False)
-                         .values()):
+        cmds = {}
+
+        if self.COMMAND_CLASSES:
+            for Class in self.COMMAND_CLASSES:
+                cmds.update(Class.loadCommandMap(instantiate=False))
+
+        if self.COMMAND_CLASS:
+            cmds.update(self.COMMAND_CLASS.loadCommandMap(instantiate=False))
+
+        for c in set(cmds.values()):
             if c not in seen_cmds:
                 listing.append((c.name(), c.aliases(),
                                 c.desc() if isLongForm() else ""))
