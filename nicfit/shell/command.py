@@ -2,9 +2,10 @@ import re
 import textwrap
 import operator
 
-from prompt_toolkit.token import Token
-from prompt_toolkit.styles import style_from_dict
-from prompt_toolkit.shortcuts import print_tokens
+from pygments.token import Token
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import PygmentsTokens
+from prompt_toolkit.styles.pygments import style_from_pygments_dict
 
 from ..command import Command as _BaseCommand
 from ..command import SubCommandCommand as _SubCommandCommand
@@ -90,11 +91,11 @@ class _HelpCommanMixin:
     NAME = "help"
     HELP_STYLE = {**output.Styles.DEFN_LIST_DICT,
                   **{Token.Name: "bold italic"}}
-    _help_style = style_from_dict(HELP_STYLE)
+    _help_style = style_from_pygments_dict(HELP_STYLE)
     ALIASES = ["?", "??"]
-    DESC = "Display a list of commands. Invoke command with -h/--help for " \
-           "more info."
+    DESC = "Display a list of commands. Invoke command with -h/--help for more info."
     COMMAND_CLASS = None
+    COMMANDS_CLASSES = None
 
     def _initArgParser(self, parser):
         parser.add_argument("-l", "--long", action="store_true",
@@ -107,8 +108,16 @@ class _HelpCommanMixin:
 
         listing = []
         seen_cmds = set()
-        for c in set(self.COMMAND_CLASS.loadCommandMap(instantiate=False)
-                         .values()):
+        cmds = {}
+
+        if self.COMMAND_CLASSES:
+            for Class in self.COMMAND_CLASSES:
+                cmds.update(Class.loadCommandMap(instantiate=False))
+
+        if self.COMMAND_CLASS:
+            cmds.update(self.COMMAND_CLASS.loadCommandMap(instantiate=False))
+
+        for c in set(cmds.values()):
             if c not in seen_cmds:
                 listing.append((c.name(), c.aliases(),
                                 c.desc() if isLongForm() else ""))
@@ -138,7 +147,7 @@ class _HelpCommanMixin:
 
         if isLongForm():
             output.printTitle("\nAll Commands")
-        print_tokens(tokens, style=self._help_style)
+        print_formatted_text(PygmentsTokens(tokens), style=self._help_style)
 
 
 class HelpCommand(_HelpCommanMixin, Command):

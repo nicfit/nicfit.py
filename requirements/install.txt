@@ -1,4 +1,4 @@
-dataclasses==0.6 ; python_version < "3.7"
-packaging==18.0                          # Required by deprecation
-deprecation==2.0.6
-pathlib==1.0.1 ; python_version < "3.4"
+dataclasses ; python_version < "3.7"
+packaging>=14                            # Required by deprecation
+deprecation
+pathlib ; python_version < "3.4"

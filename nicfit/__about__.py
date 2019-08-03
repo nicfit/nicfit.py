@@ -15,4 +15,4 @@ class Version:
     release: str
     release_name: str
 
-version_info = Version(0, 8, 4, "final", "")
+version_info = Version(0, 9, 0, "alpha", "Parcyl cometh")

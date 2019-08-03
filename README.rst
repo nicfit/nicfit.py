@@ -14,7 +14,7 @@ Features
   parsing add-ons and utilities, error handling boiler-plate, and application
   life-cycle hooks. Including intregrated `cookiecutter` that
   suuports updating to future versions with auto-merging.
-* Simple command API based on :mod:`argparse` and sub-parsers.
+* Simple command API based on `argparse` and sub-parsers.
 * Integrated configuation file (based on configparser) utitiles.
 * Logging extras (e.g. verbose level) and command line configuration.
 * Free software: MIT license

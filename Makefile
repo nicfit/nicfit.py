@@ -178,7 +178,7 @@ tag-release:
 	git tag -a $(RELEASE_TAG) -m "Release $(RELEASE_TAG)"
 	git push --tags origin
 
-release: pre-release freeze-release build-release tag-release upload-release
+release: pre-release freeze-release build-release twine-check tag-release upload-release
 
 github-release:
 	name="${RELEASE_TAG}"; \
@@ -206,11 +206,19 @@ web-release:
 
 upload-release: github-release pypi-release web-release
 
+twine-check:
+	@for f in `find dist -type f -name ${PROJECT_NAME}-${VERSION}.tar.gz \
+              -o -name \*.egg -o -name \*.whl`; do \
+        if test -f $$f ; then \
+            twine check $$f ; \
+        fi \
+	done
+
 pypi-release:
 	for f in `find dist -type f -name ${PROJECT_NAME}-${VERSION}.tar.gz \
               -o -name \*.egg -o -name \*.whl`; do \
         if test -f $$f ; then \
-            twine upload -r ${PYPI_REPO} --skip-existing $$f ; \
+            twine upload --verbose -r ${PYPI_REPO} --skip-existing $$f ; \
         fi \
 	done
 
