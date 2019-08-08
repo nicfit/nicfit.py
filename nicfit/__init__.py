@@ -5,7 +5,7 @@ from .logger import getLogger
 from ._argparse import ArgumentParser
 from .config import Config, ConfigOpts
 from .command import Command, CommandError
-from .__about__ import __version__ as version
+from .__about__ import version
 
 log = getLogger(__package__)
 

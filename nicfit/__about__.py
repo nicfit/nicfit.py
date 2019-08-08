@@ -16,3 +16,4 @@ class Version:
     release_name: str
 
 version_info = Version(0, 9, 0, "alpha", "Parcyl cometh")
+__version__ = version  # Backward compatibility

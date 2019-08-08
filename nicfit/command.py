@@ -1,11 +1,11 @@
 import functools
 from collections import OrderedDict, defaultdict
 from deprecation import deprecated
-from .__about__ import __version__
+from .__about__ import version
 from ._argparse import ArgumentParser
 
 
-@deprecated(deprecated_in="0.8", removed_in="0.9", current_version=__version__,
+@deprecated(deprecated_in="0.8", removed_in="0.9", current_version=version,
             details="Use the static class methods from nicfit.command.Command "
                     "or subclass thereof.")
 def register(CommandSubClass):
@@ -94,7 +94,7 @@ class Command:
     @staticmethod
     @deprecated(deprecated_in="0.8", removed_in="0.9",
                 details="Use :meth:`Command.loadCommandMap` instead.",
-                current_version=__version__)
+                current_version=version)
     def initAll(subparsers=None):
         if not Command._all_commands:
             raise ValueError("No commands have been registered")
@@ -110,7 +110,7 @@ class Command:
     @classmethod
     @deprecated(deprecated_in="0.8", removed_in="0.9",
                 details="Use :meth:`Command.loadCommandMap.values()` instead.",
-                current_version=__version__)
+                current_version=version)
     def iterCommands(Class):
         return iter(set(Class._all_commands.values()))
 
