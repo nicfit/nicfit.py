@@ -11,6 +11,7 @@ extra_curio:
 
 extra_shell:
     - prompt-toolkit
+    - pygments
 
 test:
     - pytest
