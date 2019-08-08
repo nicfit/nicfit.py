@@ -89,11 +89,13 @@ endif
 test: gettext
 	tox -e py37 -- $(_PYTEST_OPTS) $(_PDB_OPTS)
 
-test-all:
+test-examples:
 	for example in `ls ./examples/*.py`; do \
 		echo "Running $$example..."; \
 		./$$example > /dev/null ; \
 	done
+
+test-all: gettext
 	tox
 
 coverage: gettext
@@ -169,7 +171,7 @@ changelog:
 		mv ${CHANGELOG}.new ${CHANGELOG}; \
 	fi
 
-build-release: test-all dist
+build-release: test-all test-examples dist
 
 freeze-release:
 	@(git diff --quiet && git diff --quiet --staged) || \
