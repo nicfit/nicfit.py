@@ -13,6 +13,7 @@ class Config(configparser.ConfigParser):
                  **kwargs):
         super().__init__(**kwargs)
         self.input_filenames = []
+        self.mode = mode
 
         if (config_env_var and config_env_var in os.environ and
                 Path(os.environ[config_env_var]).exists()):
@@ -26,13 +27,16 @@ class Config(configparser.ConfigParser):
                 if not self.filename.parent.exists():
                     self.filename.parent.mkdir(parents=True)
                 if not self.filename.exists():
-                    self.filename.touch()
+                    self.filename.touch(mode=mode)
             elif not self.filename.exists():
                 raise FileNotFoundError(self.filename)
 
-            if (self.filename.exists() and mode and
-                    self.filename.stat().st_mode & 0o777 != mode):
-                self.filename.chmod(mode)
+            self._checkMode()
+
+    def _checkMode(self):
+        if (self.filename and self.filename.exists()
+                and self.mode and self.filename.stat().st_mode & 0o777 != self.mode):
+            self.filename.chmod(self.mode)
 
     def getlist(self, section, option, *, raw=False, vars=None,
                 fallback=None):
@@ -71,6 +75,8 @@ class Config(configparser.ConfigParser):
         return self
 
     def write(self, fileobject=None, space_around_delimiters=True):
+        self._checkMode()
+
         if fileobject is None:
             fp = open(str(self.filename), 'w')
         else:
