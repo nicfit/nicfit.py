@@ -13,6 +13,8 @@ class Config(configparser.ConfigParser):
                  **kwargs):
         super().__init__(**kwargs)
         self.input_filenames = []
+
+        mode = mode or 0o644
         self.mode = mode
 
         if (config_env_var and config_env_var in os.environ and
