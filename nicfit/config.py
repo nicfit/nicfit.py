@@ -14,7 +14,9 @@ class Config(configparser.ConfigParser):
         super().__init__(**kwargs)
         self.input_filenames = []
 
-        mode = mode or 0o644
+        umask = os.umask(0)
+        os.umask(umask)
+        mode = mode or (0o666 ^ umask)
         self.mode = mode
 
         if (config_env_var and config_env_var in os.environ and
