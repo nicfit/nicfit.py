@@ -9,4 +9,4 @@ pss
 sphinx_rtd_theme
 tox
 twine
-wheel
+wheel==0.33.6
