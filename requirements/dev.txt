@@ -8,5 +8,5 @@ pip-tools
 pss
 sphinx_rtd_theme
 tox
-twine
+twine==1.14.0
 wheel
