@@ -3,6 +3,9 @@ from collections import OrderedDict, defaultdict
 from deprecation import deprecated
 from .__about__ import __version__
 from ._argparse import ArgumentParser
+from .logger import getLogger
+
+log = getLogger(__name__)
 
 
 @deprecated(deprecated_in="0.8", removed_in="0.9", current_version=__version__,
@@ -38,7 +41,8 @@ class Command:
         """A class decorator for Command classes to register."""
         for name in [CommandSubClass.name()] + CommandSubClass.aliases():
             if name in Class._registered_commands[Class]:
-                raise ValueError("Command already exists: " + name)
+                log.warning("Command {} overridded: {}".format(Class._registered_commands[Class],
+                                                               CommandSubClass))
             Class._registered_commands[Class][name] = CommandSubClass
         return CommandSubClass
 
