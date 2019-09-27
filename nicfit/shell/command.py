@@ -94,8 +94,9 @@ class _HelpCommanMixin:
     _help_style = style_from_pygments_dict(HELP_STYLE)
     ALIASES = ["?", "??"]
     DESC = "Display a list of commands. Invoke command with -h/--help for more info."
-    COMMAND_CLASS = None
-    COMMANDS_CLASSES = None
+    COMMAND_CLASS = None  # C
+    COMMAND_CLASSES = None  # {C.NAME: C}
+    COMMAND_INSTANCES = None  # (c.name: c}
 
     def _initArgParser(self, parser):
         parser.add_argument("-l", "--long", action="store_true",
@@ -109,6 +110,9 @@ class _HelpCommanMixin:
         listing = []
         seen_cmds = set()
         cmds = {}
+
+        if self.COMMAND_INSTANCES:
+            cmds.update(self.COMMAND_INSTANCES)
 
         if self.COMMAND_CLASSES:
             for Class in self.COMMAND_CLASSES:
