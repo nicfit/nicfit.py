@@ -6,7 +6,7 @@ git+https://github.com/nicfit/gitchangelog.git
 ipdb
 pip-tools==4.1.0
 pss
-sphinx_rtd_theme
+sphinx_rtd_theme==0.4.3
 tox
 twine==2.0.0
 wheel
