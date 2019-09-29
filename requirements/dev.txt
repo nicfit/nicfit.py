@@ -5,7 +5,7 @@ flake8
 git+https://github.com/nicfit/gitchangelog.git
 ipdb==0.12.2
 pip-tools==4.1.0
-pss
+pss==1.42
 sphinx_rtd_theme
 tox==3.14.0
 twine==2.0.0
