@@ -1,2 +1,2 @@
 prompt-toolkit
-pygments
+pygments==2.4.2
