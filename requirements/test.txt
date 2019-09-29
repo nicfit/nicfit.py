@@ -1,6 +1,6 @@
 babel
 pytest==5.1.3
 pytest-asyncio
-pytest-cov
+pytest-cov==2.7.1
 pytest-curio
 pytest-runner
