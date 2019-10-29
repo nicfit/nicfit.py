@@ -1,7 +1,7 @@
 Sphinx==2.2.0
 babel==2.7.0
 check-manifest==0.39
-flake8==3.7.8
+flake8==3.7.9
 git+https://github.com/nicfit/gitchangelog.git
 ipdb==0.12.2
 pip-tools==4.2.0
