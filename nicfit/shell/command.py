@@ -65,7 +65,7 @@ class _SubCommandCompleterMixin(_CommandCompleterMixin):
             sub_regex = _updateCompleterDict(completers, sub_completers,
                                              sub_regex)
             sub_grammars.append(rf"(\s* {sub_regex} \s*)")
-            sub_cmds += [sub.name()] + sub.aliases()
+            sub_cmds += [sub.name()] + list(sub.aliases())
 
         sub_grammars = " |\n".join(sub_grammars)
         regex = rf"""{regex} ( {sub_grammars} )"""
