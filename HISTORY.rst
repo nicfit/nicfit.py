@@ -3,6 +3,29 @@ Release History
 
 .. :changelog:
 
+v0.8.5 (2019-08-14)
+--------------------
+
+New
+~~~
+- Pygments requirement for nicfit.shell.
+- _HelpCommanMixin supports multiple `COMMAND_CLASSES` for loading help
+  commands.
+
+Changes
+~~~~~~~
+- Nicfit.shell ported to prompt_toolkit 2.
+
+Fix
+~~~
+- Use yaml.safe_load.
+
+Other
+~~~~~
+- `make twine-check`
+
+
+
 v0.8.4 (2019-07-30)
 --------------------
 - Security update for urllib3 from 1.24.1 to 1.25.3 (#404) <github-bot@pyup.io>

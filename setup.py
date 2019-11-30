@@ -8,13 +8,11 @@ setup(package_dir={"": "."},
       test_suite="./tests",
       include_package_data=True,
       package_data={
-          "mishmash": ["alembic.ini"] + find_package_files("mishmash/alembic"),
-          "mishmash.web": find_package_files("mishmash/web/static", "../..")
-                          + find_package_files("mishmash/web/templates", "../.."),
+          "nicfit": find_package_files("cookiecutter/"),
           },
       entry_points={
                   "console_scripts": [
-                      "mishmash = mishmash.__main__:app.run",
+                      "nicfit = nicfit.__main__:app.run",
                   ]
               },
 )

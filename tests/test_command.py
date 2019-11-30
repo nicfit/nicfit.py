@@ -76,12 +76,12 @@ def test_dup_register(emptycommands):
     @Command.register
     class c2(Command): pass # noqa
 
-    with pytest.raises(ValueError):
-        @Command.register
-        class c2dup(Command):
-            NAME = "c2"
+    @Command.register
+    class c2dup(Command):
+        NAME = "c2"
 
     assert len(Command._registered_commands[Command]) == 2
+    assert Command._registered_commands[Command]["c2"] is c2dup
 
 
 def test_run_notimplemented(emptycommands):

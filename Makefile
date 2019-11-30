@@ -91,14 +91,15 @@ test:
 	tox -e default -- $(PYTEST_ARGS)
 
 
-test-all:
-	python setup.py develop
+test-examples:
 	for example in `ls ./examples/*.py`; do \
 		echo "Running $$example..."; \
 		./$$example > /dev/null ; \
 	done
 
-	detox
+
+test-all: gettext
+	tox --parallel=all
 
 
 coverage:
@@ -167,7 +168,7 @@ changelog:
 		mv ${CHANGELOG}.new ${CHANGELOG}; \
 	fi
 
-build-release: test-all dist
+build-release: test-all test-examples dist
 
 freeze-release:
 	@(git diff --quiet && git diff --quiet --staged) || \
