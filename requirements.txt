@@ -24,7 +24,7 @@ prompt-toolkit==2.0.10
 pygments==2.4.2
 pyparsing==2.4.2          # via packaging
 python-dateutil==2.8.0    # via arrow
-pyyaml==5.1.2
+pyyaml==5.2
 requests==2.22.0          # via cookiecutter
 six==1.12.0               # via packaging, prompt-toolkit, python-dateutil
 urllib3==1.25.6           # via requests
