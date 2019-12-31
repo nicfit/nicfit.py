@@ -7,6 +7,6 @@ ipdb==0.12.2
 pip-tools==4.3.0
 pss==1.42
 sphinx_rtd_theme==0.4.3
-tox==3.14.0
+tox==3.14.3
 twine==2.0.0
 wheel==0.33.6
