@@ -13,7 +13,7 @@ click==7.0                # via cookiecutter
 cookiecutter==1.7.0
 curio==0.9
 deprecation==2.0.7
-future==0.17.1            # via cookiecutter
+future==0.18.2            # via cookiecutter
 idna==2.8                 # via requests
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.10.3            # via cookiecutter, jinja2-time
