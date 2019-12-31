@@ -14,6 +14,7 @@ extra_shell:
     - pygments
 
 test:
+    - tox
     - pytest
     - pytest-cov
     - pytest-runner
@@ -27,9 +28,7 @@ dev:
     - babel
     - check-manifest
     - flake8
-    - ipdb
     - pip-tools
-    - tox
     - twine
     - wheel
     - pss
