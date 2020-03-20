@@ -76,7 +76,7 @@ class AnsiCodes(object):
                 for reset_name in ("RESET_%s" % name, "RESET"):
                     if hasattr(codes, reset_name):
                         reset_value = getattr(codes, reset_name)
-                        setattr(self, "%s" % name.lower(),
+                        setattr(self, name.lower(),
                                 AnsiCodes._mkfunc(code_to_chars(value),
                                                   code_to_chars(reset_value)))
                         break
@@ -87,7 +87,7 @@ class AnsiCodes(object):
             if not _USE_ANSI:
                 return text
 
-            s = u""
+            s = ""
             for st in styles:
                 s += st
             s += color + text + reset
@@ -98,9 +98,7 @@ class AnsiCodes(object):
 
     def __getattribute__(self, name):
         attr = super(AnsiCodes, self).__getattribute__(name)
-        if (hasattr(attr, "startswith") and
-                attr.startswith(AnsiCodes._CSI) and
-                not _USE_ANSI):
+        if not _USE_ANSI and hasattr(attr, "startswith") and attr.startswith(AnsiCodes._CSI):
             return ""
         else:
             return attr
@@ -128,13 +126,15 @@ Examples:
     print(Fg.blue("\m/ \m/"))
     print(Style.BLINK_SLOW + Fg.green("\m/ \m/"))
     print(Style.DIM + Fg.green("\m/ \m/"))
-    print(Fg.yellow("\m/ \m/", Style.BRIGHT, Style.UNDERLINE, Style.ITALICS))
     print("{b}\{g}m{r}{b}/{r}".format(b=Fg.BLUE, g=Fg.GREEN, r=Fg.RESET))
     print(Bg.green(Fg.yellow("\{}/".format(Style.strike_thru("mmmm")))))
     print("%(BLUE)sNice%(RESET)s" % Fg)
+*   print(Fg.yellow("\m/ \m/", Style.BRIGHT, Style.UNDERLINE, Style.ITALICS))
 
     # TODO
     ################################################################################
 """
 
-__all__ = ["Fg", "Bg", "Style"]
+__all__ = [
+    "Fg", "Bg", "Style",
+]
