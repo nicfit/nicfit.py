@@ -21,7 +21,7 @@ packaging==20.3           # via deprecation
 poyo==0.5.0               # via cookiecutter
 prompt-toolkit==3.0.5     # via -r requirements.txt
 pygments==2.6.1           # via -r requirements.txt
-pyparsing==2.4.6          # via packaging
+pyparsing==2.4.7          # via packaging
 python-dateutil==2.8.1    # via arrow
 pyyaml==5.3.1             # via -r requirements.txt
 requests==2.23.0          # via cookiecutter
