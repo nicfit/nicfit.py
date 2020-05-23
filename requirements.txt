@@ -26,6 +26,6 @@ python-dateutil==2.8.1    # via arrow
 pyyaml==5.3.1             # via -r requirements.txt
 requests==2.23.0          # via cookiecutter
 six==1.14.0               # via packaging, python-dateutil
-urllib3==1.25.8           # via requests
+urllib3==1.25.9           # via requests
 wcwidth==0.1.9            # via prompt-toolkit
 whichcraft==0.6.1         # via cookiecutter
