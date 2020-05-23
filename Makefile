@@ -90,10 +90,11 @@ test: gettext
 	tox -e py37 -- $(_PYTEST_OPTS) $(_PDB_OPTS)
 
 test-examples:
-	for example in `ls ./examples/*.py`; do \
-		echo "Running $$example..."; \
-		./$$example > /dev/null ; \
-	done
+	true
+	#for example in `ls ./examples/*.py`; do \
+	#	echo "Running $$example..."; \
+	#	./$$example > /dev/null ; \
+	#done
 
 test-all: gettext
 	tox
@@ -125,7 +126,7 @@ clean-docs:
 	$(MAKE) -C docs clean
 	-rm README.html
 
-pre-release: lint test changelog requirements
+pre-release: clean lint test changelog requirements
 	@# Keep docs off pre-release target list, else it is pruned during 'release' but
 	@# after a clean.
 	@$(MAKE) docs
@@ -226,12 +227,12 @@ pypi-release:
         fi \
 	done
 
-sdist: build
+sdist: clean build
 	python setup.py sdist --formats=gztar,zip
-	python setup.py bdist_egg
-	python setup.py bdist_wheel
 
 dist: clean gettext sdist docs-dist
+	python setup.py bdist_egg
+	python setup.py bdist_wheel
 	@# The cd dist keeps the dist/ prefix out of the md5sum files
 	cd dist && \
 	for f in $$(ls); do \

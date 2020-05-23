@@ -104,7 +104,7 @@ class Application:
 
 class AsyncApplication(Application):
     """A base for asynchronous apps.
-    See :mod:`nicfit.aio.Application` and :mod:`nicfit.curio.Application`.
+    See :mod:`nicfit.aio.Application`.
     """
     async def _main(self, args):
         self.log.debug("AsyncApplication._main: {args}".format(**locals()))
