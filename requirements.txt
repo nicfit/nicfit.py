@@ -9,7 +9,7 @@ attrs==19.3.0             # via -r requirements.txt
 binaryornot==0.4.4        # via cookiecutter
 certifi==2019.11.28       # via requests
 chardet==3.0.4            # via binaryornot, requests
-click==7.1.1              # via cookiecutter
+click==7.1.2              # via cookiecutter
 cookiecutter==1.7.2       # via -r requirements.txt
 deprecation==2.0.7        # via -r requirements.txt
 future==0.18.2            # via cookiecutter
