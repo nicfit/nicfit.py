@@ -3,6 +3,25 @@ Release History
 
 .. :changelog:
 
+v0.8.6 (2020-04-04)
+--------------------
+
+New
+~~~
+- `addCommandLineArgs` hide_args=bool argument to only show --help-logging.
+- _HelpCommanMixin accepts COMMAND_INSTANCES map.
+
+Changes
+~~~~~~~
+- Removed curio support.
+- Register will only warn, rather than ValueError, for dup command names.
+
+Fix
+~~~
+- Create lists from command aliases for concatenation.
+- Test for dup commands no longer raises.
+
+
 v0.8.5 (2019-08-14)
 --------------------
 

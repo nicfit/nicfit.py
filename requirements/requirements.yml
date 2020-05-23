@@ -6,9 +6,6 @@ main:
 extra_cookiecutter:
     - cookiecutter
 
-extra_curio:
-    - curio
-
 extra_shell:
     - prompt-toolkit
     - pygments
@@ -19,7 +16,6 @@ test:
     - pytest-cov
     - pytest-runner
     - pytest-asyncio
-    - pytest-curio
     - babel
 
 dev:

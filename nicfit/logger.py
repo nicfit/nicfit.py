@@ -8,7 +8,7 @@ from textwrap import dedent
 
 from .config import Config
 
-__all__ = ["stdout", "stderr", "FileConfig", "DictConfig"]
+__all__ = ["stdout", "stderr", "getLogger", "FileConfig", "DictConfig", "addCommandLineArgs"]
 
 
 class Logger(logging.getLoggerClass()):
@@ -65,13 +65,13 @@ logging.VERBOSE = logging.DEBUG + ((logging.INFO - logging.DEBUG) // 2)
 logging.addLevelName(logging.VERBOSE, "VERBOSE")
 LEVELS = [logging.DEBUG, logging.VERBOSE, logging.INFO,
           logging.WARNING, logging.ERROR, logging.CRITICAL]
-LEVEL_NAMES = [logging.getLevelName(l).lower() for l in LEVELS]
+LEVEL_NAMES = [logging.getLevelName(level).lower() for level in LEVELS]
 _LOGGING_OPTS_HELP = """
-The command line options ``-l (--log-level)`` and ``-L (--log-file)`` can be
+The command line options `-l (--log-level)` and `-L (--log-file)` can be
 used to set levels and output streams for any and all loggers, therefore each
 may be specified multiple times on a command line.
 
-Each argument requires a value of the form ``VALUE`` or ``LOGGER:VALUE``.
+Each argument requires a value of the form `VALUE` or `LOGGER:VALUE`.
 When a LOGGER is not specified the VALUE is applied to the root logger.
 
 Valid level names (-l and --log-level) are:
@@ -86,7 +86,7 @@ or /dev/null in the last case.
 
 For example:
 
-example.py -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L mylib:./debug.log -L mylib.database:/dev/stderr
+%(prog)s -l info -l mylib:debug -l mylib.database:critical -L ./info.log -L mylib:./debug.log -L mylib.database:/dev/stderr
 
 """.format(level_names=", ".join(LEVEL_NAMES))  # noqa
 
@@ -99,27 +99,29 @@ def _optSplit(opt):
     return first or None, second or None
 
 
-def addCommandLineArgs(arg_parser):
+def addCommandLineArgs(arg_parser, hide_args=False):
     """Add logging option to an ArgumentParser."""
     arg_parser.register("action", "log_levels", LogLevelAction)
     arg_parser.register("action", "log_files", LogFileAction)
     arg_parser.register("action", "log_help", LogHelpAction)
 
     group = arg_parser.add_argument_group("Logging options")
+
+    lh_help = "Show extended logging option usage info."
+    group.add_argument("--help-logging", action="log_help", help=lh_help)
+
+    ll_help = "Set log levels for individual loggers. See --help-logging for " "complete details."
     group.add_argument(
         "-l", "--log-level", dest="log_levels",
         action="log_levels", metavar="LOGGER:LEVEL", default=[],
-        help="Set log levels for individual loggers. See --help-logging for "
-             "complete details.")
+        help=ll_help if not hide_args else argparse.SUPPRESS)
 
+    lg_help = "Set log the output file for individual loggers. "\
+              "See --help-logging for complete details."
     group.add_argument(
         "-L", "--log-file", dest="log_files",
         action="log_files", metavar="LOGGER:FILE", default=[],
-        help="Set log the output file for individual loggers. "
-             " See --help-logging for complete details.")
-
-    group.add_argument("--help-logging", action="log_help",
-                       help=argparse.SUPPRESS)
+        help=lg_help if not hide_args else argparse.SUPPRESS)
 
 
 def applyLoggingOpts(log_levels, log_files):
@@ -194,7 +196,7 @@ class LogFileAction(argparse._AppendAction):
 
 class LogHelpAction(argparse._HelpAction):
     def __call__(self, parser, namespace, values, option_string=None):
-        print(_LOGGING_OPTS_HELP)
+        print(_LOGGING_OPTS_HELP % {"prog": parser.prog})
         parser.exit()
 
 
