@@ -38,7 +38,8 @@ class Requirements(nicfit.Command):
     NAME = "requirements"
     ALIASES = ["reqs"]
 
-    def _splitPkg(self, line):
+    @staticmethod
+    def _splitPkg(line):
         pkg, ver = line, None
         for c in ("=", ">", "<"):
             i = line.find(c)
@@ -51,7 +52,7 @@ class Requirements(nicfit.Command):
     def _readReq(self, file):
         reqs = {}
         file.seek(0)
-        for line in [l.strip() for l in file.readlines()
+        for line in [l.strip() for l in file.readlines()  # noqa E741
                                   if l.strip() and not l.startswith("#")]:
             pkg, version = self._splitPkg(line)
             reqs[pkg] = version
@@ -137,11 +138,12 @@ class CookieCutter(nicfit.Command):
                             help="Merge command. Called with with 2 args: "
                                  "<src> <dest>")
 
-    def _findTemplateDir(self):
+    @staticmethod
+    def _findTemplateDir():
         template_d = None
         for p in [Path(__file__).parent / "cookiecutter",
                   Path(__file__).parent.parent / "cookiecutter",
-                 ]:
+                  ]:
             if p.exists():
                 template_d = p
                 break
@@ -214,7 +216,7 @@ class CookieCutter(nicfit.Command):
     def _merge(self, cc_dir):
         md5_hashes = {}
         if HASH_FILE.exists():
-            for line in [l.strip() for l in HASH_FILE.read_text().split("\n")]:
+            for line in [l.strip() for l in HASH_FILE.read_text().split("\n")]:  # noqa E71
                 if line:
                     values = line.rsplit(":", maxsplit=1)
                     if len(values) == 2 and values[0] and values[1]:

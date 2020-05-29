@@ -3,6 +3,13 @@ Release History
 
 .. :changelog:
 
+v0.8.7 (2020-05-28)
+--------------------
+
+Fix
+~~~
+- Consume asyncio main_task exceptions.
+
 v0.8.6 (2020-04-04)
 --------------------
 

@@ -92,7 +92,7 @@ For example:
 
 
 def _optSplit(opt):
-    if ':' in opt:
+    if ":" in opt:
         first, second = opt.split(":", maxsplit=1)
     else:
         first, second = None, opt
@@ -132,12 +132,12 @@ def applyLoggingOpts(log_levels, log_files):
     applied again (e.g. when command line opts take precedence but were
     overridded by a fileConfig, etc.).
     """
-    for l, lvl in log_levels:
-        l.setLevel(lvl)
-    for l, hdl in log_files:
-        for h in l.handlers:
-            l.removeHandler(h)
-        l.addHandler(hdl)
+    for logger, lvl in log_levels:
+        logger.setLevel(lvl)
+    for logger, hdl in log_files:
+        for h in logger.handlers:
+            logger.removeHandler(h)
+        logger.addHandler(hdl)
 
 
 class LogLevelAction(argparse._AppendAction):
@@ -164,7 +164,6 @@ class LogFileAction(argparse._AppendAction):
         logger, logpath = logging.getLogger(log_name), logpath
 
         formatter = None
-        handlers_logger = None
         if logger.hasHandlers():
             # Find the logger with the actual handlers attached
             handlers_logger = logger if logger.handlers else logger.parent

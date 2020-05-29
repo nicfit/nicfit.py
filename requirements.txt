@@ -12,20 +12,20 @@ chardet==3.0.4            # via binaryornot, requests
 click==7.1.2              # via cookiecutter
 cookiecutter==1.7.2       # via -r requirements.txt
 deprecation==2.1.0        # via -r requirements.txt
-future==0.18.2            # via cookiecutter
 idna==2.9                 # via requests
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.11.2            # via cookiecutter, jinja2-time
-markupsafe==1.1.1         # via jinja2
+markupsafe==1.1.1         # via cookiecutter, jinja2
 packaging==20.4           # via deprecation
 poyo==0.5.0               # via cookiecutter
 prompt-toolkit==3.0.5     # via -r requirements.txt
 pygments==2.6.1           # via -r requirements.txt
 pyparsing==2.4.7          # via packaging
 python-dateutil==2.8.1    # via arrow
+python-slugify==4.0.0     # via cookiecutter
 pyyaml==5.3.1             # via -r requirements.txt
 requests==2.23.0          # via cookiecutter
-six==1.15.0               # via packaging, python-dateutil
+six==1.15.0               # via cookiecutter, packaging, python-dateutil
+text-unidecode==1.3       # via python-slugify
 urllib3==1.25.9           # via requests
 wcwidth==0.1.9            # via prompt-toolkit
-whichcraft==0.6.1         # via cookiecutter

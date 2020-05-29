@@ -23,7 +23,7 @@ class Application(AsyncApplication):
         except asyncio.CancelledError as ex:
             self.log.debug("aio.Application: Cancelled: {}"
                            .format(ex))
-        except BaseException as base_ex:
+        except BaseException:
             # This cleans up the _main_task and prevents"asyncio:Task exception was never retrieved"
             # e.g. SystemExit
             raise self._main_task.exception()
