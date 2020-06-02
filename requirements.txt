@@ -28,4 +28,4 @@ requests==2.23.0          # via cookiecutter
 six==1.15.0               # via cookiecutter, packaging, python-dateutil
 text-unidecode==1.3       # via python-slugify
 urllib3==1.25.9           # via requests
-wcwidth==0.1.9            # via prompt-toolkit
+wcwidth==0.2.3            # via prompt-toolkit
