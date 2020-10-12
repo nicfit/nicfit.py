@@ -18,7 +18,7 @@ jinja2==2.11.2            # via cookiecutter, jinja2-time
 markupsafe==1.1.1         # via cookiecutter, jinja2
 packaging==20.4           # via deprecation
 poyo==0.5.0               # via cookiecutter
-prompt-toolkit==3.0.5     # via -r requirements.txt
+prompt-toolkit==3.0.8     # via -r requirements.txt
 pygments==2.6.1           # via -r requirements.txt
 pyparsing==2.4.7          # via packaging
 python-dateutil==2.8.1    # via arrow
