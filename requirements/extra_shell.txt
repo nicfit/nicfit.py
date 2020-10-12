@@ -1,2 +1,2 @@
-prompt-toolkit==3.0.5
+prompt-toolkit==3.0.8
 pygments==2.6.1
