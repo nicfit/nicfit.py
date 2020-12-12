@@ -16,7 +16,7 @@ idna==2.9                 # via requests
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.11.2            # via cookiecutter, jinja2-time
 markupsafe==1.1.1         # via cookiecutter, jinja2
-packaging==20.4           # via deprecation
+packaging==20.8           # via deprecation
 poyo==0.5.0               # via cookiecutter
 prompt-toolkit==3.0.5     # via -r requirements.txt
 pygments==2.6.1           # via -r requirements.txt
