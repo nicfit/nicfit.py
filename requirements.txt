@@ -10,7 +10,7 @@ binaryornot==0.4.4        # via cookiecutter
 certifi==2020.4.5.1       # via requests
 chardet==3.0.4            # via binaryornot, requests
 click==7.1.2              # via cookiecutter
-cookiecutter==1.7.2       # via -r requirements.txt
+cookiecutter==2.1.1       # via -r requirements.txt
 deprecation==2.1.0        # via -r requirements.txt
 idna==2.9                 # via requests
 jinja2-time==0.2.0        # via cookiecutter
